@@ -1,0 +1,10 @@
+$themes: (
+	light: ( // 明亮主题
+		background_color_nav: #fff,
+		text_color_nav: #24272e,
+	),
+	dark: ( // 暗色主题
+		background_color_nav: #181c27,
+		text_color_nav: rgba(255, 255, 255, 0.82),
+	)
+);
