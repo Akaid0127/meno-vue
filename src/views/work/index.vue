@@ -10,7 +10,9 @@
                     <n-layout-header bordered>
                         <WorkSearch />
                     </n-layout-header>
-                    <n-layout-content content-style="padding: 24px;">平山道</n-layout-content>
+                    <n-layout-content>
+                        <WorkFile />
+                    </n-layout-content>
                 </n-layout>
             </n-layout>
         </div>
@@ -20,6 +22,7 @@
 <script setup>
 import WorkNav from "./components/WorkNav.vue";
 import WorkSearch from "./components/WorkSearch.vue";
+import WorkFile from "./components/WorkFile.vue";
 </script>
 
 <style lang="scss" scoped>
