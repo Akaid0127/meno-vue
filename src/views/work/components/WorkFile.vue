@@ -13,7 +13,7 @@
             <div class="split-line"></div>
             <div class="bottom">
                 <div class="add-group">
-                    <n-button class="add-btn">
+                    <n-button class="add-btn" @click="handleAddFile">
                         <div class="left">
                             <n-icon class="color-icon">
                                 <DocumentAdd />
@@ -66,6 +66,18 @@
 
 <script setup>
 import { Add, DocumentAdd, FolderAdd, Download } from "@vicons/carbon";
+import { useRouter, useRoute } from "vue-router";
+
+// 定义路由
+const router = useRouter();
+const route = useRoute();
+
+
+// 创建文件
+function handleAddFile() {
+	router.push({ name: "design" });
+}
+
 </script>
 
 <style lang="scss" scoped>

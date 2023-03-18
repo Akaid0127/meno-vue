@@ -1,5 +1,6 @@
 import Home from "@/views/home";
 import Work from "@/views/work";
+import Design from "@/views/design";
 
 
 const routes = [
@@ -18,6 +19,12 @@ const routes = [
 		name: 'work',
 		path: '/work',
 		component: Work
+	},
+	
+	{
+		name:'design',
+		path:'/design',
+		component:Design
 	}
 ];
 

@@ -92,7 +92,6 @@ function handleLogin() {
 // 注册
 function handleRegister() {
     router.push({ name: "work" });
-    console.log(123);
 }
 </script>
 
