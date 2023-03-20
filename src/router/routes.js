@@ -2,6 +2,7 @@ import Home from "@/views/home";
 import Work from "@/views/work";
 import Design from "@/views/design";
 
+import Test from '@/views/test';
 
 const routes = [
 	{

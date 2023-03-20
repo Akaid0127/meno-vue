@@ -12,7 +12,9 @@
                     </div>
 
                     <!-- 中间画布区 -->
-                    <div class="center">中间画布区</div>
+                    <div class="center">
+                        <DesignEdit />
+                    </div>
 
                     <!-- 右侧属性区 -->
                     <div class="right">右侧属性区</div>
@@ -23,6 +25,7 @@
 </template>
 
 <script setup>
+import DesignEdit from "./components/DesignEdit.vue";
 </script>
 
 <style lang="scss" scoped>
