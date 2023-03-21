@@ -1,18 +1,24 @@
 import { defineStore } from 'pinia'
 
 const useEditing = defineStore('editing', {
+	actions: {
+		addBlock(currentComponent) {
+			this.pageData.blocks.push(currentComponent)
+		},
+	},
+
 	state: () => {
 		return {
 			count: 99,
 			pageData: {
 				container: {
-					width: 550,
-					height: 400,
+					width: 1400,
+					height: 800,
 				},
 				blocks: [
 					{
 						component: 'm-text',
-						propValue:"hellotext",
+						propValue: "hellotext",
 						key: "1",
 						style: {
 							top: 100,

@@ -6,7 +6,7 @@
 >
 > 目前施工阶段：低代码开发页面
 >
-> update_time：2023-03-18
+> update_time：2023-03-21
 
 
 
@@ -264,7 +264,7 @@ https://blog.csdn.net/qq_44267691/article/details/128036879
 
 ## 四、低代码开发页面
 
-我们要先自己构造一些假数据，能够根据位置渲染内容
+我们要先自己构造一些静态数据，能够根据位置渲染内容
 
 
 
@@ -279,15 +279,263 @@ https://blog.csdn.net/qq_44267691/article/details/128036879
 
 ### 4.2 pinia存储json数据
 
+目前主要存储画布上组件信息
 
 
 
+### 4.3 vue注册全局组件
+
+需要实现批量注册全局组件
+
+https://blog.csdn.net/weixin_57246557/article/details/119764169
+
+`@/components-unit/index.js`
+
+```js
+const importFn = require.context('./', true, /\.vue$/)
+export default {
+	install(app) {
+		// 批量注册全局组件
+		importFn.keys().forEach(key => {
+			// 导入组件
+			const component = importFn(key).default
+			// 截取组件名称
+			const paramsArr = component.__file.split('/')
+			// 注册组件
+			app.component(paramsArr[2], component)
+		})
+	}
+}
+```
+
+`main.js`
+
+```js
+import gobalComponents from '@/components-unit/index.js'
+...
+// 注册全局组件
+app.use(gobalComponents)
+...
+```
 
 
 
+### 4.4 更新组件结构
+
+画布组件需要结构更新
+
+目标结构：
+
+```js
+{
+    component: 'v-text', // 组件名称，需要提前注册到 Vue
+    label: '文字', // 左侧组件列表中显示的名字
+    icon: 'el-icon-edit', // 左侧组件列表中显示的图标
+    propValue: '文字', // 组件所使用的值
+    animations: [], // 动画列表
+    events: {}, // 事件列表
+    style: { // 组件样式
+        width: 200,
+        height: 33,
+        fontSize: 14,
+        fontWeight: 500,
+        lineHeight: '',
+        letterSpacing: 0,
+        textAlign: '',
+        color: '',
+    },
+}
+```
 
 
 
+目前结构：
+
+```js
+{
+    component: 'm-text',
+    propValue:"hellotext",
+    key: "1",
+    style: {
+        top: 100,
+        left: 100,
+        zIndex: 1,
+    },
+},
+```
+
+
+
+### 4.5 拖拽开始事件
+
+```vue
+<div
+    class="component-item"
+    v-for="item in tagState.tagList"
+    :key="item.id"
+    draggable="true"
+    @dragstart="($event) => handleDragstart($event,item)"
+>{{ item.label }}</div>
+```
+
+> v-on简写为@
+
+```js
+// 拖拽开始
+function handleDragstart(event, item) {
+    console.log(item);
+    console.log(event);
+}
+```
+
+
+
+vue3的ref绑定
+
+https://blog.csdn.net/ZYS10000/article/details/125679946
+
+vue3子传父，把画布dom传递出去
+
+https://blog.csdn.net/qq_43895215/article/details/124626692
+
+vue3在setup语法糖的情况下如何传context
+
+https://blog.csdn.net/qq_34093387/article/details/126005287
+
+
+
+子组件
+
+```js
+// 声明ref
+const containerDom = ref(null);
+let $emit = defineEmits(["getContainerDom"]); // defineEmits需要先声明再使用
+const getContainerDom = () => {
+    $emit("getContainerDom", containerDom.value);
+};
+
+// 挂载
+onMounted(() => {
+    // mounted之后才能拿到dom节点
+    getContainerDom();
+});
+```
+
+父组件
+
+```vue
+<!-- 中间画布区 -->
+<div class="center">
+    <DesignEdit @getContainerDom="handleContainerDom" />
+</div>
+```
+
+```js
+// 获取containerdom
+const handleContainerDom = (containerDom) => {
+    console.log(containerDom);
+};
+```
+
+
+
+这样就可以传递画布的DOM到index啦
+
+接下来传递DOM到物料区
+
+
+
+这里使用props是无法直接做到子传父之后父传子的效果，需要使用defineExpose（简而言之就是拿到dom定义回调）
+
+父组件
+
+```vue
+<!-- 左侧组件栏 -->
+<div class="left">
+    <DesignSupply ref="supplyRef" />
+</div>
+```
+
+```js
+// 获取containerdom并传递给物料区
+const supplyRef = ref();
+const handleContainerDom = (containerDom) => {
+    supplyRef.value.hasContainerDom(containerDom);
+};
+```
+
+子组件
+
+```js
+// 拿到画布DOM节点
+const hasContainerDom = (dom) => {
+  console.log(dom)
+}
+defineExpose({hasContainerDom})
+```
+
+成功
+
+
+
+### 4.6 拖拽与画布
+
+实现组件拖拽只能作用于画布
+
+```js
+// 拿到画布DOM节点
+const domState = reactive({ containerDom: null });
+const hasContainerDom = (dom) => {
+    domState.containerDom = dom;
+};
+defineExpose({ hasContainerDom });
+
+// 拖拽开始
+const handleDragstart = (event, item) => {
+	console.log(domState.containerDom)
+    domState.containerDom.addEventListener("dragenter", dragenter);
+    domState.containerDom.addEventListener("dragover", dragover);
+    domState.containerDom.addEventListener("dragleave", dragleave);
+    domState.containerDom.addEventListener("drag", drag);
+};
+
+// 拖拽API
+const dragenter = (event) => {
+    event.dataTransfer.dropEffect = "move";
+};
+const dragover = (event) => {
+    event.preventDefault();
+};
+const dragleave = (event) => {
+    event.dataTransfer.dropEffect = "none";
+};
+const drag = (event) => {};
+```
+
+
+
+构建组件的时候需要随机生成ID
+
+```
+npm i nanoid --save
+```
+
+https://blog.csdn.net/CLdemies/article/details/107271727
+
+https://blog.csdn.net/weixin_62639453/article/details/127826255
+
+
+
+1. offsetX: 432
+2. offsetY: 14
+
+需要复习一下js数组基本操作
+
+https://blog.csdn.net/weixin_43858260/article/details/120648575
+
+
+
+用pinia添加组件数组
 
 
 

@@ -8,12 +8,12 @@
                 <div class="bottom">
                     <!-- 左侧组件栏 -->
                     <div class="left">
-                        <!-- 组件列表 -->
+                        <DesignSupply ref="supplyRef" />
                     </div>
 
                     <!-- 中间画布区 -->
                     <div class="center">
-                        <DesignEdit />
+                        <DesignEdit @getContainerDom="handleContainerDom" />
                     </div>
 
                     <!-- 右侧属性区 -->
@@ -25,7 +25,16 @@
 </template>
 
 <script setup>
+import {  ref } from "vue";
+import DesignSupply from "./components/DesignSupply.vue";
 import DesignEdit from "./components/DesignEdit.vue";
+
+// 获取containerdom并传递给物料区
+const supplyRef = ref();
+const handleContainerDom = (containerDom) => {
+    supplyRef.value.hasContainerDom(containerDom);
+};
+
 </script>
 
 <style lang="scss" scoped>
