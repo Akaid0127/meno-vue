@@ -1,5 +1,5 @@
 <template>
-    <div>{{state.propValue}}</div>
+    <div class="text-wrap">{{state.propValue}}</div>
 </template>
 
 <script setup>
@@ -11,4 +11,12 @@ const state = reactive({
 </script>
 
 <style>
+.text-wrap {
+    border: 1px solid black;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+    width: 80px;
+    height: 40px;
+}
 </style>

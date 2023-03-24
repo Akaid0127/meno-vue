@@ -1,5 +1,5 @@
 <template>
-	<input type="text" :value="state.propValue">
+    <input class="input-wrap" type="text" :value="state.propValue" />
 </template>
 
 <script setup>
@@ -11,5 +11,8 @@ const state = reactive({
 </script>
 
 <style>
-
+.input-wrap {
+    width: 80px;
+    height: 40px;
+}
 </style>

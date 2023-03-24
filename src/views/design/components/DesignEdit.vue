@@ -1,7 +1,7 @@
 <template>
     <div class="designedit-wrap">
         <div class="designedit-content" :style="containerStyle" ref="containerDom">
-            <div v-for="item in unitsData" :key="item.key">
+            <div v-for="item in blockState.blocksData" :key="item.key">
                 <edit-block :block="item"></edit-block>
             </div>
         </div>
@@ -9,23 +9,26 @@
 </template>
 
 <script setup>
-// import { storeToRefs } from "pinia";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, reactive } from "vue";
+import { storeToRefs } from "pinia";
 import useEditing from "@/stores/editing";
 import EditBlock from "./EditBlock.vue";
 
-// pinia editingStore
+// pinia
 const editingStore = useEditing();
-const pageData = editingStore.pageData.container;
-const unitsData = editingStore.pageData.blocks;
+const { pageData } = storeToRefs(editingStore);
+const containerData = pageData.value.container;
+const blockState = reactive({
+    blocksData: pageData.value.blocks,
+});
 
 // container样式
 const containerStyle = {
-    width: pageData.width + "px",
-    height: pageData.height + "px",
+    width: containerData.width + "px",
+    height: containerData.height + "px",
 };
 
-// 声明ref
+// 当前画布ref
 const containerDom = ref(null);
 let $emit = defineEmits(["getContainerDom"]); // defineEmits需要先声明再使用
 const getContainerDom = () => {

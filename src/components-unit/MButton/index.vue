@@ -11,4 +11,8 @@ const state = reactive({
 </script>
 
 <style>
+button{
+	width: 80px;
+	height: 40px;
+}
 </style>

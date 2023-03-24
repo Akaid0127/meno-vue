@@ -539,6 +539,98 @@ https://blog.csdn.net/weixin_43858260/article/details/120648575
 
 
 
+### 4.6 拖拽组件居中
+
+问题：无法获取拖拽组件的dom节点
+
+解决：直接在componentlist中把组件的宽高给定义出来
+
+在拖拽结束创建组件的时候，给定位减去宽高的一半即可实现效果
+
+```js
+style: {
+    top: event.offsetY - componentState.currentComponent.height / 2,
+    left: event.offsetX - componentState.currentComponent.width / 2,
+    zIndex: 1,
+},
+```
+
+
+
+
+
+### 4.7 画布组件拖拽
+
+终于实现了
+
+本来是在遍历组件的那个页面整mouse事件的
+
+结果越整越不对劲，无法实现样式改变
+
+最后发现这个效果应该在子组件那个页面进行操作
+
+实现步骤：
+
+- 计算出位移距离
+- 修改pinia组件的样式
+- 修改子组件的样式（一定要加px）
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
