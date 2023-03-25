@@ -121,6 +121,16 @@ https://blog.csdn.net/weixin_30522095/article/details/98983026
 
 
 
+安装vue-contextmenu
+
+```
+npm i vue3-contextmenu --save
+```
+
+
+
+
+
 ### 1.2 实现icon替换
 
 直接将设计好的logo转换为ico类型文件
@@ -577,27 +587,145 @@ style: {
 
 
 
+### 4.8 右键删除组件
+
+右键点击事件的绑定
+
+在npm上找到一个vue3的右击事件组件
+
+```
+npm install -save @imengyu/vue3-context-menu
+```
+
+在main中引入
+
+```js
+import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css'
+import ContextMenu from '@imengyu/vue3-context-menu'
+...
+// 右键菜单
+app.use(ContextMenu)    
+...
+```
+
+在组件中使用
+
+```js
+import { ContextMenu } from "@imengyu/vue3-context-menu"; // 一定要结构写法，否则会警告
+```
+
+添加组件
+
+```html
+<div v-for="item in blockState.blocksData" :key="item.key">
+    <edit-block :block="item" @contextmenu="$event=>onContextMenu($event)"></edit-block>
+</div>
+<context-menu
+    :show="contextState.show"
+    @close="closeContextMenu"
+    :options="contextState.optionsComponent"
+>
+    <context-menu-item label="删除组件" @click="delComponent" />
+    <context-menu-sperator />
+    <context-menu-item label="上移组件" @click="upComponent" />
+    <context-menu-item label="下移组件" @click="downComponent" />
+</context-menu>
+```
+
+绑定事件
+
+```js
+// 右键菜单
+const contextState = reactive({
+    show: false, // 弹框是否显示
+    //For component
+    optionsComponent: {
+        zIndex: 99,
+        minWidth: 100,
+        x: 100,
+        y: 500,
+    },
+});
+
+const onContextMenu = (e) => {
+    e.preventDefault();
+    console.log("onButtonClick");
+    //显示组件菜单
+    contextState.optionsComponent.x = e.x;
+    contextState.optionsComponent.y = e.y;
+    contextState.show = true;
+};
+
+// 右键弹框意外关闭一定要设false
+const closeContextMenu = () => {
+    contextState.show = false;
+};
+
+const delComponent = () => {
+    console.log("删除组价");
+    contextState.show = false;
+};
+
+const upComponent = () => {
+    console.log("上移组件");
+    contextState.show = false;
+};
+
+const downComponent = () => {
+    console.log("下移组件");
+    contextState.show = false;
+};
+```
 
 
 
+目前定义了功能项：
+
+- 删除组件
+- 上移组件
+- 上移组件
 
 
 
+删除组件在delComponent方法中定义就行
+
+提前在pinia存储中写好action，参数为待删除组价的key值
+
+pinia
+
+```js
+// 删除组件
+delBlock(currentComponentKey) {
+    // 从后向前遍历，这样就算后面的数据前移，也不影响继续遍历
+    for (let i = this.pageData.blocks.length - 1; i >= 0; i--) {
+        if (this.pageData.blocks[i].key === currentComponentKey) {
+            this.pageData.blocks.splice(i, 1);
+        }
+    }
+},
+```
+
+画布组件
+
+```js
+// 需要拿到当前操作组件的key
+const componentState = reactive({
+    currentComponentKey: "",
+});
+...
+const delComponent = () => {
+	editingStore.delBlock(componentState.currentComponentKey)
+    contextState.show = false;
+};
+```
 
 
 
+上移图层下移图层想后面整完div区域划分和组件属性定义再整
 
 
 
-
-
-
-
-
-
-
-
-
+### 4.9
 
 
 

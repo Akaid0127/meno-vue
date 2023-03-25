@@ -14,7 +14,7 @@
 </template>
 
 <script setup>
-import { reactive, defineExpose } from "vue";
+import { reactive } from "vue";
 import { nanoid } from "nanoid";
 import useEditing from "@/stores/editing";
 import componentList from "@/components-unit/componentList";
@@ -75,8 +75,6 @@ const drop = (event) => {
     };
     editingStore.addBlock(tempComponent);
 };
-
-
 
 </script>
 
