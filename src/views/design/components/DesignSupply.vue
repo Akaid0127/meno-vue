@@ -63,11 +63,14 @@ const dragleave = (event) => {
     event.dataTransfer.dropEffect = "none";
 };
 const drop = (event) => {
+	// 拖拽结束
     const tempComponent = {
         component: componentState.currentComponent.component,
         propValue: componentState.currentComponent.label,
         key: nanoid(),
         style: {
+			width:componentState.currentComponent.width,
+			height:componentState.currentComponent.height,
             top: event.offsetY - componentState.currentComponent.height / 2,
             left: event.offsetX - componentState.currentComponent.width / 2,
             zIndex: 1,

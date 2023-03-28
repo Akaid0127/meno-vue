@@ -6,15 +6,15 @@
 >
 > 目前施工阶段：低代码开发页面
 >
-> update_time：2023-03-21
+> update_time：2023-03-28
 
 
 
 借鉴平台：
 
-零壤
+低代码（可视化拖拽）教学项目https://github.com/woai3c/visual-drag-demo
 
-即时设计
+即时设计https://js.design/
 
 
 
@@ -725,19 +725,306 @@ const delComponent = () => {
 
 
 
-### 4.9
+todofix：
+
+- 组件拖拽出界
+- 消息提醒
+- 组件移动过程中pinia也是不断变化
 
 
 
+### 4.9 组件放大缩小
+
+css cursor属性
+
+https://blog.csdn.net/ixygj197875/article/details/79338360
 
 
 
+根据物料宽高计算组件八个原点的位置
+
+以及每个原点对应的cursor手势进行修改
+
+```js
+const pointList = ["t", "r", "b", "l", "lt", "rt", "lb", "rb"];
+const cursorList = ["n", "e", "s", "w", "nw", "ne", "sw", "se"];
+```
+
+```js
+const getPointStyle = (point) => {
+    // 获取组件宽高
+    const width = props.curComponent.style.width;
+    const height = props.curComponent.style.height;
+
+    const curCursor = cursorList[pointList.indexOf(point)];
+
+    const hasT = /t/.test(point);
+    const hasB = /b/.test(point);
+    const hasL = /l/.test(point);
+    const hasR = /r/.test(point);
+
+    let newLeft = 0;
+    let newTop = 0;
+
+    // 四个角的点
+    if (point.length === 2) {
+        newLeft = hasL ? 0 : width;
+        newTop = hasT ? 0 : height;
+    } else {
+        // 上下两点的点，宽度居中
+        if (hasT || hasB) {
+            newLeft = width / 2;
+            newTop = hasT ? 0 : height;
+        }
+
+        // 左右两边的点，高度居中
+        if (hasL || hasR) {
+            newLeft = hasL ? 0 : width;
+            newTop = Math.floor(height / 2);
+        }
+    }
+
+    const style = {
+        marginLeft: hasR ? "-4px" : "-3px",
+        marginTop: "-3px",
+        left: `${newLeft}px`,
+        top: `${newTop}px`,
+        cursor: curCursor + "-resize",
+    };
+
+    return style;
+};
+```
 
 
 
+在左侧物料区组价拖拽结束的时候需要将组件样式进行完美修改
+
+这样拖拽结束组件才有宽高属性
+
+```js
+const drop = (event) => {
+	// 拖拽结束
+    const tempComponent = {
+        component: componentState.currentComponent.component,
+        propValue: componentState.currentComponent.label,
+        key: nanoid(),
+        style: {
+			width:componentState.currentComponent.width,
+			height:componentState.currentComponent.height,
+            top: event.offsetY - componentState.currentComponent.height / 2,
+            left: event.offsetX - componentState.currentComponent.width / 2,
+            zIndex: 1,
+        },
+    };
+    editingStore.addBlock(tempComponent);
+};
+```
 
 
 
+实现点击组件才显示shape
+
+
+
+- 所有blocks
+- 当前点击的block
+
+
+
+点击当前block
+
+setpinia里当前block
+
+遍历所有blocks
+
+如果item.key === curBlock.key，则active true
+
+如果item.key !== curBlock.key，则active false
+
+
+
+选中当前组件添加一个focus属性
+
+```js
+// 实现点击组件焦点
+const handleClickBlock = (block) => {
+    // 遍历清空
+    blockState.blocksData.forEach((item) => {
+        item.focus = false;
+    });
+    blockState.blocksData.forEach((item) => {
+        if (item.key === block.key) {
+            item.focus = true;
+        }
+    });
+};
+```
+
+
+
+交给props一层一层传递
+
+```html
+<div v-for="item in blockState.blocksData" :key="item.key">
+    <edit-block
+        :block="item"
+        :blockFocus="item.focus"
+        @click="handleClickBlock(item)"
+        @contextmenu="$event=>onContextMenu($event,item)"
+    ></edit-block>
+</div>
+```
+
+```vue
+<edit-shape
+    :defaultStyle="blockStyle"
+    :curComponent="props.block"
+    :curActive="props.blockFocus"
+>
+    <component
+        class="block"
+        :is="props.block.component"
+        :propValue="props.block.propValue"
+        @mousedown="$event => handleMousedown($event)"
+    >组件</component>
+</edit-shape>
+```
+
+```vue
+<div
+    class="edit-shape"
+    :style="props.defaultStyle"
+    @mousedown="handleMouseDown"
+>
+    <div
+        class="shape-point"
+        v-for="(item, index) in pointList"
+        :key="index"
+        v-show="props.curActive"
+        @mousedown="handleMouseDownOnPoint(item)"
+        :style="getPointStyle(item)"
+    ></div>
+    <!-- 插槽接收component -->
+    <slot></slot>
+</div>
+```
+
+
+
+给选中的组件设置外轮廓
+
+```vue
+<div
+    :class="props.curActive?'edit-shape-line':'edit-shape'"
+    :style="props.defaultStyle"
+    @mousedown="handleMouseDown"
+>
+    ...
+</div>
+```
+
+```scss
+.edit-shape {
+    position: absolute;
+    outline: 1px solid transparent;
+}
+
+.edit-shape-line {
+    position: absolute;
+    outline: 1px solid #59c7f9;
+    .shape-point {
+        position: absolute;
+        background: #fff;
+        border: 1px solid #59c7f9;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        z-index: 99;
+    }
+}
+```
+
+
+
+放大缩小
+
+- 点击小圆点时，记录点击的坐标 xy
+- 假设我们现在向下拖动，那么 y 坐标就会增大
+- 用新的 y 坐标减去原来的 y 坐标，就可以知道在纵轴方向的移动距离是多少
+- 最后再将移动距离加上原来组件的高度，就可以得出新的组件高度
+- 如果是正数，说明是往下拉，组件的高度在增加。如果是负数，说明是往上拉，组件的高度在减少
+
+
+
+```js
+const handleMouseDownOnPoint = (point) => {
+    const downEvent = window.event;
+    downEvent.stopPropagation();
+    downEvent.preventDefault();
+    const pos = { ...props.defaultStyle };
+
+    const height = Number(pos.height.slice(0, -2));
+    const width = Number(pos.width.slice(0, -2));
+    const top = Number(pos.top.slice(0, -2));
+    const left = Number(pos.left.slice(0, -2));
+    const startX = downEvent.clientX;
+    const startY = downEvent.clientY;
+
+    const move = (moveEvent) => {
+        const currX = moveEvent.clientX;
+        const currY = moveEvent.clientY;
+        const disY = currY - startY;
+        const disX = currX - startX;
+        const hasT = /t/.test(point);
+        const hasB = /b/.test(point);
+        const hasL = /l/.test(point);
+        const hasR = /r/.test(point);
+        const newHeight = height + (hasT ? -disY : hasB ? disY : 0);
+        const newWidth = width + (hasL ? -disX : hasR ? disX : 0);
+
+        pos.height = (newHeight > 0 ? newHeight : 0) + "px";
+        pos.width = (newWidth > 0 ? newWidth : 0) + "px";
+        pos.left = left + (hasL ? disX : 0) + "px";
+        pos.top = top + (hasT ? disY : 0) + "px";
+
+		// 修改组件
+        editingStore.updateBlockSize(
+            props.curComponent.key,
+            pos.top,
+            pos.left,
+            pos.width,
+            pos.height
+        );
+        // 修改样式
+		emit("blockStyle", pos);
+    };
+
+    const up = () => {
+        document.removeEventListener("mousemove", move);
+        document.removeEventListener("mouseup", up);
+    };
+
+    document.addEventListener("mousemove", move);
+    document.addEventListener("mouseup", up);
+};
+```
+
+
+
+这一功能完成之后出现一些problem：
+
+- 圆点并不会跟随改变
+- 组件本身长宽也不会改变
+- 组件改变大小后无法拖拽
+
+
+
+用了一下午解决了这些问题
+
+总的来说就是props有时候并不能直接拿来用
+
+最好做一层reactive封装
 
 
 

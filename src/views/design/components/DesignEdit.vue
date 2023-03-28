@@ -1,10 +1,21 @@
 <template>
     <div class="designedit-wrap">
-        <div class="designedit-content" :style="containerStyle" ref="containerDom">
+        <div
+            class="designedit-content"
+            :style="containerStyle"
+            ref="containerDom"
+            @click="handleClickEdit"
+        >
             <div v-for="item in blockState.blocksData" :key="item.key">
-                <edit-block :block="item" @contextmenu="$event=>onContextMenu($event,item)"></edit-block>
+                <edit-block
+                    :block="item"
+                    :blockFocus="item.focus"
+                    @click="handleClickBlock(item)"
+                    @contextmenu="$event=>onContextMenu($event,item)"
+                ></edit-block>
             </div>
 
+            <!-- 右键菜单 -->
             <context-menu
                 :show="contextState.show"
                 @close="closeContextMenu"
@@ -45,6 +56,12 @@ import { Delete, ChevronUp, ChevronDown } from "@vicons/carbon";
 import useEditing from "@/stores/editing";
 import EditBlock from "./EditBlock.vue";
 
+// 挂载
+onMounted(() => {
+    // mounted之后才能拿到dom节点
+    getContainerDom();
+});
+
 // pinia
 const editingStore = useEditing();
 const { pageData } = storeToRefs(editingStore);
@@ -53,31 +70,42 @@ const blockState = reactive({
     blocksData: pageData.value.blocks,
 });
 
-// container样式
+// 实现画布
 const containerStyle = {
     width: containerData.width + "px",
     height: containerData.height + "px",
 };
-
-// 当前画布ref
 const containerDom = ref(null);
 let $emit = defineEmits(["getContainerDom"]); // defineEmits需要先声明再使用
 const getContainerDom = () => {
     $emit("getContainerDom", containerDom.value);
 };
 
-// 挂载
-onMounted(() => {
-    // mounted之后才能拿到dom节点
-    getContainerDom();
-});
+// 实现点击组件焦点
+const handleClickBlock = (block) => {
+    // 遍历清空
+    blockState.blocksData.forEach((item) => {
+        item.focus = false;
+    });
+    blockState.blocksData.forEach((item) => {
+        if (item.key === block.key) {
+            item.focus = true;
+        }
+    });
+};
+const handleClickEdit = () => {
+    // 点击画布清空
+	// todo 后期可以使用一个清空按钮取消选择
+    // blockState.blocksData.forEach((item) => {
+    //     item.focus = false;
+    // });
+};
 
-// 需要拿到当前操作组件的key
+// 实现右键菜单
 const componentState = reactive({
     currentComponentKey: "",
 });
 
-// 右键菜单
 const contextState = reactive({
     show: false,
     //For component
@@ -101,7 +129,7 @@ const closeContextMenu = () => {
     contextState.show = false;
 };
 const delComponent = () => {
-	editingStore.delBlock(componentState.currentComponentKey)
+    editingStore.delBlock(componentState.currentComponentKey);
     contextState.show = false;
 };
 const upComponent = () => {

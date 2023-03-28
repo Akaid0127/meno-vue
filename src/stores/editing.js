@@ -3,6 +3,11 @@ import { defineStore } from 'pinia'
 
 const useEditing = defineStore('editing', {
 	actions: {
+		// 设置当前正在操作组件
+		setCurBlock(curBlock) {
+			this.curData.curBlock = curBlock
+		},
+
 		// 添加组价
 		addBlock(currentComponent) {
 			this.pageData.blocks.push(currentComponent)
@@ -19,11 +24,23 @@ const useEditing = defineStore('editing', {
 		},
 
 		// 更新组件位置
-		updateBlock(key, posTop, posLeft) {
+		updateBlockPos(key, posTop, posLeft) {
 			this.pageData.blocks.forEach((item) => {
 				if (item.key === key) {
 					item.style.top = posTop
 					item.style.left = posLeft
+				}
+			})
+		},
+
+		// 更新组件大小
+		updateBlockSize(key, posTop, posLeft, posWidth, posHeight) {
+			this.pageData.blocks.forEach((item) => {
+				if (item.key === key) {
+					item.style.top = posTop
+					item.style.left = posLeft
+					item.style.width = posWidth
+					item.style.height = posHeight
 				}
 			})
 		}
@@ -43,6 +60,8 @@ const useEditing = defineStore('editing', {
 						propValue: "hellotext",
 						key: "defaultkey1",
 						style: {
+							width: 80,
+							height: 40,
 							top: 100,
 							left: 100,
 							zIndex: 1,
@@ -53,6 +72,8 @@ const useEditing = defineStore('editing', {
 						propValue: "hellobutton",
 						key: "defaultkey2",
 						style: {
+							width: 80,
+							height: 40,
 							top: 200,
 							left: 200,
 							zIndex: 1,
@@ -63,6 +84,8 @@ const useEditing = defineStore('editing', {
 						propValue: "helloinput",
 						key: "defaultkey3",
 						style: {
+							width: 80,
+							height: 40,
 							top: 300,
 							left: 300,
 							zIndex: 1,
@@ -71,7 +94,9 @@ const useEditing = defineStore('editing', {
 				]
 			},
 
-
+			curData: {
+				curBlock: {}
+			}
 		}
 	}
 
