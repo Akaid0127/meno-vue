@@ -25,7 +25,7 @@ const editingStore = useEditing();
 // tag和component状态
 const tagState = reactive({ tagList: componentList });
 const componentState = reactive({ currentComponent: null });
- 
+
 // 拿到画布DOM节点
 const domState = reactive({ containerDom: null });
 const hasContainerDom = (dom) => {
@@ -33,11 +33,7 @@ const hasContainerDom = (dom) => {
 };
 defineExpose({ hasContainerDom });
 
-
-/* 
-	实现物料区组件拖拽功能
-*/
-// 拖拽开始
+// 实现物料区组件拖拽
 const handleDragstart = (event, item) => {
     componentState.currentComponent = item;
     domState.containerDom.addEventListener("dragenter", dragenter);
@@ -45,14 +41,12 @@ const handleDragstart = (event, item) => {
     domState.containerDom.addEventListener("dragleave", dragleave);
     domState.containerDom.addEventListener("drop", drop);
 };
-// 拖拽结束
 const handleDragend = (event) => {
     domState.containerDom.removeEventListener("dragenter", dragenter);
     domState.containerDom.removeEventListener("dragover", dragover);
     domState.containerDom.removeEventListener("dragleave", dragleave);
     domState.containerDom.removeEventListener("drop", drop);
 };
-// 拖拽API 
 const dragenter = (event) => {
     event.dataTransfer.dropEffect = "move";
 };
@@ -63,14 +57,15 @@ const dragleave = (event) => {
     event.dataTransfer.dropEffect = "none";
 };
 const drop = (event) => {
-	// 拖拽结束
+    // 拖拽结束 添加组件
     const tempComponent = {
         component: componentState.currentComponent.component,
         propValue: componentState.currentComponent.label,
         key: nanoid(),
+        focus: false,
         style: {
-			width:componentState.currentComponent.width,
-			height:componentState.currentComponent.height,
+            width: componentState.currentComponent.width,
+            height: componentState.currentComponent.height,
             top: event.offsetY - componentState.currentComponent.height / 2,
             left: event.offsetX - componentState.currentComponent.width / 2,
             zIndex: 1,
@@ -78,7 +73,6 @@ const drop = (event) => {
     };
     editingStore.addBlock(tempComponent);
 };
-
 </script>
 
 <style lang="scss" scoped>

@@ -6,6 +6,8 @@
             ref="containerDom"
             @click="handleClickEdit"
         >
+            <!-- 网格线 -->
+            <edit-grid />
             <div v-for="item in blockState.blocksData" :key="item.key">
                 <edit-block
                     :block="item"
@@ -54,7 +56,9 @@ import { storeToRefs } from "pinia";
 import { ContextMenu } from "@imengyu/vue3-context-menu";
 import { Delete, ChevronUp, ChevronDown } from "@vicons/carbon";
 import useEditing from "@/stores/editing";
+import emitter from "@/mitt/event";
 import EditBlock from "./EditBlock.vue";
+import EditGrid from "./EditGrid.vue";
 
 // 挂载
 onMounted(() => {
@@ -70,7 +74,7 @@ const blockState = reactive({
     blocksData: pageData.value.blocks,
 });
 
-// 实现画布
+// 实现画布渲染
 const containerStyle = {
     width: containerData.width + "px",
     height: containerData.height + "px",
@@ -81,21 +85,29 @@ const getContainerDom = () => {
     $emit("getContainerDom", containerDom.value);
 };
 
-// 实现点击组件焦点
-const handleClickBlock = (block) => {
-    // 遍历清空
+// 实现组件焦点效果
+const setBlockFocus = (data) => {
     blockState.blocksData.forEach((item) => {
-        item.focus = false;
+        item.focus = false; // 遍历清空
     });
     blockState.blocksData.forEach((item) => {
-        if (item.key === block.key) {
+        if (item.key === data) {
+            editingStore.setCurBlock(item.key); // 更新pinia-editing
+            emitter.emit("getCurBlock", item.key); // 全局事件总线
             item.focus = true;
         }
     });
 };
+const handleClickBlock = (block) => {
+    setBlockFocus(block.key);
+}; // 画布-->组件列表
+emitter.on("setCurBlock", (data) => {
+    setBlockFocus(data); 
+}); // 组件列表-->画布
+
 const handleClickEdit = () => {
     // 点击画布清空
-	// todo 后期可以使用一个清空按钮取消选择
+    // todo 后期可以使用一个清空按钮取消选择
     // blockState.blocksData.forEach((item) => {
     //     item.focus = false;
     // });
@@ -149,12 +161,13 @@ const downComponent = () => {
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: #f0f2f5;
 }
 
 .designedit-content {
     width: 200px;
     height: 200px;
-    background-color: #f9f5eb;
+    background-color: #ffffff;
     position: relative;
 }
 </style>

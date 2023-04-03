@@ -4,8 +4,8 @@ import { defineStore } from 'pinia'
 const useEditing = defineStore('editing', {
 	actions: {
 		// 设置当前正在操作组件
-		setCurBlock(curBlock) {
-			this.curData.curBlock = curBlock
+		setCurBlock(keyString) {
+			this.curData.curBlockKey = keyString
 		},
 
 		// 添加组价
@@ -51,7 +51,7 @@ const useEditing = defineStore('editing', {
 			count: 99,
 			pageData: {
 				container: {
-					width: 1400,
+					width: 1200,
 					height: 800,
 				},
 				blocks: [
@@ -59,6 +59,7 @@ const useEditing = defineStore('editing', {
 						component: 'm-text',
 						propValue: "hellotext",
 						key: "defaultkey1",
+						focus: false,
 						style: {
 							width: 80,
 							height: 40,
@@ -71,6 +72,7 @@ const useEditing = defineStore('editing', {
 						component: 'm-button',
 						propValue: "hellobutton",
 						key: "defaultkey2",
+						focus: false,
 						style: {
 							width: 80,
 							height: 40,
@@ -83,6 +85,7 @@ const useEditing = defineStore('editing', {
 						component: 'm-input',
 						propValue: "helloinput",
 						key: "defaultkey3",
+						focus: false,
 						style: {
 							width: 80,
 							height: 40,
@@ -95,7 +98,7 @@ const useEditing = defineStore('editing', {
 			},
 
 			curData: {
-				curBlock: {}
+				curBlockKey: ""
 			}
 		}
 	}

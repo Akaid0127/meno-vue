@@ -9,6 +9,7 @@
                     <!-- 左侧组件栏 -->
                     <div class="left">
                         <DesignSupply ref="supplyRef" />
+                        <DesignLevel />
                     </div>
 
                     <!-- 中间画布区 -->
@@ -25,22 +26,21 @@
 </template>
 
 <script setup>
-import {  ref } from "vue";
+import { ref } from "vue";
 import DesignSupply from "./components/DesignSupply.vue";
+import DesignLevel from "./components/DesignLevel.vue";
 import DesignEdit from "./components/DesignEdit.vue";
 
-// 获取containerdom并传递给物料区
+// 获取containerdom并传递给左侧物料区
 const supplyRef = ref();
 const handleContainerDom = (containerDom) => {
     supplyRef.value.hasContainerDom(containerDom);
 };
-
 </script>
 
 <style lang="scss" scoped>
 .design-wrap {
     height: 100vh;
-    border: 1px solid red;
 }
 
 .design-cotent {
@@ -49,7 +49,7 @@ const handleContainerDom = (containerDom) => {
     .top {
         height: 60px;
         width: 100%;
-        border: 1px solid red;
+        border-bottom: 1px solid #D4D7DE;
     }
 
     .bottom {
@@ -58,17 +58,19 @@ const handleContainerDom = (containerDom) => {
         .left {
             width: 280px;
             height: 868px;
-            border: 1px solid red;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
         .center {
+            border-left: 1px solid #D4D7DE;
+            border-right: 1px solid #D4D7DE;
             width: 100%;
             height: 868px;
-            border: 1px solid red;
         }
         .right {
             width: 290px;
             height: 868px;
-            border: 1px solid red;
         }
     }
 }
