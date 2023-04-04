@@ -10,11 +10,28 @@ import {
 	NLayoutContent,
 	NLayoutFooter,
 	NIcon,
-	NAvatar
+	NAvatar,
+	NForm,
+	NFormItem,
+	NInputNumber
 } from 'naive-ui'
 
 const naive = create({
-	components: [NButton, NCard, NInput, NLayout, NLayoutSider, NLayoutHeader, NLayoutContent, NLayoutFooter, NIcon, NAvatar]
+	components: [
+		NButton,
+		NCard,
+		NInput,
+		NLayout,
+		NLayoutSider,
+		NLayoutHeader,
+		NLayoutContent,
+		NLayoutFooter,
+		NIcon,
+		NAvatar,
+		NForm,
+		NFormItem,
+		NInputNumber
+	]
 })
 
 export default naive

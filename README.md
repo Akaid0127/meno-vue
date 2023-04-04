@@ -6,7 +6,7 @@
 >
 > 目前施工阶段：低代码开发页面
 >
-> update_time：2023-03-28
+> update_time：2023-04-03
 
 
 
@@ -1087,63 +1087,194 @@ https://blog.csdn.net/Heartnottowake/article/details/124072686
 
 
 
+### 4.11 组件属性列表
+
+获取到当前焦点组件（所有属性）
+
+提取当前组件的style对象
+
+提取style对象中所有key形成一个styleKeys的数组
+
+遍历数组
+
+> 打算还是通过全局总线的方式解决getCurStyle
 
 
 
+画布组件
+
+```js
+// 实现组件焦点效果
+const setBlockFocus = (data) => {
+    blockState.blocksData.forEach((item) => {
+        item.focus = false; // 遍历清空
+    });
+    blockState.blocksData.forEach((item) => {
+        if (item.key === data) {
+            editingStore.setCurBlock(item.key); // 更新pinia-editing
+            emitter.emit("getCurBlock", item.key); // 获取列表组件焦点
+			emitter.emit("getCurStyle", item); // 获取焦点组件属性
+            item.focus = true;
+        }
+    });
+};
+```
+
+属性组件
+
+```js
+// 接收当前组件style
+const curState = reactive({
+    curStyle: {},
+    styleKeys: [],
+});
+emitter.on("getCurStyle", (data) => {
+    curState.curStyle = data.style;
+    curState.styleKeys = Object.keys(data.style);
+});
+```
 
 
 
+在通用组件文件夹简历一个styleList键值对应的对象
+
+```
+const styleList = {
+	"width":"宽度",
+	"height":"高度",
+	"top":"位置Y",
+	"left":"位置X",
+	"zIndex":"层级",
+}
+
+export default styleList
+```
 
 
 
+对于样式列表其实就是遍历
+
+考虑到后期样式的多样性，可以使用`v-if`，`v-else-if`
+
+```vue
+<div class="list">
+    <n-form label-placement="left" label-width="auto">
+        <n-form-item
+            v-for="(key, index) in curState.styleKeys"
+            :key="index"
+            :label="styleLabelList[key]"
+        >
+            <n-input-number v-model:value="curState.curStyle[key]" />
+        </n-form-item>
+    </n-form>
+</div>
+```
 
 
 
+在画布中拉动组件位置未出现警告
+
+但是在画布中拉动组件大小的时候，出现额外单位、类型不匹配等错误
+
+这是在提交pinia数据的时候没有做好类型装换，需要将string转换为number
+
+修改editshape中提交pinia数据部分
+
+```js
+// 修改组件 *注意这里修改pinia中数据的时候一定要去掉单位*
+editingStore.updateBlockSize(
+    props.curComponent.key,
+    Number(pos.top.slice(0, -2)),
+    Number(pos.left.slice(0, -2)),
+    Number(pos.width.slice(0, -2)),
+    Number(pos.height.slice(0, -2))
+);
+```
+
+修改designsupply中提交pinia数据部分
+
+```js
+const drop = (event) => {
+    // 拖拽结束 添加组件
+    const tempComponent = {
+        component: componentState.currentComponent.component,
+        propValue: componentState.currentComponent.label,
+        key: nanoid(),
+        focus: false,
+        style: {
+            width: Number(componentState.currentComponent.width),
+            height: Number(componentState.currentComponent.height),
+            top: Number(event.offsetY - componentState.currentComponent.height / 2),
+            left: Number(event.offsetX - componentState.currentComponent.width / 2),
+            zIndex: 1,
+        },
+    };
+    editingStore.addBlock(tempComponent);
+};
+```
 
 
 
+接下来实现修改input内容，实现组件样式调整
+
+改变属性值的同时，怎么改变pinia中组件属性？
+
+设置监听
+
+```js
+// 深度监听表单数据
+watch(
+    () => curState.curStyle,
+    (curStyle) => {
+		editingStore.updateBlockStyle(curState.curkey,curStyle)
+    },
+    {
+        deep: true,
+    }
+);
+```
+
+在pinia里定义方法
+
+```js
+// 更新组件样式
+updateBlockStyle(key,curStyle){
+    this.pageData.blocks.forEach((item) => {
+        if (item.key === key) {
+            const styleKeys = Object.keys(curStyle);
+            styleKeys.forEach((key) => {
+                item.style[key] = curStyle[key]
+            })
+        }
+    })
+}
+```
+
+这样数据确实是修改了
+
+但是画布上的组件样式并没有修改
+
+还要设置全局事件总线实现样式实时改变
+
+此路不通
 
 
 
+样式绑定应该绑定在子组件editblock上
 
-
-
-
-### 4.11 页面适配
-
-提前做一下页面适配
-
-页面适配打算采用PC端页面缩放适配，已适配不同屏幕浏览器需求
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+```js
+// 组件修改属性样式绑定
+emitter.on("setCurStyle", (data) => {
+    if (blockState.key === data.key) {
+		console.log("123")
+        blockState.style.width = data.style.width + "px";
+        blockState.style.height = data.style.height + "px";
+        blockState.style.top = data.style.top + "px";
+        blockState.style.left = data.style.left + "px";
+        blockState.style.zIndex = data.style.zIndex;
+    }
+}); // 组件属性-->画布
+```
 
 
 

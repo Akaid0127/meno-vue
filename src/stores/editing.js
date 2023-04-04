@@ -43,6 +43,18 @@ const useEditing = defineStore('editing', {
 					item.style.height = posHeight
 				}
 			})
+		},
+
+		// 更新组件样式
+		updateBlockStyle(key,curStyle){
+			this.pageData.blocks.forEach((item) => {
+				if (item.key === key) {
+					const styleKeys = Object.keys(curStyle);
+					styleKeys.forEach((key) => {
+						item.style[key] = curStyle[key]
+					})
+				}
+			})
 		}
 	},
 

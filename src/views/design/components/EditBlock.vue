@@ -17,6 +17,7 @@
 
 <script setup>
 import { reactive } from "vue";
+import emitter from "@/mitt/event";
 import useEditing from "@/stores/editing";
 import EditShape from "./EditShape.vue";
 
@@ -76,6 +77,18 @@ const handleMousedown = (event) => {
     document.addEventListener("mouseup", up);
 };
 
+// 组件修改属性样式绑定
+emitter.on("setCurStyle", (data) => {
+    if (blockState.key === data.key) {
+        blockState.style.width = data.style.width + "px";
+        blockState.style.height = data.style.height + "px";
+        blockState.style.top = data.style.top + "px";
+        blockState.style.left = data.style.left + "px";
+        blockState.style.zIndex = data.style.zIndex;
+    }
+}); // 组件属性-->画布
+
+// shape定型
 const setBlockStyle = (data) => {
     blockState.style.width = data.width;
     blockState.style.height = data.height;

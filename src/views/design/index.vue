@@ -18,7 +18,9 @@
                     </div>
 
                     <!-- 右侧属性区 -->
-                    <div class="right">右侧属性区</div>
+                    <div class="right">
+                        <DesignAttr />
+                    </div>
                 </div>
             </n-layout>
         </div>
@@ -30,6 +32,7 @@ import { ref } from "vue";
 import DesignSupply from "./components/DesignSupply.vue";
 import DesignLevel from "./components/DesignLevel.vue";
 import DesignEdit from "./components/DesignEdit.vue";
+import DesignAttr from "./components/DesignAttr.vue";
 
 // 获取containerdom并传递给左侧物料区
 const supplyRef = ref();
@@ -49,7 +52,7 @@ const handleContainerDom = (containerDom) => {
     .top {
         height: 60px;
         width: 100%;
-        border-bottom: 1px solid #D4D7DE;
+        border-bottom: 1px solid #d4d7de;
     }
 
     .bottom {
@@ -57,20 +60,20 @@ const handleContainerDom = (containerDom) => {
         flex-direction: row;
         .left {
             width: 280px;
-            height: 868px;
+            height: 855px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
         }
         .center {
-            border-left: 1px solid #D4D7DE;
-            border-right: 1px solid #D4D7DE;
             width: 100%;
-            height: 868px;
+            height: 855px;
+            border-left: 1px solid #d4d7de;
+            border-right: 1px solid #d4d7de;
         }
         .right {
             width: 290px;
-            height: 868px;
+            height: 855px;
         }
     }
 }

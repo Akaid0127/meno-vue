@@ -61,13 +61,13 @@ const handleMouseDownOnPoint = (point) => {
         pos.left = left + (hasL ? disX : 0) + "px";
         pos.top = top + (hasT ? disY : 0) + "px";
 
-		// 修改组件
+		// 修改组件 *注意这里修改pinia中数据的时候一定要去掉单位*
         editingStore.updateBlockSize(
             props.curComponent.key,
-            pos.top,
-            pos.left,
-            pos.width,
-            pos.height
+			Number(pos.top.slice(0, -2)),
+			Number(pos.left.slice(0, -2)),
+			Number(pos.width.slice(0, -2)),
+			Number(pos.height.slice(0, -2))
         );
         // 修改样式
 		emit("blockStyle", pos);

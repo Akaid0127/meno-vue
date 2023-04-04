@@ -52,11 +52,10 @@
 
 <script setup>
 import { onMounted, ref, reactive } from "vue";
-import { storeToRefs } from "pinia";
 import { ContextMenu } from "@imengyu/vue3-context-menu";
 import { Delete, ChevronUp, ChevronDown } from "@vicons/carbon";
-import useEditing from "@/stores/editing";
 import emitter from "@/mitt/event";
+import useEditing from "@/stores/editing";
 import EditBlock from "./EditBlock.vue";
 import EditGrid from "./EditGrid.vue";
 
@@ -68,13 +67,12 @@ onMounted(() => {
 
 // pinia
 const editingStore = useEditing();
-const { pageData } = storeToRefs(editingStore);
-const containerData = pageData.value.container;
 const blockState = reactive({
-    blocksData: pageData.value.blocks,
-});
+    blocksData: editingStore.pageData.blocks,
+}); //画布组件
 
 // 实现画布渲染
+const containerData = editingStore.pageData.container;
 const containerStyle = {
     width: containerData.width + "px",
     height: containerData.height + "px",
@@ -93,18 +91,12 @@ const setBlockFocus = (data) => {
     blockState.blocksData.forEach((item) => {
         if (item.key === data) {
             editingStore.setCurBlock(item.key); // 更新pinia-editing
-            emitter.emit("getCurBlock", item.key); // 全局事件总线
+            emitter.emit("getCurBlock", item.key); // 获取列表组件焦点
+            emitter.emit("getCurStyle", item); // 获取焦点组件属性
             item.focus = true;
         }
     });
 };
-const handleClickBlock = (block) => {
-    setBlockFocus(block.key);
-}; // 画布-->组件列表
-emitter.on("setCurBlock", (data) => {
-    setBlockFocus(data); 
-}); // 组件列表-->画布
-
 const handleClickEdit = () => {
     // 点击画布清空
     // todo 后期可以使用一个清空按钮取消选择
@@ -112,6 +104,13 @@ const handleClickEdit = () => {
     //     item.focus = false;
     // });
 };
+const handleClickBlock = (block) => {
+    setBlockFocus(block.key);
+}; // 画布-->组件列表
+emitter.on("setCurBlock", (data) => {
+    setBlockFocus(data);
+}); // 组件列表-->画布
+
 
 // 实现右键菜单
 const componentState = reactive({

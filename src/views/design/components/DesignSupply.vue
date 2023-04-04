@@ -64,10 +64,10 @@ const drop = (event) => {
         key: nanoid(),
         focus: false,
         style: {
-            width: componentState.currentComponent.width,
-            height: componentState.currentComponent.height,
-            top: event.offsetY - componentState.currentComponent.height / 2,
-            left: event.offsetX - componentState.currentComponent.width / 2,
+            width: Number(componentState.currentComponent.width),
+            height: Number(componentState.currentComponent.height),
+            top: Number(event.offsetY - componentState.currentComponent.height / 2),
+            left: Number(event.offsetX - componentState.currentComponent.width / 2),
             zIndex: 1,
         },
     };
