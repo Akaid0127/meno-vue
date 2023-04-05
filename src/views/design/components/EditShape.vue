@@ -23,12 +23,14 @@
 <script setup>
 import { reactive } from "vue";
 import useEditing from "@/stores/editing";
+import useSnapshot from "@/stores/snapshot";
 // props emit
 const props = defineProps(["curComponent", "defaultStyle", "curActive"]);
-const emit = defineEmits(['blockStyle'])
+const emit = defineEmits(["blockStyle"]);
 
 // pinia
-const editingStore = useEditing();
+const editingStore = useEditing(); // 组件状态
+const snapshotStore = useSnapshot(); // 快照状态
 
 // 圆点位置鼠标落下
 const handleMouseDownOnPoint = (point) => {
@@ -61,19 +63,21 @@ const handleMouseDownOnPoint = (point) => {
         pos.left = left + (hasL ? disX : 0) + "px";
         pos.top = top + (hasT ? disY : 0) + "px";
 
-		// 修改组件 *注意这里修改pinia中数据的时候一定要去掉单位*
+        // 修改组件 *注意这里修改pinia中数据的时候一定要去掉单位*
         editingStore.updateBlockSize(
             props.curComponent.key,
-			Number(pos.top.slice(0, -2)),
-			Number(pos.left.slice(0, -2)),
-			Number(pos.width.slice(0, -2)),
-			Number(pos.height.slice(0, -2))
+            Number(pos.top.slice(0, -2)),
+            Number(pos.left.slice(0, -2)),
+            Number(pos.width.slice(0, -2)),
+            Number(pos.height.slice(0, -2))
         );
         // 修改样式
-		emit("blockStyle", pos);
+        emit("blockStyle", pos);
     };
 
     const up = () => {
+        // 添加快照
+        snapshotStore.addSnapshot([...editingStore.pageData.blocks]);
         document.removeEventListener("mousemove", move);
         document.removeEventListener("mouseup", up);
     };

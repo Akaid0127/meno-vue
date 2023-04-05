@@ -6,11 +6,10 @@
 >
 > 目前施工阶段：低代码开发页面
 >
-> update_time：2023-04-03
 
 
 
-借鉴平台：
+借鉴作品：
 
 低代码（可视化拖拽）教学项目https://github.com/woai3c/visual-drag-demo
 
@@ -1266,7 +1265,6 @@ updateBlockStyle(key,curStyle){
 // 组件修改属性样式绑定
 emitter.on("setCurStyle", (data) => {
     if (blockState.key === data.key) {
-		console.log("123")
         blockState.style.width = data.style.width + "px";
         blockState.style.height = data.style.height + "px";
         blockState.style.top = data.style.top + "px";
@@ -1278,79 +1276,385 @@ emitter.on("setCurStyle", (data) => {
 
 
 
+### 4.12右键改变组件层级
+
+就是直接修改z-index就可以
+
+
+
+### 4.13 撤销和反撤销操作
+
+首先整理一下目前能够引起editing里数据变化的操作
+
+- 物料区拖拽组件
+- 画布拖拽组件
+- 放大缩小组件
+- ~~改变组件属性（这样无疑增加巨量快照，不可取）~~
+- 右键删除组件
+- 右键改变组件层级
+
+
+
+新建操作快照的状态集中管理：snapshot
+
+```js
+import { defineStore } from 'pinia'
+
+const useSnapshot = defineStore('snapshot', {
+	actions: {
+		// 存入数据快照
+		addSnapshot(data) {
+			this.snapshotData.push(data)
+			this.snapshotIndex++
+		},
+
+		// 撤销操作
+		cancelOperate() {
+			if (this.snapshotIndex !== 0) {
+				this.snapshotIndex--
+			}
+		},
+
+		// 返回操作
+		rebackOperate() {
+			if (this.snapshotIndex < this.snapshotData.length - 1) {
+				this.snapshotIndex++
+			}
+		},
+	},
+
+	state: () => {
+		return {
+			snapshotData: [[
+				{
+					component: 'm-text',
+					propValue: "hellotext",
+					key: "defaultkey1",
+					focus: false,
+					style: {
+						width: 80,
+						height: 40,
+						top: 100,
+						left: 100,
+						zIndex: 1,
+					},
+				},
+				{
+					component: 'm-button',
+					propValue: "hellobutton",
+					key: "defaultkey2",
+					focus: false,
+					style: {
+						width: 80,
+						height: 40,
+						top: 200,
+						left: 200,
+						zIndex: 1,
+					},
+				},
+				{
+					component: 'm-input',
+					propValue: "helloinput",
+					key: "defaultkey3",
+					focus: false,
+					style: {
+						width: 80,
+						height: 40,
+						top: 300,
+						left: 300,
+						zIndex: 1,
+					},
+				}
+			]], // 组件数据快照
+			snapshotIndex: 0, // 快照索引从负一开始
+		}
+	}
 
+})
 
+export default useSnapshot
+```
 
 
 
+需要设置第一个快照
 
+等后面完善后台之后
 
+拿到的第一个快照是第一次初始化的json数据
 
 
 
+在editing操作完成之后
 
+进行快照的存储工作
 
+```js
+...
+editingStore.addBlock(tempComponent);
+// 添加快照
+snapshotStore.addSnapshot([...editingStore.pageData.blocks]) // 存储的快照不能是响应式的，需要深拷贝
+...
+```
 
 
 
+在页面的撤销和反撤销按钮绑定事件
 
+```js
+// 撤销
+const handlePrevious = () => {
+    snapshotStore.cancelOperate();
+    const tempData = snapshotStore.snapshotData[snapshotStore.snapshotIndex];
+    editingStore.resetBlocks(tempData);
+};
 
+// 反撤销
+const handleReback = () => {
+    snapshotStore.rebackOperate();
+    const tempData = snapshotStore.snapshotData[snapshotStore.snapshotIndex];
+    editingStore.resetBlocks(tempData);
+};
+```
 
 
 
+在editing中添加重置action，这里需要手动splice清空，才能确保画布响应
 
+```js
+// 重置画布组件
+resetBlocks(data){
+    // console.log(data)
+    this.pageData.blocks.splice(0, this.pageData.blocks.length)
+    data.forEach((item) => {
+        this.pageData.blocks.push(item)
+    })
+},
+```
 
 
 
+这样就完成了一个物料区拖拽组件实现的撤销操作
 
 
 
+接下来实现画布拖拽组件时记录组件快照
 
+先看一下原组件写法
 
+```js
+// 组件选中画布中拖拽
+const handleMousedown = (event) => {
+	...
+    const up = () => {
+        document.removeEventListener("mousemove", move);
+        document.removeEventListener("mouseup", up);
+    };
 
+    document.addEventListener("mousemove", move);
+    document.addEventListener("mouseup", up);
+};
+```
 
 
 
+重点是在鼠标抬起的一瞬间记录组件快照
 
+也就是up这里
 
+以下方法是不对的，前后两次移动的时候，组件的style属性也是响应式的，需要进一步消除响应式
 
+```js
+// 添加快照
+console.log([...editingStore.pageData.blocks])
+// snapshotStore.addSnapshot([...editingStore.pageData.blocks]);
+```
 
+```js
+// 添加快照
+const tempArr = []
+editingStore.pageData.blocks.forEach(item => {
+    tempArr.push({...item})
+});
+console.log(tempArr)
+// snapshotStore.addSnapshot([...editingStore.pageData.blocks]);
+```
 
 
 
+如何消除vue对数据的响应式封装
 
+`editingStore.pageData.blocks`是一个对象数组
 
 
 
+ES6的拓展运算符属于第一层深拷贝、之后的子层属于浅拷贝，无法消除子层的响应式
 
+这里关于JavaScript的深拷贝和浅拷贝需要记录以下
 
+https://blog.csdn.net/HJHAlone/article/details/124551759
 
 
 
+可不可以通过手写深拷贝函数，消除数据的响应式
 
+对snapshot进行修改
 
+```js
+// 深拷贝
+deepClone(source, target) {
+    var _tar = target || {};
+    for (var key in source) {
+        if (source.hasOwnProperty(key) && source[key] != null) {
+            if (typeof source[key] === "object") {
+                _tar[key] = (Object.prototype.toString.call(source[key]) === "[object Array]")
+                    ? [] : {};
+                this.deepClone(source[key], _tar[key]);
+            } else {
+                _tar[key] = source[key];
+            }
+        }
+    }
+    return _tar;
+},
 
+// 存入数据快照
+addSnapshot(data) {
+    const tempArr = []
+    data.forEach(item => {
+        tempArr.push(this.deepClone(item))
+    });
+    this.snapshotData.push(tempArr)
+    this.snapshotIndex++
+},
+```
 
 
 
+这样确实实现了
 
+但是数据改变，画布组件的效果并没有改变
 
+还是要修改组件的样式效果
 
+在designheader和editblock中应用全局事件总线
 
+```js
+// 撤销
+const handlePrevious = () => {
+    snapshotStore.cancelOperate();
+    const tempData = snapshotStore.snapshotData[snapshotStore.snapshotIndex];
+    editingStore.resetBlocks(tempData);	
+	emitter.emit("setOperateStyle",tempData)
+};
 
+// 反撤销
+const handleReback = () => {
+    snapshotStore.rebackOperate();
+    const tempData = snapshotStore.snapshotData[snapshotStore.snapshotIndex];
+    editingStore.resetBlocks(tempData);
+	emitter.emit("setOperateStyle",tempData)
+};
+```
 
+```js
+emitter.on("setOperateStyle", (data) => {
+    console.log(data);
+    const tempData = [...data];
+    tempData.forEach((item) => {
+        if (blockState.key === item.key) {
+            blockState.style.top = item.style.top + "px";
+            blockState.style.left = item.style.left + "px";
+        }
+    });
+});
+```
 
 
 
+至此完成了画布拖拽组件撤销和反撤销操作
 
+测试的时候会有小bug，index错位
 
+不知道是不是执行顺序问题，还是全局事件总线存在异步问题，还有可能是内存问题
 
+因为在快照存储的时候，我是将所有组件信息进行存储
 
 
 
+接下来实现放大缩小组件的撤销和反撤销操作
 
+先看看放大缩小组件的操作代码（应该是控制shape上的八个小点放大缩小）
 
+```js
+// 圆点位置鼠标落下
+const handleMouseDownOnPoint = (point) => {
+	...
+    const up = () => {
+        document.removeEventListener("mousemove", move);
+        document.removeEventListener("mouseup", up);
+    };
 
+    document.addEventListener("mousemove", move);
+    document.addEventListener("mouseup", up);
+};
+```
+
+
+
+直接在鼠标抬起时候添加快照
+
+```js
+const up = () => {
+    // 添加快照
+    snapshotStore.addSnapshot([...editingStore.pageData.blocks]);
+    document.removeEventListener("mousemove", move);
+    document.removeEventListener("mouseup", up);
+};
+```
+
+接着修改editblock中全局事件总线的监听，添加组件的长度和高度
+
+```js
+emitter.on("setOperateStyle", (data) => {
+    data.forEach((item) => {
+        if (blockState.key === item.key) {
+            blockState.style.width = item.style.width + "px";
+            blockState.style.height = item.style.height + "px";
+            blockState.style.top = item.style.top + "px";
+            blockState.style.left = item.style.left + "px";
+        }
+    });
+}); // 组件操作-->画布
+```
+
+
+
+接下来实现以下两个步骤的快照
+
+- 右键删除组件
+- 右键改变组件层级
+
+这部分应该在designedit里的右键菜单部分
+
+```js
+const delComponent = () => {
+    editingStore.delBlock(componentState.currentComponentKey);
+    contextState.show = false;
+}; // 删除组件
+const upComponent = () => {
+	editingStore.updateBlockZindex(componentState.currentComponentKey,"up")
+    contextState.show = false;
+}; // 上移组件
+const downComponent = () => {
+	editingStore.updateBlockZindex(componentState.currentComponentKey,"down")
+    contextState.show = false;
+}; // 下移组件
+```
+
+
+
+实现success~~~soeasy
 
 
 

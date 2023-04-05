@@ -1,8 +1,15 @@
-import { collapseProps } from 'naive-ui'
 import { defineStore } from 'pinia'
 
 const useEditing = defineStore('editing', {
 	actions: {
+		// 重置组件
+		resetBlocks(data) {
+			this.pageData.blocks.splice(0, this.pageData.blocks.length)
+			data.forEach((item) => {
+				this.pageData.blocks.push(item)
+			})
+		},
+
 		// 设置当前正在操作组件
 		setCurBlock(keyString) {
 			this.curData.curBlockKey = keyString
@@ -45,8 +52,20 @@ const useEditing = defineStore('editing', {
 			})
 		},
 
+		// 更新组件层级
+		updateBlockZindex(key, circums) {
+			this.pageData.blocks.forEach((item) => {
+				if (item.key === key) {
+					if (circums === "up")
+						item.style.zIndex++
+					else if (circums === "down")
+						item.style.zIndex--
+				}
+			})
+		},
+
 		// 更新组件样式
-		updateBlockStyle(key,curStyle){
+		updateBlockStyle(key, curStyle) {
 			this.pageData.blocks.forEach((item) => {
 				if (item.key === key) {
 					const styleKeys = Object.keys(curStyle);

@@ -17,10 +17,12 @@
 import { reactive } from "vue";
 import { nanoid } from "nanoid";
 import useEditing from "@/stores/editing";
+import useSnapshot from "@/stores/snapshot";
 import componentList from "@/components-unit/componentList";
 
-// pinia editingStore
-const editingStore = useEditing();
+// pinia
+const editingStore = useEditing(); // 组件状态
+const snapshotStore = useSnapshot(); // 快照状态
 
 // tag和component状态
 const tagState = reactive({ tagList: componentList });
@@ -66,12 +68,18 @@ const drop = (event) => {
         style: {
             width: Number(componentState.currentComponent.width),
             height: Number(componentState.currentComponent.height),
-            top: Number(event.offsetY - componentState.currentComponent.height / 2),
-            left: Number(event.offsetX - componentState.currentComponent.width / 2),
+            top: Number(
+                event.offsetY - componentState.currentComponent.height / 2
+            ),
+            left: Number(
+                event.offsetX - componentState.currentComponent.width / 2
+            ),
             zIndex: 1,
         },
     };
     editingStore.addBlock(tempComponent);
+    // 添加快照
+	snapshotStore.addSnapshot([...editingStore.pageData.blocks]) // 存储的快照不能是响应式的，需要深拷贝
 };
 </script>
 

@@ -16,13 +16,16 @@
 </template>
 
 <script setup>
-import { reactive } from "vue";
+import { reactive, onMounted } from "vue";
 import emitter from "@/mitt/event";
 import useEditing from "@/stores/editing";
+import useSnapshot from "@/stores/snapshot";
 import EditShape from "./EditShape.vue";
 
 // pinia
-const editingStore = useEditing();
+const editingStore = useEditing(); // 组件状态
+const snapshotStore = useSnapshot(); // 快照状态
+
 // get props
 const props = defineProps(["block", "blockFocus"]);
 
@@ -46,6 +49,8 @@ const handleMousedown = (event) => {
     event.preventDefault();
     event.stopPropagation();
 
+    let snapshotFlag = false;
+
     const posItem = { ...blockState };
     const startTop = Number(posItem.style.top.slice(0, -2));
     const startLeft = Number(posItem.style.left.slice(0, -2));
@@ -53,6 +58,8 @@ const handleMousedown = (event) => {
     const startX = event.clientX;
 
     const move = (moveEvent) => {
+        // 开启快照
+        snapshotFlag = true;
         const currX = moveEvent.clientX;
         const currY = moveEvent.clientY;
         posItem.style.top = currY - startY + startTop;
@@ -69,6 +76,10 @@ const handleMousedown = (event) => {
     };
 
     const up = () => {
+        // 添加快照
+        if (snapshotFlag === true) {
+            snapshotStore.addSnapshot([...editingStore.pageData.blocks]);
+        }
         document.removeEventListener("mousemove", move);
         document.removeEventListener("mouseup", up);
     };
@@ -87,6 +98,18 @@ emitter.on("setCurStyle", (data) => {
         blockState.style.zIndex = data.style.zIndex;
     }
 }); // 组件属性-->画布
+
+emitter.on("setOperateStyle", (data) => {
+    data.forEach((item) => {
+        if (blockState.key === item.key) {
+            blockState.style.width = item.style.width + "px";
+            blockState.style.height = item.style.height + "px";
+            blockState.style.top = item.style.top + "px";
+            blockState.style.left = item.style.left + "px";
+			blockState.style.zIndex = item.style.zIndex;
+        }
+    });
+}); // 组件操作-->画布
 
 // shape定型
 const setBlockStyle = (data) => {

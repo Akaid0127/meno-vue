@@ -56,6 +56,7 @@ import { ContextMenu } from "@imengyu/vue3-context-menu";
 import { Delete, ChevronUp, ChevronDown } from "@vicons/carbon";
 import emitter from "@/mitt/event";
 import useEditing from "@/stores/editing";
+import useSnapshot from "@/stores/snapshot";
 import EditBlock from "./EditBlock.vue";
 import EditGrid from "./EditGrid.vue";
 
@@ -66,12 +67,10 @@ onMounted(() => {
 });
 
 // pinia
-const editingStore = useEditing();
-const blockState = reactive({
-    blocksData: editingStore.pageData.blocks,
-}); //画布组件
+const editingStore = useEditing(); // 组件状态
+const snapshotStore = useSnapshot(); // 快照状态
 
-// 实现画布渲染
+// 画布
 const containerData = editingStore.pageData.container;
 const containerStyle = {
     width: containerData.width + "px",
@@ -82,6 +81,11 @@ let $emit = defineEmits(["getContainerDom"]); // defineEmits需要先声明再�
 const getContainerDom = () => {
     $emit("getContainerDom", containerDom.value);
 };
+
+// 组件
+const blockState = reactive({
+    blocksData: editingStore.pageData.blocks,
+});
 
 // 实现组件焦点效果
 const setBlockFocus = (data) => {
@@ -110,7 +114,6 @@ const handleClickBlock = (block) => {
 emitter.on("setCurBlock", (data) => {
     setBlockFocus(data);
 }); // 组件列表-->画布
-
 
 // 实现右键菜单
 const componentState = reactive({
@@ -141,16 +144,22 @@ const closeContextMenu = () => {
 };
 const delComponent = () => {
     editingStore.delBlock(componentState.currentComponentKey);
+    // 添加快照
+    snapshotStore.addSnapshot([...editingStore.pageData.blocks]);
     contextState.show = false;
-};
+}; // 删除组件
 const upComponent = () => {
-    // 上移组件 todo
+    editingStore.updateBlockZindex(componentState.currentComponentKey, "up");
+    // 添加快照
+    snapshotStore.addSnapshot([...editingStore.pageData.blocks]);
     contextState.show = false;
-};
+}; // 上移组件
 const downComponent = () => {
-    // 下移组件 todo
+    editingStore.updateBlockZindex(componentState.currentComponentKey, "down");
+    // 添加快照
+    snapshotStore.addSnapshot([...editingStore.pageData.blocks]);
     contextState.show = false;
-};
+}; // 下移组件
 </script>
 
 <style lang="scss" scoped>

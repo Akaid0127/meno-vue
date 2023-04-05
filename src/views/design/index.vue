@@ -3,23 +3,25 @@
         <div class="design-cotent">
             <n-layout>
                 <!-- 顶部工具栏 -->
-                <div class="top">顶部工具栏</div>
+                <div class="top">
+					<design-header/>
+				</div>
 
                 <div class="bottom">
                     <!-- 左侧组件栏 -->
                     <div class="left">
-                        <DesignSupply ref="supplyRef" />
-                        <DesignLevel />
+                        <design-supply ref="supplyRef" />
+                        <design-level />
                     </div>
 
                     <!-- 中间画布区 -->
                     <div class="center">
-                        <DesignEdit @getContainerDom="handleContainerDom" />
+                        <design-edit @getContainerDom="handleContainerDom" />
                     </div>
 
                     <!-- 右侧属性区 -->
                     <div class="right">
-                        <DesignAttr />
+                        <design-attr />
                     </div>
                 </div>
             </n-layout>
@@ -29,6 +31,7 @@
 
 <script setup>
 import { ref } from "vue";
+import DesignHeader from "./components/DesignHeader.vue";
 import DesignSupply from "./components/DesignSupply.vue";
 import DesignLevel from "./components/DesignLevel.vue";
 import DesignEdit from "./components/DesignEdit.vue";
@@ -50,7 +53,7 @@ const handleContainerDom = (containerDom) => {
     height: 900px;
     width: 100%;
     .top {
-        height: 60px;
+        height: 50px;
         width: 100%;
         border-bottom: 1px solid #d4d7de;
     }
@@ -60,20 +63,20 @@ const handleContainerDom = (containerDom) => {
         flex-direction: row;
         .left {
             width: 280px;
-            height: 855px;
+            height: 865px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
         }
         .center {
             width: 100%;
-            height: 855px;
+            height: 865px;
             border-left: 1px solid #d4d7de;
             border-right: 1px solid #d4d7de;
         }
         .right {
             width: 290px;
-            height: 855px;
+            height: 865px;
         }
     }
 }
