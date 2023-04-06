@@ -84,18 +84,19 @@ const snapshotStore = useSnapshot(); // 快照状态
 
 // 撤销
 const handlePrevious = () => {
-    snapshotStore.cancelOperate();
+    snapshotStore.cancelOperate([...editingStore.pageData.blocks]);
+    // 拿取快照重置editingStore的数据
     const tempData = snapshotStore.snapshotData[snapshotStore.snapshotIndex];
-    editingStore.resetBlocks(tempData);	
-	emitter.emit("setOperateStyle",tempData)
+    editingStore.resetBlocks(tempData);
+    emitter.emit("setOperateStyle", tempData);
 };
 
 // 反撤销
 const handleReback = () => {
-    snapshotStore.rebackOperate();
+    snapshotStore.rebackOperate([...editingStore.pageData.blocks]);
     const tempData = snapshotStore.snapshotData[snapshotStore.snapshotIndex];
     editingStore.resetBlocks(tempData);
-	emitter.emit("setOperateStyle",tempData)
+    emitter.emit("setOperateStyle", tempData);
 };
 
 // 添加图片

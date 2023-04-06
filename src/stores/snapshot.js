@@ -26,19 +26,32 @@ const useSnapshot = defineStore('snapshot', {
 			data.forEach(item => {
 				tempArr.push(this.deepClone(item))
 			});
+			console.log(tempArr)
 			this.snapshotData.push(tempArr)
 		},
 
 		// 撤销操作
-		cancelOperate() {
+		cancelOperate(data) {
 			if (this.snapshotIndex !== 0) {
+				const tempArr = []
+				data.forEach(item => {
+					tempArr.push(this.deepClone(item))
+				});
+				console.log(tempArr)
+				this.snapshotData.push(tempArr)
 				this.snapshotIndex--
 			}
 		},
 
 		// 返回操作
-		rebackOperate() {
+		rebackOperate(data) {
 			if (this.snapshotIndex < this.snapshotData.length - 1) {
+				const tempArr = []
+				data.forEach(item => {
+					tempArr.push(this.deepClone(item))
+				});
+				console.log(tempArr)
+				this.snapshotData.push(tempArr)
 				this.snapshotIndex++
 			}
 		},

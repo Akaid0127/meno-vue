@@ -92,8 +92,6 @@ const drop = (event) => {
             fontSize: Number(componentState.currentComponent.style.fontSize),
         },
     };
-
-	console.log(tempComponent)
     editingStore.addBlock(tempComponent);
     // 添加快照
     snapshotStore.addSnapshot([...editingStore.pageData.blocks]); // 存储的快照不能是响应式的，需要深拷贝

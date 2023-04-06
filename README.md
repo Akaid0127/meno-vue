@@ -1666,41 +1666,79 @@ snapshotIndex不断增加，跟随数据增加
 
 
 
-time1用户四次操作，snapshotData存储4个，snapshotIndex加为4
+time1用户四次操作，snapshotData存储4个，snapshotIndex加为4，页面四个按钮
 
-time2用户撤销两次操作，snapshotData仍存储4个，snapshotIndex变为2
+time2用户撤销两次操作，snapshotData仍存储4个，snapshotIndex变为2，页面两个按钮
 
-time3用户继续添加输入框1，snapshotData存储5个，snapshotIndex变为3
+time3用户继续添加输入框1，snapshotData存储5个，snapshotIndex变为3，页面两个按钮、一个输入框
 
 time4用户返回一次操作，snapshotData存储5个，snapshotIndex变为4，页面显示的是四个按钮
 
 
 
-按用户的逻辑，这时候应该显示
+按用户的逻辑，这时候应该显示两个按钮，但是页面显示了四个按钮，这就是因为指针错位
+
+先把所有快照列出来，看一看
+
+| 1     | 2     | 3     | 4     | 5       |
+| ----- | ----- | ----- | ----- | ------- |
+| 按钮1 | 按钮1 | 按钮1 | 按钮1 | 按钮1   |
+|       | 按钮2 | 按钮2 | 按钮2 | 按钮2   |
+|       |       | 按钮3 | 按钮3 | 输入框1 |
+|       |       |       | 按钮4 |         |
+|       |       |       |       |         |
+|       |       |       |       |         |
+
+按照用户的逻辑快照是不是应该是这样
+
+| 1     | 2     | 3     | 4     | 5     | 6     | 7       | 8     |
+| ----- | ----- | ----- | ----- | ----- | ----- | ------- | ----- |
+| 按钮1 | 按钮1 | 按钮1 | 按钮1 | 按钮1 | 按钮1 | 按钮1   | 按钮1 |
+|       | 按钮2 | 按钮2 | 按钮2 | 按钮2 | 按钮2 | 按钮2   | 按钮2 |
+|       |       | 按钮3 | 按钮3 | 按钮3 |       | 输入框1 |       |
+|       |       |       | 按钮4 |       |       |         |       |
+|       |       |       |       |       |       |         |       |
+|       |       |       |       |       |       |         |       |
+
+找到原因了，在撤销和反撤销的时候没有存储快照
+
+继续修改snapshot中撤销和反撤销操作源码
 
 
 
+又有错误
 
+在返回的时候应该是不用存储快照的
 
+先这样吧
 
+```js
+// 撤销操作
+cancelOperate(data) {
+    if (this.snapshotIndex !== 0) {
+        const tempArr = []
+        data.forEach(item => {
+            tempArr.push(this.deepClone(item))
+        });
+        console.log(tempArr)
+        this.snapshotData.push(tempArr)
+        this.snapshotIndex--
+    }
+},
 
-|       | 1     | 2             | 3     | 4             | 5       | 6    | 7    | 8    | 9    |
-| ----- | ----- | ------------- | ----- | ------------- | ------- | ---- | ---- | ---- | ---- |
-| time1 | 按钮1 | 按钮2         | 按钮3 | 按钮4（页面） |         |      |      |      |      |
-| time2 | 按钮1 | 按钮2（页面） | 按钮3 | 按钮4         |         |      |      |      |      |
-| time3 | 按钮1 | 按钮2（页面） | 按钮3 | 按钮4         | 输入框1 |      |      |      |      |
-| time4 | 按钮1 | 按钮2         | 按钮3 | 按钮4（页面） | 输入框1 |      |      |      |      |
-|       |       |               |       |               |         |      |      |      |      |
-|       |       |               |       |               |         |      |      |      |      |
-|       |       |               |       |               |         |      |      |      |      |
-
-
-
-
-
-
-
-
+// 返回操作
+rebackOperate(data) {
+    if (this.snapshotIndex < this.snapshotData.length - 1) {
+        const tempArr = []
+        data.forEach(item => {
+            tempArr.push(this.deepClone(item))
+        });
+        console.log(tempArr)
+        this.snapshotData.push(tempArr)
+        this.snapshotIndex++
+    }
+},
+```
 
 
 
