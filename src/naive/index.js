@@ -13,7 +13,9 @@ import {
 	NAvatar,
 	NForm,
 	NFormItem,
-	NInputNumber
+	NInputNumber,
+	NColorPicker,
+	NSelect
 } from 'naive-ui'
 
 const naive = create({
@@ -30,7 +32,9 @@ const naive = create({
 		NAvatar,
 		NForm,
 		NFormItem,
-		NInputNumber
+		NInputNumber,
+		NColorPicker,
+		NSelect
 	]
 })
 

@@ -90,9 +90,14 @@ const handleMouseDownOnPoint = (point) => {
 const pointList = ["t", "r", "b", "l", "lt", "rt", "lb", "rb"];
 const cursorList = ["n", "e", "s", "w", "nw", "ne", "sw", "se"];
 const getPointStyle = (point) => {
-    // 获取组件宽高
-    const width = props.curComponent.style.width.slice(0, -2);
-    const height = props.curComponent.style.height.slice(0, -2);
+    // 获取组件整体宽高和边框
+    let borderWidthValue =
+        props.curComponent.style.borderWidth === "undefinedpx"
+            ? 1: Number(props.curComponent.style.borderWidth.slice(0, -2));
+    const width =
+        props.curComponent.style.width.slice(0, -2) * 1 + borderWidthValue * 2;
+    const height =
+        props.curComponent.style.height.slice(0, -2) * 1 + borderWidthValue * 2;
 
     const curCursor = cursorList[pointList.indexOf(point)];
 
@@ -122,9 +127,12 @@ const getPointStyle = (point) => {
         }
     }
 
+    // 左移和上移一个边框宽度的距离
     const style = {
-        marginLeft: hasR ? "-4px" : "-3px",
-        marginTop: "-3px",
+        marginLeft: hasR
+            ? `-${borderWidthValue + 3}px`
+            : `-${borderWidthValue + 4}px`,
+        marginTop: `-${borderWidthValue + 4}px`,
         left: `${newLeft}px`,
         top: `${newTop}px`,
         cursor: curCursor + "-resize",

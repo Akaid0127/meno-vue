@@ -1654,7 +1654,96 @@ const downComponent = () => {
 
 
 
-实现success~~~soeasy
+实现逻辑有问题
+
+用户不断不断操作
+
+snapshotIndex不断增加，跟随数据增加
+
+但是用户撤销的时候，snapshotIndex减少，
+
+这时候用户再进行操作，存储的数据位置
+
+
+
+time1用户四次操作，snapshotData存储4个，snapshotIndex加为4
+
+time2用户撤销两次操作，snapshotData仍存储4个，snapshotIndex变为2
+
+time3用户继续添加输入框1，snapshotData存储5个，snapshotIndex变为3
+
+time4用户返回一次操作，snapshotData存储5个，snapshotIndex变为4，页面显示的是四个按钮
+
+
+
+按用户的逻辑，这时候应该显示
+
+
+
+
+
+
+
+|       | 1     | 2             | 3     | 4             | 5       | 6    | 7    | 8    | 9    |
+| ----- | ----- | ------------- | ----- | ------------- | ------- | ---- | ---- | ---- | ---- |
+| time1 | 按钮1 | 按钮2         | 按钮3 | 按钮4（页面） |         |      |      |      |      |
+| time2 | 按钮1 | 按钮2（页面） | 按钮3 | 按钮4         |         |      |      |      |      |
+| time3 | 按钮1 | 按钮2（页面） | 按钮3 | 按钮4         | 输入框1 |      |      |      |      |
+| time4 | 按钮1 | 按钮2         | 按钮3 | 按钮4（页面） | 输入框1 |      |      |      |      |
+|       |       |               |       |               |         |      |      |      |      |
+|       |       |               |       |               |         |      |      |      |      |
+|       |       |               |       |               |         |      |      |      |      |
+
+
+
+
+
+
+
+
+
+
+
+### 4.14 注册更多组件
+
+目前注册的组件有三个
+
+- 文本
+- 按钮
+- 输入框
+
+先对以上进行样式修改
+
+
+
+目前的样式很简单，就是
+
+- width
+- height
+- top
+- left
+- zIndex
+
+
+
+需要添加
+
+- background-color背景颜色
+  - hex
+- border-style边框类型
+  - `dotted` - 定义点线边框
+  - `dashed` - 定义虚线边框
+  - `solid` - 定义实线边框
+  - `double` - 定义双边框
+  - `none` - 定义无边框
+- border-width边框宽度
+- border-color边框颜色
+- opacity透明度
+- border-radius圆角边框
+- color文本颜色
+- font-style字体样式
+- font-weight字体粗细
+- font-size字体大小
 
 
 

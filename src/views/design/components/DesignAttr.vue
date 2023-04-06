@@ -13,7 +13,37 @@
                         :key="index"
                         :label="styleLabelList[key]"
                     >
-                        <n-input-number v-model:value="curState.curStyle[key]" placeholder="请输入数值" />
+                        <n-input-number
+                            v-if="key == 'width'||key == 'height'||
+							key == 'top'||key == 'left'||key == 'zIndex'||key == 'borderWidth'
+							||key == 'opacity'||key == 'borderRadius'||key == 'fontSize'"
+                            v-model:value="curState.curStyle[key]"
+                            placeholder="请输入数值"
+                        />
+                        <n-color-picker
+                            v-else-if="key == 'backgroundColor'||key == 'borderColor'||key == 'color'"
+                            v-model:value="curState.curStyle[key]"
+                            :show-alpha="true"
+                        />
+                        <n-select
+                            v-else-if="key === 'borderStyle'"
+                            v-model:value="curState.curStyle[key]"
+                            placeholder="选择类型"
+                            :options="formState.borderStyleSelect"
+                        />
+                        <n-select
+                            v-else-if="key == 'fontStyle'"
+                            v-model:value="curState.curStyle[key]"
+                            placeholder="选择类型"
+                            :options="formState.fontStyleSelect"
+                        />
+                        <n-select
+                            v-else-if="key == 'fontWeight'"
+                            v-model:value="curState.curStyle[key]"
+                            placeholder="选择类型"
+                            :options="formState.fontWeightSelect"
+                        />
+                        <n-input v-else v-model:value="curState.curStyle[key]" placeholder="请输入数据" />
                     </n-form-item>
                 </n-form>
             </div>
@@ -27,6 +57,25 @@ import emitter from "@/mitt/event";
 import styleLabelList from "@/components-unit/styleList";
 import useEditing from "@/stores/editing";
 
+// 表单
+const formState = reactive({
+    borderStyleSelect: [
+        { value: "dotted", label: "点线" },
+        { value: "dashed", label: "虚线" },
+        { value: "solid", label: "实线" },
+        { value: "double", label: "双边" },
+        { value: "none", label: "无边" },
+    ],
+    fontStyleSelect: [
+        { value: "normal", label: "正常" },
+        { value: "italic", label: "斜体" },
+    ],
+    fontWeightSelect: [
+        { value: "normal", label: "正常" },
+        { value: "bold", label: "加粗" },
+    ],
+});
+
 // pinia
 const editingStore = useEditing();
 
@@ -37,7 +86,7 @@ const curState = reactive({
     styleKeys: [],
 });
 emitter.on("getCurStyle", (data) => {
-	curState.curkey = data.key
+    curState.curkey = data.key;
     curState.curStyle = data.style;
     curState.styleKeys = Object.keys(data.style);
 });
@@ -46,12 +95,12 @@ emitter.on("getCurStyle", (data) => {
 watch(
     () => curState.curStyle,
     (curStyle) => {
-		editingStore.updateBlockStyle(curState.curkey,curStyle)
-		const curData = {
-			key:curState.curkey,
-			style:curState.curStyle
-		}
-		emitter.emit("setCurStyle", curData); // 设置焦点组件属性
+        editingStore.updateBlockStyle(curState.curkey, curStyle);
+        const curData = {
+            key: curState.curkey,
+            style: curState.curStyle,
+        };
+        emitter.emit("setCurStyle", curData); // 设置焦点组件属性
     },
     {
         deep: true,
@@ -74,6 +123,9 @@ watch(
     }
     .list {
         padding: 10px;
+		.n-form-item{
+			margin-bottom: -6px;
+		}
     }
 }
 </style>

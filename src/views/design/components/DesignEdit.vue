@@ -13,7 +13,7 @@
                     :block="item"
                     :blockFocus="item.focus"
                     @click="handleClickBlock(item)"
-                    @contextmenu="$event=>onContextMenu($event,item)"
+                    @contextmenu="$event => onContextMenu($event, item)"
                 ></edit-block>
             </div>
 

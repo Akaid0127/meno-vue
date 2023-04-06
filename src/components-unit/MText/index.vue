@@ -1,22 +1,28 @@
 <template>
     <div
         class="text-wrap"
-        :style="{width:state.propStyle.width,height:state.propStyle.height}"
-    >{{state.propValue}}</div>
+        :style="{
+			width:compState.propStyle.width,
+			height:compState.propStyle.height,
+		}"
+    >{{compState.propValue}}</div>
 </template>
 
 <script setup>
-import { reactive } from "vue";
+import { reactive,onMounted} from "vue";
 const props = defineProps(["propValue", "propStyle"]);
-const state = reactive({
+const compState = reactive({
     propValue: props.propValue,
     propStyle: props.propStyle,
 });
+onMounted(() => {
+	// console.log(compState.propValue)
+})
 </script>
 
 <style>
 .text-wrap {
-    border: 1px solid black;
+    /* border: 1px solid black; */
     display: flex;
     align-items: center;
     justify-content: center;

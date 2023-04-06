@@ -11,7 +11,7 @@
             :propValue="blockState.propValue"
             :propStyle="blockState.style"
             @mousedown="$event => handleMousedown($event)"
-        >组件</component>
+        ></component>
     </edit-shape>
 </template>
 
@@ -40,7 +40,18 @@ let blockState = reactive({
         top: props.block.style.top + "px",
         left: props.block.style.left + "px",
         zIndex: props.block.style.zIndex,
-    },
+        backgroundColor: props.block.style.backgroundColor,
+        borderStyle: props.block.style.borderStyle,
+        borderWidth: props.block.style.borderWidth + "px",
+        borderColor: props.block.style.borderColor,
+        opacity: props.block.style.opacity,
+        borderRadius: props.block.style.borderRadius + "px",
+        color: props.block.style.color,
+        fontStyle: props.block.style.fontStyle,
+        fontWeight: props.block.style.fontWeight,
+        fontSize: props.block.style.fontSize + "px",
+		boxSizing:"content-box"
+    }, 
 });
 
 // 组件选中画布中拖拽
@@ -96,6 +107,16 @@ emitter.on("setCurStyle", (data) => {
         blockState.style.top = data.style.top + "px";
         blockState.style.left = data.style.left + "px";
         blockState.style.zIndex = data.style.zIndex;
+        blockState.style.backgroundColor = data.style.backgroundColor;
+        blockState.style.borderStyle = data.style.borderStyle;
+        blockState.style.borderWidth = data.style.borderWidth + "px",
+        blockState.style.borderColor = data.style.borderColor;
+        blockState.style.opacity = data.style.opacity;
+        blockState.style.borderRadius = data.style.borderRadius + "px",
+        blockState.style.color = data.style.color;
+        blockState.style.fontStyle = data.style.fontStyle;
+        blockState.style.fontWeight = data.style.fontWeight;
+        blockState.style.fontSize = data.style.fontSize + "px"
     }
 }); // 组件属性-->画布
 
@@ -106,7 +127,7 @@ emitter.on("setOperateStyle", (data) => {
             blockState.style.height = item.style.height + "px";
             blockState.style.top = item.style.top + "px";
             blockState.style.left = item.style.left + "px";
-			blockState.style.zIndex = item.style.zIndex;
+            blockState.style.zIndex = item.style.zIndex;
         }
     });
 }); // 组件操作-->画布
