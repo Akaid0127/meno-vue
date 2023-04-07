@@ -121,8 +121,6 @@ const useEditing = defineStore('editing', {
 							left: 200,
 							zIndex: 1,
 							backgroundColor: "#FFFFFF",
-							borderWidth: 1,
-							borderColor: "#DCDFE6",
 							opacity: 1,
 							borderRadius: 6,
 							color: "#606266",

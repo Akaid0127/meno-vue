@@ -548,7 +548,7 @@ https://blog.csdn.net/weixin_43858260/article/details/120648575
 
 
 
-### 4.6 拖拽组件居中
+### 4.7 拖拽组件居中
 
 问题：无法获取拖拽组件的dom节点
 
@@ -568,7 +568,7 @@ style: {
 
 
 
-### 4.7 画布组件拖拽
+### 4.8 画布组件拖拽
 
 终于实现了
 
@@ -586,7 +586,7 @@ style: {
 
 
 
-### 4.8 右键删除组件
+### 4.9 右键删除组件
 
 右键点击事件的绑定
 
@@ -732,7 +732,7 @@ todofix：
 
 
 
-### 4.9 组件放大缩小
+### 4.10 组件放大缩小
 
 css cursor属性
 
@@ -1027,7 +1027,7 @@ const handleMouseDownOnPoint = (point) => {
 
 
 
-### 4.10 画布组件结构
+### 4.11 画布组件结构
 
 必须规划画布组件结构
 
@@ -1086,7 +1086,7 @@ https://blog.csdn.net/Heartnottowake/article/details/124072686
 
 
 
-### 4.11 组件属性列表
+### 4.12 组件属性列表
 
 获取到当前焦点组件（所有属性）
 
@@ -1276,13 +1276,13 @@ emitter.on("setCurStyle", (data) => {
 
 
 
-### 4.12右键改变组件层级
+### 4.13 右键改变组件层级
 
 就是直接修改z-index就可以
 
 
 
-### 4.13 撤销和反撤销操作
+### 4.14 撤销和反撤销操作
 
 首先整理一下目前能够引起editing里数据变化的操作
 
@@ -1742,7 +1742,7 @@ rebackOperate(data) {
 
 
 
-### 4.14 注册更多组件
+### 4.15 样式修改
 
 目前注册的组件有三个
 
@@ -1785,9 +1785,96 @@ rebackOperate(data) {
 
 
 
+修改完成后三个组件的基本样式
+
+```js
+// 物料栏组件拖入画布初始状态
+const componentList = [
+	{
+		id: 1,
+		label: "文本",
+		component: "m-text",
+		style: {
+			width: "80",
+			height: "40",
+			zIndex: 1,
+			backgroundColor: "#FFFFFF",
+			borderStyle: "solid",
+			borderWidth: "1",
+			borderColor: "#112D4E",
+			opacity: "1",
+			borderRadius: "0",
+			color: "#000000",
+			fontStyle: "normal",
+			fontWeight: "normal",
+			fontSize: "14",
+		}
+	},
+	{
+		id: 2,
+		label: "按钮",
+		component: "m-button",
+		style: {
+			width: "80",
+			height: "40",
+			zIndex: 1,
+			backgroundColor: "#FFFFFF",
+			opacity: "1",
+			borderRadius: "6",
+			color: "#606266",
+			fontSize: "14",
+		}
+	},
+	{
+		id: 3,
+		label: "输入框",
+		component: "m-input",
+		style: {
+			width: "80",
+			height: "40",
+			zIndex: 1,
+			backgroundColor: "#FFFFFF",
+			borderWidth: "1",
+			borderColor: "#DCDFE6",
+			opacity: "1",
+			borderRadius: "6",
+			fontSize: "14",
+		}
+	},
+]
+
+export default componentList
+```
 
 
 
+组件样式表
+
+|                 | m-text | m-button | m-input |      |      |      |      |      |      |
+| --------------- | ------ | -------- | ------- | ---- | ---- | ---- | ---- | ---- | ---- |
+| width           | √      | √        | √       |      |      |      |      |      |      |
+| height          | √      | √        | √       |      |      |      |      |      |      |
+| zIndex          | √      | √        | √       |      |      |      |      |      |      |
+| backgroundColor | √      | √        | √       |      |      |      |      |      |      |
+| borderStyle     | √      |          |         |      |      |      |      |      |      |
+| borderWidth     | √      |          |         |      |      |      |      |      |      |
+| borderColor     | √      |          |         |      |      |      |      |      |      |
+| opacity         | √      | √        | √       |      |      |      |      |      |      |
+| borderRadius    | √      | √        | √       |      |      |      |      |      |      |
+| color           | √      | √        |         |      |      |      |      |      |      |
+| fontStyle       | √      |          |         |      |      |      |      |      |      |
+| fontWeight      | √      |          |         |      |      |      |      |      |      |
+| fontSize        | √      | √        | √       |      |      |      |      |      |      |
+
+
+
+
+
+
+
+
+
+### 4.16 注册更多组件
 
 
 

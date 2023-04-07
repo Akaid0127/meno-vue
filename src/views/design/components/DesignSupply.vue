@@ -60,6 +60,8 @@ const dragleave = (event) => {
 };
 const drop = (event) => {
     // 拖拽结束 添加组件
+    // 添加组件要进行判断，每个组件的属性不一样需要添加不同组件的style
+
     const tempComponent = {
         component: componentState.currentComponent.component,
         propValue: componentState.currentComponent.label,
@@ -68,30 +70,44 @@ const drop = (event) => {
         style: {
             width: Number(componentState.currentComponent.style.width),
             height: Number(componentState.currentComponent.style.height),
-            top: Number(
-                event.offsetY - componentState.currentComponent.style.height / 2
-            ),
-            left: Number(
-                event.offsetX - componentState.currentComponent.style.width / 2
-            ),
+            top: Number(event.offsetY - componentState.currentComponent.style.height / 2),
+            left: Number(event.offsetX - componentState.currentComponent.style.width / 2),
             zIndex: Number(componentState.currentComponent.style.zIndex),
-            backgroundColor:
-                componentState.currentComponent.style.backgroundColor,
+        },
+    };
+
+    if (tempComponent.component === "m-text") {
+        tempComponent.style = {
+            ...tempComponent.style,
+            backgroundColor:componentState.currentComponent.style.backgroundColor,
             borderStyle: componentState.currentComponent.style.borderStyle,
-            borderWidth: Number(
-                componentState.currentComponent.style.borderWidth
-            ),
+            borderWidth: Number(componentState.currentComponent.style.borderWidth),
             borderColor: componentState.currentComponent.style.borderColor,
             opacity: Number(componentState.currentComponent.style.opacity),
-            borderRadius: Number(
-                componentState.currentComponent.style.borderRadius
-            ),
+            borderRadius: Number(componentState.currentComponent.style.borderRadius),
             color: componentState.currentComponent.style.color,
             fontStyle: componentState.currentComponent.style.fontStyle,
             fontWeight: componentState.currentComponent.style.fontWeight,
             fontSize: Number(componentState.currentComponent.style.fontSize),
-        },
-    };
+        };
+    } else if (tempComponent.component === "m-button") {
+        tempComponent.style = {
+            ...tempComponent.style,
+			backgroundColor:componentState.currentComponent.style.backgroundColor,
+            opacity: Number(componentState.currentComponent.style.opacity),
+            borderRadius: Number(componentState.currentComponent.style.borderRadius),
+            color: componentState.currentComponent.style.color,
+			fontSize: Number(componentState.currentComponent.style.fontSize),
+        };
+    } else if (tempComponent.component === "m-input") {
+		tempComponent.style = {
+            ...tempComponent.style,
+            opacity: Number(componentState.currentComponent.style.opacity),
+            borderRadius: Number(componentState.currentComponent.style.borderRadius),
+			fontSize: Number(componentState.currentComponent.style.fontSize),
+        };
+    }
+
     editingStore.addBlock(tempComponent);
     // 添加快照
     snapshotStore.addSnapshot([...editingStore.pageData.blocks]); // 存储的快照不能是响应式的，需要深拷贝

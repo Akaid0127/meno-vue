@@ -26,7 +26,7 @@ const useSnapshot = defineStore('snapshot', {
 			data.forEach(item => {
 				tempArr.push(this.deepClone(item))
 			});
-			console.log(tempArr)
+			// console.log(tempArr)
 			this.snapshotData.push(tempArr)
 		},
 
@@ -37,7 +37,7 @@ const useSnapshot = defineStore('snapshot', {
 				data.forEach(item => {
 					tempArr.push(this.deepClone(item))
 				});
-				console.log(tempArr)
+				// console.log(tempArr)
 				this.snapshotData.push(tempArr)
 				this.snapshotIndex--
 			}
@@ -50,7 +50,7 @@ const useSnapshot = defineStore('snapshot', {
 				data.forEach(item => {
 					tempArr.push(this.deepClone(item))
 				});
-				console.log(tempArr)
+				// console.log(tempArr)
 				this.snapshotData.push(tempArr)
 				this.snapshotIndex++
 			}
