@@ -91,6 +91,8 @@ const useEditing = defineStore('editing', {
 						propValue: "hellotext",
 						key: "defaultkey1",
 						focus: false,
+						styleDefault: {
+						},
 						style: {
 							width: 80,
 							height: 40,
@@ -114,16 +116,21 @@ const useEditing = defineStore('editing', {
 						propValue: "hellobutton",
 						key: "defaultkey2",
 						focus: false,
+						styleDefault: {
+						},
 						style: {
 							width: 80,
 							height: 40,
 							top: 200,
 							left: 200,
 							zIndex: 1,
-							backgroundColor: "#FFFFFF",
+							backgroundColor: "#DAF0E4",
+							borderStyle: "solid",
+							borderWidth: 1,
+							borderColor: "#DAF0E4",
 							opacity: 1,
-							borderRadius: 6,
-							color: "#606266",
+							borderRadius: 4,
+							color: "#3DA36A",
 							fontSize: 14,
 						},
 					},
@@ -132,6 +139,8 @@ const useEditing = defineStore('editing', {
 						propValue: "helloinput",
 						key: "defaultkey3",
 						focus: false,
+						styleDefault: {
+						},
 						style: {
 							width: 80,
 							height: 40,
@@ -139,8 +148,11 @@ const useEditing = defineStore('editing', {
 							left: 300,
 							zIndex: 1,
 							backgroundColor: "#FFFFFF",
+							borderStyle: "solid",
+							borderWidth: 1,
+							borderColor: "#5EA47EFF",
 							opacity: 1,
-							borderRadius: 6,
+							borderRadius: 4,
 							fontSize: 14,
 						},
 					}

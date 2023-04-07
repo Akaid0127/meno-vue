@@ -34,6 +34,7 @@ let blockState = reactive({
     component: props.block.component,
     propValue: props.block.propValue,
     key: props.block.key,
+    styleDefault: {},
     style: {
         width: props.block.style.width + "px",
         height: props.block.style.height + "px",
@@ -45,13 +46,15 @@ let blockState = reactive({
         borderWidth: props.block.style.borderWidth + "px",
         borderColor: props.block.style.borderColor,
         opacity: props.block.style.opacity,
-        borderRadius: props.block.style.borderRadius + "px",
+        borderRadius: props.block.styleDefault.hasOwnProperty("borderRadius")
+            ? props.block.styleDefault.borderRadius
+            : props.block.style.borderRadius + "px",
         color: props.block.style.color,
         fontStyle: props.block.style.fontStyle,
         fontWeight: props.block.style.fontWeight,
         fontSize: props.block.style.fontSize + "px",
-		boxSizing:"content-box"
-    }, 
+        boxSizing: "content-box",
+    },
 });
 
 // 组件选中画布中拖拽
@@ -109,14 +112,14 @@ emitter.on("setCurStyle", (data) => {
         blockState.style.zIndex = data.style.zIndex;
         blockState.style.backgroundColor = data.style.backgroundColor;
         blockState.style.borderStyle = data.style.borderStyle;
-        blockState.style.borderWidth = data.style.borderWidth + "px",
-        blockState.style.borderColor = data.style.borderColor;
+        (blockState.style.borderWidth = data.style.borderWidth + "px"),
+            (blockState.style.borderColor = data.style.borderColor);
         blockState.style.opacity = data.style.opacity;
-        blockState.style.borderRadius = data.style.borderRadius + "px",
-        blockState.style.color = data.style.color;
+        (blockState.style.borderRadius = data.style.borderRadius + "px"),
+            (blockState.style.color = data.style.color);
         blockState.style.fontStyle = data.style.fontStyle;
         blockState.style.fontWeight = data.style.fontWeight;
-        blockState.style.fontSize = data.style.fontSize + "px"
+        blockState.style.fontSize = data.style.fontSize + "px";
     }
 }); // 组件属性-->画布
 
@@ -143,7 +146,7 @@ const setBlockStyle = (data) => {
 <style lang="scss" scoped>
 .block {
     position: absolute;
-    // cursor: pointer;
     user-select: none;
+    cursor: pointer;
 }
 </style>

@@ -28,6 +28,9 @@ const compState = reactive({
 .input-wrap {
     width: 80px;
     height: 40px;
-    padding-left: 5px;
+    padding-left: 2px;
+	border:0;
+	outline:none;
+	background-color: transparent;
 }
 </style>

@@ -1868,13 +1868,122 @@ export default componentList
 
 
 
-
-
-
-
-
-
 ### 4.16 注册更多组件
+
+希望实现的组件有
+
+矩形（文本组件去掉文字及文字相关属性）
+
+圆形（边框圆角百分之50）
+
+图片
+
+图标
+
+
+
+按钮和输入框的原生效果需要消除
+
+```css
+button{
+	//边框清掉
+	border:0;
+	outline:none;
+	//背景颜色清掉
+	background-color: transparent;
+}
+```
+
+
+
+修改组件结构
+
+增加styleDefault固有样式
+
+例如圆形
+
+```js
+{
+    id: 5,
+    label: "圆形",
+    component: "m-circular",
+    styleDefault: {
+        borderRadius: "50%"
+    },
+    style: {
+        width: "100",
+        height: "100",
+        zIndex: 1,
+        backgroundColor: "#DAF0E4",
+        borderStyle: "solid",
+        borderWidth: "2",
+        borderColor: "#18A058",
+        opacity: "1",
+    }
+},
+```
+
+在supply物料区中修改
+
+```js
+const tempComponent = {
+    component: componentState.currentComponent.component,
+    propValue: componentState.currentComponent.label,
+    key: nanoid(),
+    focus: false,
+    style: {
+        width: Number(componentState.currentComponent.style.width),
+        height: Number(componentState.currentComponent.style.height),
+        top: Number(
+            event.offsetY - componentState.currentComponent.style.height / 2
+        ),
+        left: Number(
+            event.offsetX - componentState.currentComponent.style.width / 2
+        ),
+        zIndex: Number(componentState.currentComponent.style.zIndex),
+    },
+    styleDefault: {
+        ...componentState.currentComponent.styleDefault,
+    },
+};
+
+if (tempComponent.component === "m-text") {
+    ...
+} 
+...
+else if (tempComponent.component === "m-circular") {
+    tempComponent.style = {
+        ...tempComponent.style,
+        backgroundColor:
+            componentState.currentComponent.style.backgroundColor,
+        borderStyle: componentState.currentComponent.style.borderStyle,
+        borderWidth: Number(
+            componentState.currentComponent.style.borderWidth
+        ),
+        borderColor: componentState.currentComponent.style.borderColor,
+        opacity: Number(componentState.currentComponent.style.opacity),
+    };
+}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

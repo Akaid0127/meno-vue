@@ -70,21 +70,33 @@ const drop = (event) => {
         style: {
             width: Number(componentState.currentComponent.style.width),
             height: Number(componentState.currentComponent.style.height),
-            top: Number(event.offsetY - componentState.currentComponent.style.height / 2),
-            left: Number(event.offsetX - componentState.currentComponent.style.width / 2),
+            top: Number(
+                event.offsetY - componentState.currentComponent.style.height / 2
+            ),
+            left: Number(
+                event.offsetX - componentState.currentComponent.style.width / 2
+            ),
             zIndex: Number(componentState.currentComponent.style.zIndex),
+        },
+        styleDefault: {
+            ...componentState.currentComponent.styleDefault,
         },
     };
 
     if (tempComponent.component === "m-text") {
         tempComponent.style = {
             ...tempComponent.style,
-            backgroundColor:componentState.currentComponent.style.backgroundColor,
+            backgroundColor:
+                componentState.currentComponent.style.backgroundColor,
             borderStyle: componentState.currentComponent.style.borderStyle,
-            borderWidth: Number(componentState.currentComponent.style.borderWidth),
+            borderWidth: Number(
+                componentState.currentComponent.style.borderWidth
+            ),
             borderColor: componentState.currentComponent.style.borderColor,
             opacity: Number(componentState.currentComponent.style.opacity),
-            borderRadius: Number(componentState.currentComponent.style.borderRadius),
+            borderRadius: Number(
+                componentState.currentComponent.style.borderRadius
+            ),
             color: componentState.currentComponent.style.color,
             fontStyle: componentState.currentComponent.style.fontStyle,
             fontWeight: componentState.currentComponent.style.fontWeight,
@@ -93,18 +105,62 @@ const drop = (event) => {
     } else if (tempComponent.component === "m-button") {
         tempComponent.style = {
             ...tempComponent.style,
-			backgroundColor:componentState.currentComponent.style.backgroundColor,
+            backgroundColor:
+                componentState.currentComponent.style.backgroundColor,
+            borderStyle: componentState.currentComponent.style.borderStyle,
+            borderWidth: Number(
+                componentState.currentComponent.style.borderWidth
+            ),
+            borderColor: componentState.currentComponent.style.borderColor,
             opacity: Number(componentState.currentComponent.style.opacity),
-            borderRadius: Number(componentState.currentComponent.style.borderRadius),
+            borderRadius: Number(
+                componentState.currentComponent.style.borderRadius
+            ),
             color: componentState.currentComponent.style.color,
-			fontSize: Number(componentState.currentComponent.style.fontSize),
+            fontSize: Number(componentState.currentComponent.style.fontSize),
         };
     } else if (tempComponent.component === "m-input") {
-		tempComponent.style = {
+        tempComponent.style = {
             ...tempComponent.style,
+            backgroundColor:
+                componentState.currentComponent.style.backgroundColor,
+            borderStyle: componentState.currentComponent.style.borderStyle,
+            borderWidth: Number(
+                componentState.currentComponent.style.borderWidth
+            ),
+            borderColor: componentState.currentComponent.style.borderColor,
             opacity: Number(componentState.currentComponent.style.opacity),
-            borderRadius: Number(componentState.currentComponent.style.borderRadius),
-			fontSize: Number(componentState.currentComponent.style.fontSize),
+            borderRadius: Number(
+                componentState.currentComponent.style.borderRadius
+            ),
+            fontSize: Number(componentState.currentComponent.style.fontSize),
+        };
+    } else if (tempComponent.component === "m-rectangle") {
+        tempComponent.style = {
+            ...tempComponent.style,
+            backgroundColor:
+                componentState.currentComponent.style.backgroundColor,
+            borderStyle: componentState.currentComponent.style.borderStyle,
+            borderWidth: Number(
+                componentState.currentComponent.style.borderWidth
+            ),
+            borderColor: componentState.currentComponent.style.borderColor,
+            opacity: Number(componentState.currentComponent.style.opacity),
+            borderRadius: Number(
+                componentState.currentComponent.style.borderRadius
+            ),
+        };
+    } else if (tempComponent.component === "m-circular") {
+        tempComponent.style = {
+            ...tempComponent.style,
+            backgroundColor:
+                componentState.currentComponent.style.backgroundColor,
+            borderStyle: componentState.currentComponent.style.borderStyle,
+            borderWidth: Number(
+                componentState.currentComponent.style.borderWidth
+            ),
+            borderColor: componentState.currentComponent.style.borderColor,
+            opacity: Number(componentState.currentComponent.style.opacity),
         };
     }
 

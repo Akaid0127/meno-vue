@@ -2,9 +2,9 @@
     <div class="designattr-wrap">
         <div class="designattr-content">
             <div class="nav">
-                <div class="item">属性</div>
+                <div class="item">样式</div>
+                <div class="item">内容</div>
                 <div class="item">事件</div>
-                <div class="item">动画</div>
             </div>
             <div class="list">
                 <n-form label-placement="left" label-width="auto">

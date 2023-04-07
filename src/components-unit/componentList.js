@@ -4,6 +4,8 @@ const componentList = [
 		id: 1,
 		label: "文本",
 		component: "m-text",
+		styleDefault: {
+		},
 		style: {
 			width: "80",
 			height: "40",
@@ -24,14 +26,19 @@ const componentList = [
 		id: 2,
 		label: "按钮",
 		component: "m-button",
+		styleDefault: {
+		},
 		style: {
 			width: "80",
 			height: "40",
 			zIndex: 1,
-			backgroundColor: "#FFFFFF",
+			backgroundColor: "#DAF0E4",
+			borderStyle: "solid",
+			borderWidth: "1",
+			borderColor: "#DAF0E4",
 			opacity: "1",
-			borderRadius: "6",
-			color: "#606266",
+			borderRadius: "4",
+			color: "#3DA36A",
 			fontSize: "14",
 		}
 	},
@@ -39,16 +46,55 @@ const componentList = [
 		id: 3,
 		label: "输入框",
 		component: "m-input",
+		styleDefault: {
+		},
 		style: {
 			width: "80",
 			height: "40",
 			zIndex: 1,
 			backgroundColor: "#FFFFFF",
+			borderStyle: "solid",
 			borderWidth: "1",
-			borderColor: "#DCDFE6",
+			borderColor: "#5EA47EFF",
 			opacity: "1",
 			borderRadius: "6",
 			fontSize: "14",
+		}
+	},
+	{
+		id: 4,
+		label: "矩形",
+		component: "m-rectangle",
+		styleDefault: {
+		},
+		style: {
+			width: "100",
+			height: "120",
+			zIndex: 1,
+			backgroundColor: "#DAF0E4",
+			borderStyle: "solid",
+			borderWidth: "2",
+			borderColor: "#18A058",
+			opacity: "1",
+			borderRadius: "0",
+		}
+	},
+	{
+		id: 5,
+		label: "圆形",
+		component: "m-circular",
+		styleDefault: {
+			borderRadius: "50%"
+		},
+		style: {
+			width: "100",
+			height: "100",
+			zIndex: 1,
+			backgroundColor: "#DAF0E4",
+			borderStyle: "solid",
+			borderWidth: "2",
+			borderColor: "#18A058",
+			opacity: "1",
 		}
 	},
 ]

@@ -28,8 +28,8 @@ const compState = reactive({
 button {
     width: 80px;
     height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+	border:0;
+	outline:none;
+	background-color: transparent;
 }
 </style>
