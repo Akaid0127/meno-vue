@@ -96,7 +96,7 @@ const setBlockFocus = (data) => {
         if (item.key === data) {
             editingStore.setCurBlock(item.key); // 更新pinia-editing
             emitter.emit("getCurBlock", item.key); // 获取列表组件焦点
-            emitter.emit("getCurStyle", item); // 获取焦点组件属性
+            emitter.emit("getCurStyle", item); // 画布-->组件属性
             item.focus = true;
         }
     });

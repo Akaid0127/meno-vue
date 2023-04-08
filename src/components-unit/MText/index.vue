@@ -2,27 +2,25 @@
     <div
         class="text-wrap"
         :style="{
-			width:compState.propStyle.width,
-			height:compState.propStyle.height,
+			width:compState.curStyle.width,
+			height:compState.curStyle.height,
 		}"
-    >{{compState.propValue}}</div>
+    >{{props.propValue}}</div>
+	<!-- 必须直接传入props.propValue才能确保数据响应 -->
 </template>
 
 <script setup>
 import { reactive,onMounted} from "vue";
 const props = defineProps(["propValue", "propStyle"]);
 const compState = reactive({
-    propValue: props.propValue,
-    propStyle: props.propStyle,
+    curValue: props.propValue,
+    curStyle: props.propStyle,
 });
-onMounted(() => {
-	// console.log(compState.propValue)
-})
+
 </script>
 
 <style>
 .text-wrap {
-    /* border: 1px solid black; */
     display: flex;
     align-items: center;
     justify-content: center;

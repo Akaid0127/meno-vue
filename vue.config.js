@@ -8,6 +8,18 @@ function resolve(dir) {
 
 module.exports = defineConfig({
 	transpileDependencies: true,
+	// 客户端脚本和服务器之间建立 Websocket 连接
+	devServer: {
+		host: '0.0.0.0',
+		port: 3000,
+		client: {
+			webSocketURL: 'ws://0.0.0.0:3000/ws',
+		},
+		headers: {
+			'Access-Control-Allow-Origin': '*',
+		}
+
+	},
 	// 关闭lint校验
 	lintOnSave: false,
 	// 配置scss

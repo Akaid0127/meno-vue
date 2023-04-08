@@ -12,7 +12,7 @@
 			color: compState.propStyle.color,
 			fontSize: compState.propStyle.fontSize,
 		}"
-    >{{compState.propValue}}</button>
+    >{{props.propValue}}</button>
 </template>
 
 <script setup>

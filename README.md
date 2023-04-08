@@ -1872,13 +1872,14 @@ export default componentList
 
 希望实现的组件有
 
-矩形（文本组件去掉文字及文字相关属性）
+- 矩形（文本组件去掉文字及文字相关属性）
 
-圆形（边框圆角百分之50）
+- 圆形（边框圆角百分之50）
 
-图片
+- 图片
 
-图标
+- 图标
+
 
 
 
@@ -1966,6 +1967,187 @@ else if (tempComponent.component === "m-circular") {
 }
 
 ```
+
+
+
+实现图片组件
+
+注意src要动态引入使用require才能引入本地图片
+
+```vue
+<template>
+    <img
+        class="image-wrap"
+        :src="props.propUrl?props.propUrl:require('@/assets/testImage.jpg')"
+        :style="{
+			width:compState.propStyle.width,
+			height:compState.propStyle.height,
+		}"
+    />
+</template>
+
+<script setup>
+import { reactive } from "vue";
+const props = defineProps(["propStyle", "propUrl"]);
+const compState = reactive({
+    propStyle: props.propStyle,
+});
+</script>
+```
+
+
+
+在组件属性attr中修改表单
+
+简单来说就是给图片组件加一个propUrl的属性
+
+用来存放http链接地址
+
+```html
+<n-form-item
+    v-if="curState.curComponent==='m-rectangle'
+    ||curState.curComponent==='m-circular'
+    ||curState.curComponent==='m-image'"
+    label="组件名称"
+>
+    <n-input
+        v-model:value="curState.curValue"
+        type="text"
+        placeholder="请输入组件名称"
+    />
+</n-form-item>
+
+<n-form-item v-if="curState.curComponent==='m-image'" label="图片链接">
+    <n-input
+        v-model:value="curState.curImgUrl"
+        type="textarea"
+        placeholder="请输入图片链接(http://...)"
+    />
+</n-form-item>
+```
+
+
+
+图标组件怎么实现？
+
+SVG图标？？
+
+普通html图标的实现
+
+```html
+<style>
+    .svgLog{
+        width: 50px;
+        height: 50px;
+        color: aqua;
+    }
+</style>
+
+
+<div class="svgLog">
+    <svg>...</svg>
+</div>
+```
+
+
+
+怎么取到特定svg图标
+
+打算使用v-html
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+	</head>
+	<body>
+		<div id="app">
+			<p v-text="msg"></p>
+			<p v-html="msg"></p>
+			<p>{{msg}}</p>
+		</div>
+		<script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+		<script>
+			new Vue({
+				el: "#app",
+				data: {
+					msg: "<span>Hello Vue</span>",
+				},
+			});
+		</script>
+	</body>
+</html>
+```
+
+
+
+将所有的svg图标加载为类对象数组
+
+```js
+curSvg = {
+    {
+        name:"Plus",
+        svgValue:"<svg>...<svg>"
+    },
+}
+svgArr = [
+    {
+        name:"Plus",
+        svgValue:"<svg>...<svg>"
+    },
+    {
+        name:"Minus",
+        svgValue:"<svg>...<svg>"
+    },
+    {
+        name:"CirclePlus",
+        svgValue:"<svg>...<svg>"
+    },
+]
+```
+
+图标组件结构
+
+```html
+<div class="svgLog" v-html="curSvg.svgValue">
+    <svg>...</svg>
+</div>
+```
+
+
+
+成功实现图标组件
+
+```html
+<template>
+    <div
+        class="icon-wrap"
+        v-html="svgArr[props.propIndex].svgValue"
+        :style="{
+			width:comState.comStyle.width,
+			height:comState.comStyle.height,
+		}"
+    ></div>
+</template>
+
+<script setup>
+import { reactive } from "vue";
+import svgArr from "../iconData";
+const props = defineProps(["propStyle", "propIndex"]);
+const comState = reactive({
+    comStyle: props.propStyle,
+});
+</script>
+```
+
+
+
+接下来就是把element图标全部搬过来
+
+
 
 
 

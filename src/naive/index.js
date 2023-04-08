@@ -15,7 +15,10 @@ import {
 	NFormItem,
 	NInputNumber,
 	NColorPicker,
-	NSelect
+	NSelect,
+	NTabs,
+	NTabPane,
+	NScrollbar
 } from 'naive-ui'
 
 const naive = create({
@@ -34,7 +37,10 @@ const naive = create({
 		NFormItem,
 		NInputNumber,
 		NColorPicker,
-		NSelect
+		NSelect,
+		NTabs,
+		NTabPane,
+		NScrollbar
 	]
 })
 

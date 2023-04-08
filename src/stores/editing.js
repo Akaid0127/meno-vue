@@ -74,6 +74,34 @@ const useEditing = defineStore('editing', {
 					})
 				}
 			})
+		},
+
+		// 更新组件内容（普通组件）
+		updateBlockContent(key, curValue) {
+			this.pageData.blocks.forEach((item) => {
+				if (item.key === key) {
+					item.propValue = curValue
+				}
+			})
+		},
+
+		// 更新组件内容（图片组件）
+		updateImgContent(key, curValue, curUrl) {
+			this.pageData.blocks.forEach((item) => {
+				if (item.key === key) {
+					item.propValue = curValue
+					item.propUrl = curUrl
+				}
+			})
+		},
+
+		// 更新组件内容（图标组件）
+		updateIconContent(key, curValue) {
+			this.pageData.blocks.forEach((item) => {
+				if (item.key === key) {
+					item.propValue = curValue
+				}
+			})
 		}
 	},
 

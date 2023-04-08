@@ -97,6 +97,40 @@ const componentList = [
 			opacity: "1",
 		}
 	},
+
+	{
+		id: 6,
+		label: "图片",
+		component: "m-image",
+		styleDefault: {
+		},
+		style: {
+			width: "240",
+			height: "140",
+			zIndex: 1,
+			borderStyle: "solid",
+			borderWidth: "1",
+			borderColor: "#18A058",
+			opacity: "1",
+		}
+	},
+
+	{
+		id: 7,
+		label: "图标",
+		component: "m-icon",
+		styleDefault: {
+		},
+		style: {
+			width: "26",
+			height: "26",
+			zIndex: 1,
+			backgroundColor: "#00000000",
+			color: "#747679",
+			opacity: "1",
+			borderRadius: "5",
+		}
+	},
 ]
 
 export default componentList

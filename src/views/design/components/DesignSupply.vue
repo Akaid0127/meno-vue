@@ -64,6 +64,7 @@ const drop = (event) => {
 
     const tempComponent = {
         component: componentState.currentComponent.component,
+        // 传入内容
         propValue: componentState.currentComponent.label,
         key: nanoid(),
         focus: false,
@@ -161,6 +162,27 @@ const drop = (event) => {
             ),
             borderColor: componentState.currentComponent.style.borderColor,
             opacity: Number(componentState.currentComponent.style.opacity),
+        };
+    } else if (tempComponent.component === "m-image") {
+        tempComponent.style = {
+            ...tempComponent.style,
+            borderStyle: componentState.currentComponent.style.borderStyle,
+            borderWidth: Number(
+                componentState.currentComponent.style.borderWidth
+            ),
+            borderColor: componentState.currentComponent.style.borderColor,
+            opacity: Number(componentState.currentComponent.style.opacity),
+        };
+    } else if (tempComponent.component === "m-icon") {
+        tempComponent.style = {
+            ...tempComponent.style,
+            backgroundColor:
+                componentState.currentComponent.style.backgroundColor,
+            opacity: Number(componentState.currentComponent.style.opacity),
+            color: componentState.currentComponent.style.color,
+            borderRadius: Number(
+                componentState.currentComponent.style.borderRadius
+            ),
         };
     }
 

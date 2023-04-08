@@ -9,6 +9,8 @@
             class="block"
             :is="blockState.component"
             :propValue="blockState.propValue"
+            :propUrl="blockState.propUrl"
+			:propIndex="blockState.propIndex"
             :propStyle="blockState.style"
             @mousedown="$event => handleMousedown($event)"
         ></component>
@@ -33,6 +35,8 @@ const props = defineProps(["block", "blockFocus"]);
 let blockState = reactive({
     component: props.block.component,
     propValue: props.block.propValue,
+    propUrl: "",
+    propIndex: 11,
     key: props.block.key,
     styleDefault: {},
     style: {
@@ -102,7 +106,7 @@ const handleMousedown = (event) => {
     document.addEventListener("mouseup", up);
 };
 
-// 组件修改属性样式绑定
+// 组件修改属性样式绑定 组件属性-->组件
 emitter.on("setCurStyle", (data) => {
     if (blockState.key === data.key) {
         blockState.style.width = data.style.width + "px";
@@ -122,7 +126,7 @@ emitter.on("setCurStyle", (data) => {
         blockState.style.fontSize = data.style.fontSize + "px";
     }
 }); // 组件属性-->画布
-
+// 组件操作引起的样式绑定 操作-->组件
 emitter.on("setOperateStyle", (data) => {
     data.forEach((item) => {
         if (blockState.key === item.key) {
@@ -134,6 +138,28 @@ emitter.on("setOperateStyle", (data) => {
         }
     });
 }); // 组件操作-->画布
+// 组件内容绑定 组件属性-->组件
+emitter.on("setCurContent", (data) => {
+    if (blockState.key === data.key) {
+        if (data.componentType === "m-image") {
+            editingStore.updateImgContent(data.key, data.value, data.imgUrl);
+            blockState.propValue = data.value;
+            blockState.propUrl = data.imgUrl;
+        } else {
+            editingStore.updateBlockContent(data.key, data.value);
+            blockState.propValue = data.value;
+        }
+    }
+});
+// 图标组件内容绑定 图标组件属性-->图标组件
+emitter.on("setCurIcon", (data) => {
+    if (blockState.key === data.key) {
+        if (data.componentType === "m-icon") {
+            editingStore.updateBlockContent(data.key, data.value);
+            blockState.propIndex = data.iconIndex;
+        }
+    }
+});
 
 // shape定型
 const setBlockStyle = (data) => {

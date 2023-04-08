@@ -2,7 +2,7 @@
     <input
         class="input-wrap"
         type="text"
-        :placeholder="compState.propValue"
+        :placeholder="props.propValue"
         :style="{
 			width:compState.propStyle.width,
 			height:compState.propStyle.height,
