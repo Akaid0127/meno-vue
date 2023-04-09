@@ -10,7 +10,7 @@
             :is="blockState.component"
             :propValue="blockState.propValue"
             :propUrl="blockState.propUrl"
-			:propIndex="blockState.propIndex"
+            :propIndex="blockState.propIndex"
             :propStyle="blockState.style"
             @mousedown="$event => handleMousedown($event)"
         ></component>
@@ -155,7 +155,11 @@ emitter.on("setCurContent", (data) => {
 emitter.on("setCurIcon", (data) => {
     if (blockState.key === data.key) {
         if (data.componentType === "m-icon") {
-            editingStore.updateBlockContent(data.key, data.value);
+            editingStore.updateIconContent(
+                data.key,
+                data.value,
+                data.iconIndex
+            );
             blockState.propIndex = data.iconIndex;
         }
     }

@@ -30,6 +30,11 @@ const useEditing = defineStore('editing', {
 			}
 		},
 
+		// 删除所有组件
+		delBlockAll(){
+			this.pageData.blocks.splice(0, this.pageData.blocks.length)
+		},
+
 		// 更新组件位置
 		updateBlockPos(key, posTop, posLeft) {
 			this.pageData.blocks.forEach((item) => {
@@ -96,10 +101,11 @@ const useEditing = defineStore('editing', {
 		},
 
 		// 更新组件内容（图标组件）
-		updateIconContent(key, curValue) {
+		updateIconContent(key, curValue,curIndex) {
 			this.pageData.blocks.forEach((item) => {
 				if (item.key === key) {
 					item.propValue = curValue
+					item.propIndex = curIndex;
 				}
 			})
 		}

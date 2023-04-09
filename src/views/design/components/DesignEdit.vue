@@ -95,19 +95,22 @@ const setBlockFocus = (data) => {
     blockState.blocksData.forEach((item) => {
         if (item.key === data) {
             editingStore.setCurBlock(item.key); // 更新pinia-editing
-            emitter.emit("getCurBlock", item.key); // 获取列表组件焦点
+            emitter.emit("getCurBlock", item.key); // 画布-->组件列表
             emitter.emit("getCurStyle", item); // 画布-->组件属性
             item.focus = true;
         }
     });
 };
 const handleClickEdit = () => {
-    // 点击画布清空
-    // todo 后期可以使用一个清空按钮取消选择
-    // blockState.blocksData.forEach((item) => {
-    //     item.focus = false;
-    // });
+    // 点击画布清空focus
+    emitter.on("setCancelChoose", () => {
+        blockState.blocksData.forEach((item) => {
+            item.focus = false;
+        });
+		emitter.emit("getCurBlock", ""); // 画布-->组件列表
+    });
 };
+
 const handleClickBlock = (block) => {
     setBlockFocus(block.key);
 }; // 画布-->组件列表

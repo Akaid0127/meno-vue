@@ -2149,6 +2149,302 @@ const comState = reactive({
 
 
 
+### 4.17 JSON显示
+
+选用naive模态组件
+
+安装highlight.js实现代码高亮
+
+使用n-config-provider组件
+
+使用n-code组件
+
+
+
+找了一圈代码格式化的插件，
+
+没想到JSON.stringify的第三个参数可以直接调整缩进和换行
+
+```
+JSON.stringify(value, replacer, space)
+```
+
+1. value：第一个参数，将要序列后成 JSON 字符串的值。
+2. replacer：【可选】第二个参数
+   1. 如果该参数是一个函数，则在序列化过程中，被序列化的值的每个属性都会经过该函数的转换和处理；
+   2. 如果参数是一个数组，则仅转换该数组中具有键值的成员。成员的转换顺序与键在数组中的顺序一样。
+   3. 如果该参数为未提供或者null ，则对象所有的属性都会被序列化。
+3. space：【可选】第三个参数，美化文本格式，文本添加缩进、空格和换行符，
+   1. 如果 该参数 是一个数字，则返回值文本在每个级别缩进指定数目的空格
+   2. 该参数最大值为10，如果 该参数大于 10，则文本缩进 10 个空格。
+   3. 该参数也可以使用非数字，如：\t。最大值为10
+
+```html
+<n-button @click="handleDeriveJson">JSON</n-button>
+<n-modal
+    v-model:show="showModal.jsonModal"
+    class="custom-card"
+    preset="card"
+    :style="{width:'740px',height:'700px'}"
+    title="JSON数据"
+    size="huge"
+    :bordered="true"
+    :segmented="{content:'soft',footer:'soft'}"
+>
+    <n-scrollbar style="max-height: 560px" trigger="none">
+        <n-code
+            :code="codeState.jsonCode"
+            language="javascript"
+            show-line-numbers
+            trim
+        />
+    </n-scrollbar>
+</n-modal>
+```
+
+```js
+const handleDeriveJson = () => {
+    showModal.jsonModal = true;
+    const jsonData = JSON.stringify(editingStore.pageData.blocks, null, 2);
+    codeState.jsonCode = `${jsonData}`;
+};
+```
+
+
+
+### 4.18 HTML显示
+
+打算使用json2html
+
+http://www.json2html.com/docs/#main-type-dom
+
+>json2html is an open source javascript library that uses js templates to render JSON objects into HTML.
+>
+>Build lightning fast, interactive client side templates using nothing but javascript.
+
+json2html是一个开源javascript库，它使用js模板将JSON对象呈现为HTML。
+
+只使用javascript构建闪电般快速的交互式客户端模板。
+
+
+
+需要实现
+
+- 标签解析
+- 属性解析
+- 样式解析
+
+
+
+json2html有三种解析html模板的方式分别是
+
+- dom
+- block
+- component
+
+
+
+JavaScript如何读取和修改本地文件（FileReader）
+
+浏览器中的 JavaScript 是没有文件操作的能力的（基于安全，不能直接操作本地文件）
+
+但是 Node 中的 JavaScript 具有文件操作的能力
+
+
+
+导出html应该是相对简单的，因为js的writer()语法就可以实现输出
+
+```
+let resHtml = `<!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="utf-8">
+                    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+                    ${.htmlContent}
+                    </body>
+                </html>`
+       writer(`${new Date().getTime()}.html`, resHtml, "utf-8");
+```
+
+
+
+FileSaver.js 是在客户端保存文件的解决方案，非常适合在客户端生成文件的 Web 应用程序
+
+
+
+响应式非常简单，只需要
+
+```js
+// 消除响应式
+let jsonData = JSON.parse(JSON.stringify(objData)) 
+```
+
+
+
+对于不提供npm客户端的包直接import
+
+```
+import './json2html.min';
+```
+
+
+
+目前的组件信息
+
+1. **component**: "m-text"
+2. **focus**: false
+3. **key**: "defaultkey1"
+4. **propValue**: "hellotext"
+5. **style**: {width: 80, height: 40, top: 100, left: 100, zIndex: 1, …}
+6. **styleDefault**: {}
+
+
+
+obj转html
+
+1. 拿到组件数组，消除响应式
+2. 遍历组件数组，匹配对应组件标签
+3. 填入标签模板，加上组件属性
+4. 插入html模板返回
+
+```js
+function objToHtml(objData) {
+	const jsonData = JSON.parse(JSON.stringify(objData)) // 消除响应式
+
+	let comTemplateArr = [] // 组件模板数组
+	let resTemplate = "" // 结果组件模板
+
+	jsonData.forEach(item => {
+		if (item.component === "m-text") {
+			let data = [{ "propValue": item.propValue },];
+			let template = { '<>': 'div', 'html': '${propValue}' };
+			comTemplateArr.push(json2html.render(data, template))
+		}
+		else if (item.component === "m-button") {
+			let data = [{ "propValue": item.propValue },];
+			let template = { '<>': 'button', 'html': '${propValue}' };
+			comTemplateArr.push(json2html.render(data, template))
+		}
+		else if (item.component === "m-input") {
+			let data = [{ "propValue": "", "placeValue": item.propValue },];
+			let template = { '<>': 'input', 'html': 'propValue', 'placeholder': '${placeValue}' };
+			comTemplateArr.push(json2html.render(data, template))
+		}
+		else if (item.component === "m-rectangle") {
+			let data = [{ "propValue": "" }];
+			let template = { '<>': 'div', 'html': '${propValue}' };
+			comTemplateArr.push(json2html.render(data, template))
+		}
+		else if (item.component === "m-circular") {
+			let data = [{ "propValue": "" }];
+			let template = { '<>': 'div', 'html': '${propValue}' };
+			comTemplateArr.push(json2html.render(data, template))
+		}
+		else if (item.component === "m-image") {
+			let data = [{ "propValue": "", "srcValue": `${item.propUrl}` }];
+			let template = { '<>': 'img', 'html': '${propValue}', 'src': '${srcValue}' };
+			comTemplateArr.push(json2html.render(data, template))
+		}
+		else if (item.component === "m-icon") {
+			console.log(item.propIndex)
+			let data = [{ "propValue": `${svgArr[item.propIndex].svgValue}` },];
+			let template = { '<>': 'div', 'html': '${propValue}' };
+			comTemplateArr.push(json2html.render(data, template))
+		}
+	});
+
+	comTemplateArr.forEach((item) => {
+		resTemplate = resTemplate + item + "\n\t"
+	})
+
+
+	// HTML模板
+	let htmlData = `<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+<body>
+	<!-- insert components -->
+</body>
+</html>`
+
+	const insertComIndex = htmlData.indexOf("<!-- insert components -->")
+	htmlData = htmlData.slice(0, insertComIndex) + resTemplate + htmlData.slice(insertComIndex)
+
+	return htmlData
+}
+
+```
+
+
+
+如何转化组件样式
+
+首先我们拥有组件的key作为唯一标识
+
+可以采用`componentType-key`作为class名
+
+class内容怎么确定？
+
+已有组件的style对象，可以拿到style的key数组
+
+直接插入不就行了吗?
+
+不行，有些css属性在class里使用`-`连接，而对象中采用驼峰命名
+
+需要对属性名做处理
+
+```js
+let comCssArr = [] // 组件样式数组
+let comCssRes = "" // 组件样式字符串
+
+const cssKeyTransform = (sourceString) => {
+    const sourceLen = sourceString.length
+    for (let i = 0; i < sourceLen; i++) {
+        if (sourceString[i] === sourceString[i].toUpperCase()) {
+            sourceString = sourceString.slice(0, i) + `-${sourceString[i].toLowerCase()}` + sourceString.slice(i + 1, sourceLen)
+        }
+    }
+    return sourceString
+} // backgroundColor to background-color
+
+jsonData.forEach(item => {
+    const keyArr = Object.keys(item.style)
+    let cssStringArr = []
+    keyArr.forEach((key) => {
+        if (key === "width" || key === "height" || key === "top" || key === "left" ||
+            key === "borderWidth" || key === "borderRadius" || key === "fontSize") {
+            let cssString = `${cssKeyTransform(key)}:${item.style[key]}px;`
+            cssStringArr.push(cssString)
+        } else {
+            let cssString = `${cssKeyTransform(key)}:${item.style[key]};`
+            cssStringArr.push(cssString)
+        }
+    })
+    let sentenceRes = ""
+    cssStringArr.forEach((i) => {
+        sentenceRes = sentenceRes + "\t\t" + i + "\n"
+    })
+    let comCssString = `.${item.component}-${item.key}{\n${sentenceRes}\t}`
+    comCssArr.push(comCssString)
+})
+
+comCssArr.forEach((item) => {
+    comCssRes = comCssRes + item + "\n\n\t"
+})
+
+```
+
+
+
+
+
+
+
 
 
 

@@ -6,6 +6,7 @@
 			height:compState.curStyle.height,
 		}"
     >{{props.propValue}}</div>
+	
 	<!-- 必须直接传入props.propValue才能确保数据响应 -->
 </template>
 

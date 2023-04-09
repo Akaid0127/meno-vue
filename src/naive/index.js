@@ -18,7 +18,10 @@ import {
 	NSelect,
 	NTabs,
 	NTabPane,
-	NScrollbar
+	NScrollbar,
+	NModal,
+	NConfigProvider,
+	NCode
 } from 'naive-ui'
 
 const naive = create({
@@ -40,7 +43,10 @@ const naive = create({
 		NSelect,
 		NTabs,
 		NTabPane,
-		NScrollbar
+		NScrollbar,
+		NModal,
+		NConfigProvider,
+		NCode
 	]
 })
 

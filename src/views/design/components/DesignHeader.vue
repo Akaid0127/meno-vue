@@ -35,15 +35,6 @@
                     返回
                 </n-button>
 
-                <n-button strong secondary @click="handleImage">
-                    <template #icon>
-                        <n-icon>
-                            <vicon-image />
-                        </n-icon>
-                    </template>
-                    图片
-                </n-button>
-
                 <n-button strong secondary @click="handleCancelChoose">
                     <template #icon>
                         <n-icon>
@@ -65,7 +56,45 @@
             <div class="right">
                 <!-- 右侧拓展栏 -->
                 <n-button @click="handleDeriveJson">JSON</n-button>
+                <n-modal
+                    v-model:show="showModal.jsonModal"
+                    class="custom-card"
+                    preset="card"
+                    :style="{width:'740px',height:'700px'}"
+                    title="JSON数据"
+                    size="huge"
+                    :bordered="true"
+                    :segmented="{content:'soft',footer:'soft'}"
+                >
+                    <n-scrollbar style="max-height: 560px" trigger="none">
+                        <n-code
+                            :code="codeState.jsonCode"
+                            language="javascript"
+                            show-line-numbers
+                            trim
+                        />
+                    </n-scrollbar>
+                </n-modal>
+
                 <n-button @click="handleDeriveHtml">HTML</n-button>
+                <n-modal
+                    v-model:show="showModal.htmlModal"
+                    class="custom-card"
+                    preset="card"
+                    :style="{width:'740px',height:'700px'}"
+                    title="HTML数据"
+                    size="huge"
+                    :bordered="true"
+                    :segmented="{content:'soft',footer:'soft'}"
+                >
+                    <n-scrollbar style="max-height: 560px" trigger="none">
+                        <n-code
+                            :code="codeState.htmlCode"
+                            language="javascript"
+                            show-line-numbers
+                        />
+                    </n-scrollbar>
+                </n-modal>
                 <n-button strong secondary type="success">保存退出</n-button>
             </div>
         </div>
@@ -73,10 +102,13 @@
 </template>
 
 <script setup>
+import { reactive } from "vue";
 import { Reply, Delete, Image as viconImage, EditOff } from "@vicons/carbon";
 import emitter from "@/mitt/event";
 import useEditing from "@/stores/editing";
 import useSnapshot from "@/stores/snapshot";
+import objToJson from "@/utils/objToJson";
+import objToHtml from "@/utils/objToHtml";
 
 // pinia
 const editingStore = useEditing(); // 组件状态
@@ -99,20 +131,38 @@ const handleReback = () => {
     emitter.emit("setOperateStyle", tempData);
 };
 
-// 添加图片
-const handleImage = () => {};
-
 // 取消选择
-const handleCancelChoose = () => {};
+const handleCancelChoose = () => {
+    editingStore.setCurBlock("");
+    emitter.emit("setCancelChoose");
+};
 
 // 清空画布
-const handleEmpty = () => {};
+const handleEmpty = () => {
+    editingStore.delBlockAll();
+};
 
 // 导出Json
-const handleDeriveJson = () => {};
+const showModal = reactive({
+    jsonModal: false,
+    htmlModal: false,
+});
+const codeState = reactive({
+    jsonCode: ``,
+    htmlCode: ``,
+});
+const handleDeriveJson = () => {
+    showModal.jsonModal = true;
+    const jsonData = objToJson(editingStore.pageData.blocks);
+    codeState.jsonCode = `${jsonData}`;
+};
 
 // 导出HTML
-const handleDeriveHtml = () => {};
+const handleDeriveHtml = () => {
+	showModal.htmlModal = true;
+	const htmlData = objToHtml(editingStore.pageData.blocks);
+	codeState.htmlCode = `${htmlData}`;
+};
 </script>
 
 <style lang="scss" scoped>

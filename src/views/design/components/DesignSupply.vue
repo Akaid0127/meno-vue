@@ -174,6 +174,7 @@ const drop = (event) => {
             opacity: Number(componentState.currentComponent.style.opacity),
         };
     } else if (tempComponent.component === "m-icon") {
+		tempComponent.propIndex = 11
         tempComponent.style = {
             ...tempComponent.style,
             backgroundColor:
