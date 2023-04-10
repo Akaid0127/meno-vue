@@ -10,6 +10,7 @@
   "dependencies": {
     "@imengyu/vue3-context-menu": "^1.2.3",
     "core-js": "^3.8.3",
+    "file-saver": "^2.0.5",
     "highlight.js": "^11.7.0",
     "mitt": "^3.0.0",
     "nanoid": "^4.0.1",

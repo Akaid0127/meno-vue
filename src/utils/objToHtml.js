@@ -9,7 +9,7 @@ function objToHtml(objData) {
 
 	jsonData.forEach(item => {
 		if (item.component === "m-text") {
-			let data = [{ "propValue": item.propValue, "className": `${item.component}-${item.key}` },];
+			let data = [{ "propValue": item.propValue, "className": `${item.component}-${item.key} child-center` },];
 			let template = { '<>': 'div', 'html': '${propValue}', 'class': '${className}' };
 			comTemplateArr.push(json2html.render(data, template))
 		}
@@ -29,7 +29,7 @@ function objToHtml(objData) {
 			comTemplateArr.push(json2html.render(data, template))
 		}
 		else if (item.component === "m-circular") {
-			let data = [{ "propValue": "", "className": `${item.component}-${item.key}` }];
+			let data = [{ "propValue": "", "className": `${item.component}-${item.key} border-circle` }];
 			let template = { '<>': 'div', 'html': '${propValue}', 'class': '${className}' };
 			comTemplateArr.push(json2html.render(data, template))
 		}
@@ -46,7 +46,7 @@ function objToHtml(objData) {
 	});
 
 	comTemplateArr.forEach((item) => {
-		comTemplateRes = comTemplateRes + item + "\n\t"
+		comTemplateRes = comTemplateRes + item + "\n\t\t\t"
 	})
 
 
@@ -80,7 +80,7 @@ function objToHtml(objData) {
 		cssStringArr.forEach((i) => {
 			sentenceRes = sentenceRes + "\t\t" + i + "\n"
 		})
-		let comCssString = `.${item.component}-${item.key}{\n${sentenceRes}\t}`
+		let comCssString = `.${item.component}-${item.key}{\n${sentenceRes}\t\tposition: absolute;\n\t}`
 		comCssArr.push(comCssString)
 	})
 
@@ -92,26 +92,68 @@ function objToHtml(objData) {
 	// HTML模板
 	let htmlData = `<!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Document</title>
 	<style>
-	<!-- insert css start -->
-	<!-- insert css end -->
-	<style>
+	/* defaultStyle */
+	.design-wrap {
+		width: 100%;
+	}
+
+	.design-content {
+		width: 1200px;
+		height: 800px;
+		margin: 0 auto;
+		position: relative;
+	}
+
+	button {
+		border: 0;
+		outline: none;
+		background-color: transparent;
+	}
+
+	input {
+		padding-left: 2px;
+		border: 0;
+		outline: none;
+		background-color: transparent;
+	}
+
+	.child-center{
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.border-circle{
+		border-radius: 50%;
+	}
+
+	/* insert css start */
+	/* insert css end */
+	</style>
 </head>
+
 <body>
-	<!-- insert components start-->
-	<!-- insert components end-->
+	<div class="design-wrap">
+		<div class="design-content">
+			<!-- insert components start-->
+			<!-- insert components end-->
+		</div>
+	</div>
 </body>
+
 </html>`
 
 	const insertComIndex = htmlData.indexOf("<!-- insert components end-->")
 	htmlData = htmlData.slice(0, insertComIndex) + comTemplateRes + htmlData.slice(insertComIndex)
 
-	const insertCssIndex = htmlData.indexOf("<!-- insert css end -->")
+	const insertCssIndex = htmlData.indexOf("/* insert css end */")
 	htmlData = htmlData.slice(0, insertCssIndex) + comCssRes + htmlData.slice(insertCssIndex)
 
 	return htmlData

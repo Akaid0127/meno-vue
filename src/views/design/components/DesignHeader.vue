@@ -66,6 +66,9 @@
                     :bordered="true"
                     :segmented="{content:'soft',footer:'soft'}"
                 >
+                    <template #header-extra>
+                        <n-button strong secondary type="primary" @click="handleExportJson">下载Json</n-button>
+                    </template>
                     <n-scrollbar style="max-height: 560px" trigger="none">
                         <n-code
                             :code="codeState.jsonCode"
@@ -87,12 +90,11 @@
                     :bordered="true"
                     :segmented="{content:'soft',footer:'soft'}"
                 >
+                    <template #header-extra>
+                        <n-button strong secondary type="primary" @click="handleExportHtml">下载HTML</n-button>
+                    </template>
                     <n-scrollbar style="max-height: 560px" trigger="none">
-                        <n-code
-                            :code="codeState.htmlCode"
-                            language="javascript"
-                            show-line-numbers
-                        />
+                        <n-code :code="codeState.htmlCode" language="javascript" show-line-numbers />
                     </n-scrollbar>
                 </n-modal>
                 <n-button strong secondary type="success">保存退出</n-button>
@@ -109,6 +111,7 @@ import useEditing from "@/stores/editing";
 import useSnapshot from "@/stores/snapshot";
 import objToJson from "@/utils/objToJson";
 import objToHtml from "@/utils/objToHtml";
+import exportHtml from "@/utils/exportHtml";
 
 // pinia
 const editingStore = useEditing(); // 组件状态
@@ -159,9 +162,19 @@ const handleDeriveJson = () => {
 
 // 导出HTML
 const handleDeriveHtml = () => {
-	showModal.htmlModal = true;
-	const htmlData = objToHtml(editingStore.pageData.blocks);
-	codeState.htmlCode = `${htmlData}`;
+    showModal.htmlModal = true;
+    const htmlData = objToHtml(editingStore.pageData.blocks);
+    codeState.htmlCode = `${htmlData}`;
+};
+
+// 下载JSON
+const handleExportJson = () => {
+    exportHtml("json", codeState.jsonCode);
+};
+
+// 下载Html
+const handleExportHtml = () => {
+    exportHtml("html", codeState.htmlCode);
 };
 </script>
 
