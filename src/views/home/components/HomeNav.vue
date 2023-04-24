@@ -47,7 +47,7 @@
                     type="primary"
                     :color="themeState.dark?'#fff':'#18A058'"
                     @click="handleRegister"
-                >免费使用</n-button>
+                >免费体验</n-button>
             </div>
         </div>
     </div>
@@ -86,7 +86,7 @@ onMounted(() => {
 
 // 登录
 function handleLogin() {
-    console.log(123);
+    router.push({ name: "login" });
 }
 
 // 注册

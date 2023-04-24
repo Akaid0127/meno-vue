@@ -22,6 +22,7 @@ const bodyScale = () => {
     document.body.style.height = heightScale;
 };
 onMounted(() => {
+	// 使用这种方法会导致组件在拖拽的过程中，定位有偏差
     // bodyScale()
 });
 </script>

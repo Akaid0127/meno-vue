@@ -2441,6 +2441,240 @@ comCssArr.forEach((item) => {
 
 
 
+### 4.19 导出JSON和HTML
+
+使用file-saver
+
+- mode：导出的文件后缀
+- htmlString：导出的文件内容
+
+```js
+import { saveAs } from 'file-saver';
+
+// 导出html
+function exportHtml(mode, htmlString) {
+	let blob = new Blob([htmlString], { type: "text/plain;charset=utf-8" });
+	saveAs(blob, `testFile.${mode}`);
+}
+
+export default exportHtml
+```
+
+
+
+就下来就可以正式开始后台Strapi的编写了
+
+增删改查
+
+低代码页面的遗留问题：
+
+- 组件的拖动会超出限定范围
+- 组件属性的事件未定义
+
+日后再解决
+
+
+
+## 五、数据结构设计
+
+以上完成的低代码页面开发平台作为作品导出
+
+接下整理系统的数据结构
+
+所有自创建表均包含`id`，`createdAt`，`updatedAt`
+
+### 5.1 用户
+
+User
+
+| 字段      | 类型     | 说明               | 约束                           |
+| --------- | -------- | ------------------ | ------------------------------ |
+| username  | text     | 用户姓名           |                                |
+| email     | email    | 用户邮箱           |                                |
+| password  | password | 用户密码           |                                |
+| creations | relation | 用户所拥有的产品   | User belongs to many Creations |
+| folds     | relation | 用户所拥有的文件夹 | User belongs to many Folds     |
+| team      | relation | 用户所在的team     | Team has many Users            |
+
+
+
+### 5.2 作品
+
+Creation
+
+| 字段                   | 类型     | 说明           | 约束                        |
+| ---------------------- | -------- | -------------- | --------------------------- |
+| crea_name              | text     | 作品名称       |                             |
+| crea_status            | text     | 作品状态       |                             |
+| isPublic               | boolean  | 作品是否公开   |                             |
+| json_content           | json     | 内容           |                             |
+| users_permissions_user | relation | 作品作者       | User has many Creations     |
+| fold                   | relation | 作品所属文件夹 | Fold has many Creations     |
+| category               | relation | 作品分类       | Category has many Creations |
+
+
+
+### 5.3 作品文件夹
+
+Fold
+
+| 字段                   | 类型     | 说明           | 约束                           |
+| ---------------------- | -------- | -------------- | ------------------------------ |
+| fold_name              | text     | 文件夹名称     |                                |
+| users_permissions_user | relation | 文件夹所属用户 | User has many Folds            |
+| creations              | relation | 文件夹下的作品 | Fold belongs to many Creations |
+
+
+
+### 5.4 作品类别
+
+Category
+
+| 字段      | 类型     | 说明         | 约束                               |
+| --------- | -------- | ------------ | ---------------------------------- |
+| cate_name | text     | 类别名称     |                                    |
+| creations | relation | 类别下的作品 | Category belongs to many Creations |
+
+
+
+### 5.5 团队
+
+Team
+
+| 字段          | 类型     | 说明     | 约束                           |
+| ------------- | -------- | -------- | ------------------------------ |
+| team_name     | text     | 团队名称 |                                |
+| users_list    | relation | 团队成员 | Team belongs to many Users     |
+| user_manager  | relation | 管理员   | Team has one User              |
+| users_operate | relation | 成员列表 | Team has many Users            |
+| users_visit   | relation | 访客列表 | Team has many Users            |
+| creations     | relation | 团队作品 | Team belongs to many Creations |
+
+
+
+
+
+
+
+
+
+## 六、 用户注册登录
+
+### 项目创建
+
+创建Strapi项目`meno-server`
+
+后台账号密码
+
+```
+Email:
+lzy127125@163.com
+Password:
+Lzy127127
+```
+
+
+
+### 身份认证
+
+注册auth用户
+
+发送特定的post请求
+
+```
+http://localhost:1337/api/auth/loacl/register
+```
+
+数据参数JSON（不需要data）
+
+```json
+{
+	"username":"Andy",
+	"email":"andy@andy.andy",
+    "password":"password!"
+}
+```
+
+
+
+response
+
+```json
+{
+	"jwt":"asdsadrsygwg...",
+    "user":{
+        ...
+    }
+}
+```
+
+
+
+在需求auth用户的请求中需要
+
+在Headers指定一个
+
+```
+KEY:Authorization
+VALUE:Bearer asdasawdawd(刚才的jwt安全令牌)
+```
+
+
+
+### 用户注册登录
+
+首先在后台注册一个权限用户
+
+```
+andy
+andy@meno.com
+123123
+```
+
+
+
+## 七、配置Axios
+
+安装axios
+
+```
+npm install --save axios vue-axios
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

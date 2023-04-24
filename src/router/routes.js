@@ -1,6 +1,8 @@
-import Home from "@/views/home";
-import Work from "@/views/work";
-import Design from "@/views/design";
+import Home from "@/views/home"; // 首页
+import Work from "@/views/work"; // 工作台
+import Design from "@/views/design"; // 设计室
+import Login from "@/views/login"; // 登录
+
 
 import Test from '@/views/test';
 
@@ -26,6 +28,12 @@ const routes = [
 		name:'design',
 		path:'/design',
 		component:Design
+	},
+	
+	{
+		name: 'login',
+		path: '/login',
+		component: Login
 	}
 ];
 

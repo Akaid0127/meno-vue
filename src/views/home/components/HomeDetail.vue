@@ -14,7 +14,7 @@
                 </template>
 
                 <template #suffix>
-                    <n-button strong secondary type="primary">免费使用</n-button>
+                    <n-button strong secondary type="primary">免费注册</n-button>
                 </template>
             </n-input>
 
@@ -71,7 +71,7 @@ import {
 .homedetail-wrap {
     background-color: #f3f7fb;
     width: 100%;
-    padding: 20px 0;
+    padding: 20px 20px;
     display: flex;
     justify-content: center;
     border-bottom: 1px solid black;
