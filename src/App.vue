@@ -1,9 +1,13 @@
 <template>
-    <n-config-provider :hljs="hljs">
-        <div id="app">
-            <router-view></router-view>
-        </div>
-    </n-config-provider>
+<!-- message消息提醒 -->
+    <n-message-provider>
+		<!-- 代码高亮 -->
+        <n-config-provider :hljs="hljs">
+            <div id="app">
+                <router-view></router-view>
+            </div>
+        </n-config-provider>
+    </n-message-provider>
 </template>
 
 <script setup>
@@ -22,7 +26,7 @@ const bodyScale = () => {
     document.body.style.height = heightScale;
 };
 onMounted(() => {
-	// 使用这种方法会导致组件在拖拽的过程中，定位有偏差
+    // 使用这种方法会导致组件在拖拽的过程中，定位有偏差
     // bodyScale()
 });
 </script>

@@ -20,7 +20,7 @@ export const userReg = (data) => {
 		data: {
 			username: data.userName,
 			email: data.email,
-			password: email.passward,
+			password: data.passward,
 		}
 	})
 }

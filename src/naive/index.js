@@ -22,7 +22,8 @@ import {
 	NScrollbar,
 	NModal,
 	NConfigProvider,
-	NCode
+	NCode,
+	NMessageProvider
 } from 'naive-ui'
 
 const naive = create({
@@ -48,7 +49,8 @@ const naive = create({
 		NScrollbar,
 		NModal,
 		NConfigProvider,
-		NCode
+		NCode,
+		NMessageProvider
 	]
 })
 

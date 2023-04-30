@@ -566,8 +566,6 @@ style: {
 
 
 
-
-
 ### 4.8 画布组件拖拽
 
 终于实现了
@@ -2643,7 +2641,9 @@ npm install --save axios vue-axios
 
 
 
+登录或注册之后获得jwt，获得jwt之后读取token并存储localStorage
 
+把token封装在每一次请求头中
 
 
 

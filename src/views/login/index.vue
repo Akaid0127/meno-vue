@@ -3,7 +3,6 @@
         <div class="login-content">
             <div class="header">
                 <img class="logo" :src="imgState.logoImgLight" alt="低代码平台" />
-
                 <n-button strong secondary type="primary" @click="handleBack">返回首页</n-button>
             </div>
 
@@ -29,17 +28,17 @@
                             >
                                 <n-tab-pane name="signin" tab="登录">
                                     <n-form
-                                        ref="formLogin"
+                                        ref="formLoginRef"
                                         :model="formLoginState"
                                         :rules="formLoginRule"
                                     >
-                                        <n-form-item-row label="用户名" path="formLoginState.userName">
+                                        <n-form-item-row label="用户名" path="userName">
                                             <n-input
                                                 v-model:value="formLoginState.userName"
                                                 placeholder="请输入用户名"
                                             />
                                         </n-form-item-row>
-                                        <n-form-item-row label="密码" path="formLoginState.passward">
+                                        <n-form-item-row label="密码" path="passward">
                                             <n-input
                                                 v-model:value="formLoginState.passward"
                                                 placeholder="请输入密码"
@@ -58,23 +57,23 @@
                                 </n-tab-pane>
                                 <n-tab-pane name="signup" tab="注册">
                                     <n-form
-                                        ref="formReg"
+                                        ref="formRegRef"
                                         :model="formRegState"
                                         :rules="formRegRule"
                                     >
-                                        <n-form-item-row label="用户名" path="formRegState.userName">
+                                        <n-form-item-row label="用户名" path="userName">
                                             <n-input
                                                 v-model:value="formRegState.userName"
                                                 placeholder="请输入用户名"
                                             />
                                         </n-form-item-row>
-                                        <n-form-item-row label="邮箱" path="formRegState.email">
+                                        <n-form-item-row label="邮箱" path="email">
                                             <n-input
                                                 v-model:value="formRegState.email"
                                                 placeholder="请输入邮箱"
                                             />
                                         </n-form-item-row>
-                                        <n-form-item-row label="密码" path="formRegState.passward">
+                                        <n-form-item-row label="密码" path="passward">
                                             <n-input
                                                 v-model:value="formRegState.passward"
                                                 placeholder="请输入密码"
@@ -103,8 +102,11 @@
 <script setup>
 import { ref, reactive, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
+import { useMessage } from "naive-ui";
 import { Bot } from "@vicons/carbon";
 import { userLogin, userReg } from "@/service";
+
+const message = useMessage();
 
 // 定义路由
 const router = useRouter();
@@ -140,31 +142,34 @@ const formLoginRule = {
     },
 };
 
-const formLogin = ref(null);
+const formLoginRef = ref(null);
 
 const handleLogin = (e) => {
     e.preventDefault();
-    formLogin.value?.validate((errors) => {
+    formLoginRef.value?.validate((errors) => {
         if (!errors) {
-            console.log(123);
             if (formLoginState.userName && formLoginState.passward) {
                 const params = {
                     userName: formLoginState.userName,
                     passward: formLoginState.passward,
                 };
 
-                userLogin(params)
-                    .then((res) => {
+                userLogin(params).then(
+                    (res) => {
                         // 读取token并存储localStorage
-                        localStorage.setItem("userJwt", response.data.jwt);
-                    })
-                    .catch((error) => {
-                        // Handle error.
-                        console.log("An error occurred:", error.response);
-                    });
+                        localStorage.setItem("userJwt", res.data.jwt);
+                    },
+                    (error) => {
+                        console.log(345);
+                        if (error.response.status === 400) {
+                            message.error("账号密码错误或账号不存在");
+                        }
+                    }
+                );
             }
         } else {
             console.log(errors);
+            message.error("请补全信息");
         }
     });
 };
@@ -184,7 +189,7 @@ const formRegRule = {
     },
     email: {
         required: true,
-        message: "请输入姓名",
+        message: "请输入邮箱",
         trigger: "blur",
     },
     passward: {
@@ -194,11 +199,11 @@ const formRegRule = {
     },
 };
 
-const formReg = ref(null);
+const formRegRef = ref(null);
 
 const handleReg = (e) => {
     e.preventDefault();
-    formLogin.value?.validate((errors) => {
+    formRegRef.value?.validate((errors) => {
         if (!errors) {
             if (
                 formRegState.userName &&
@@ -206,20 +211,25 @@ const handleReg = (e) => {
                 formRegState.email
             ) {
                 const params = {
-                    userName: formLoginState.userName,
-                    email: formLoginState.email,
-                    passward: formLoginState.passward,
+                    userName: formRegState.userName,
+                    email: formRegState.email,
+                    passward: formRegState.passward,
                 };
 
-                userReg(params)
-                    .then((res) => {
+                if (localStorage.removeItem("userJwt")) {
+                    localStorage.removeItem("userJwt");
+                }
+                userReg(params).then(
+                    (res) => {
                         // 读取token并存储localStorage
-                        localStorage.setItem("userJwt", response.data.jwt);
-                    })
-                    .catch((error) => {
-                        // Handle error.
-                        console.log("An error occurred:", error.response);
-                    });
+                        localStorage.setItem("userJwt", res.data.jwt);
+                    },
+                    (error) => {
+                        if (error.response.status === 400) {
+                            message.error(error.response.data.error.message);
+                        }
+                    }
+                );
             }
         } else {
             console.log(errors);
@@ -240,6 +250,7 @@ const handleReg = (e) => {
     .card-tabs .n-tabs-nav--bar-type {
         padding-left: 4px;
     }
+
     .header {
         height: 65px;
         display: flex;
@@ -261,28 +272,84 @@ const handleReg = (e) => {
         justify-content: center;
         padding: 40px;
 
+        height: calc(100vh - 65px);
+
         .left {
             width: 1200px;
-            height: 650px;
             margin-right: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             .show {
                 width: 1200px;
-                height: 650px;
+                height: calc(100vh - 65px - 80px);
                 background-color: #daf0e4;
                 border-radius: 20px;
+                background-color: #bcecc8;
+                background-image: radial-gradient(
+                        closest-side,
+                        rgba(218, 240, 228, 1),
+                        rgba(218, 240, 228, 0)
+                    ),
+                    radial-gradient(
+                        closest-side,
+                        rgba(194, 236, 194, 1),
+                        rgba(194, 236, 194, 0)
+                    ),
+                    radial-gradient(
+                        closest-side,
+                        rgba(226, 237, 170, 1),
+                        rgba(226, 237, 170, 0)
+                    ),
+                    radial-gradient(
+                        closest-side,
+                        rgba(139, 226, 217, 1),
+                        rgba(139, 226, 217, 0)
+                    ),
+                    radial-gradient(
+                        closest-side,
+                        rgba(251, 237, 150, 1),
+                        rgba(251, 237, 150, 0)
+                    );
+                background-size: 130vmax 130vmax, 80vmax 80vmax, 90vmax 90vmax,
+                    110vmax 110vmax, 90vmax 90vmax;
+                background-position: -80vmax -80vmax, 60vmax -30vmax,
+                    10vmax 10vmax, -30vmax -10vmax, 50vmax 50vmax;
+                background-repeat: no-repeat;
+                animation: 10s movement linear infinite;
+
+                @keyframes movement {
+                    0%,
+                    100% {
+                        background-size: 130vmax 130vmax, 80vmax 80vmax,
+                            90vmax 90vmax, 110vmax 110vmax, 90vmax 90vmax;
+                        background-position: -80vmax -80vmax, 60vmax -30vmax,
+                            10vmax 10vmax, -30vmax -10vmax, 50vmax 50vmax;
+                    }
+                    25% {
+                        background-size: 100vmax 100vmax, 90vmax 90vmax,
+                            100vmax 100vmax, 90vmax 90vmax, 60vmax 60vmax;
+                        background-position: -60vmax -90vmax, 50vmax -40vmax,
+                            0vmax -20vmax, -40vmax -20vmax, 40vmax 60vmax;
+                    }
+                    50% {
+                        background-size: 80vmax 80vmax, 110vmax 110vmax,
+                            80vmax 80vmax, 60vmax 60vmax, 80vmax 80vmax;
+                        background-position: -50vmax -70vmax, 40vmax -30vmax,
+                            10vmax 0vmax, 20vmax 10vmax, 30vmax 70vmax;
+                    }
+                    75% {
+                        background-size: 90vmax 90vmax, 90vmax 90vmax,
+                            100vmax 100vmax, 90vmax 90vmax, 70vmax 70vmax;
+                        background-position: -50vmax -40vmax, 50vmax -30vmax,
+                            20vmax 0vmax, -10vmax 10vmax, 40vmax 60vmax;
+                    }
+                }
             }
         }
 
         .right {
             width: 400px;
-            height: 650px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-between;
             .title {
                 .n-icon {
                     font-size: 50px;
@@ -295,6 +362,8 @@ const handleReg = (e) => {
                 align-items: center;
                 justify-content: center;
                 padding-top: 40px;
+                margin-bottom: 40px;
+
                 font: bold 40px "SourceHanSansCN_Bold";
                 color: #53a058;
                 opacity: 0.8;
@@ -303,12 +372,10 @@ const handleReg = (e) => {
                 .n-card {
                     width: 360px;
                     border-radius: 20px;
-                    height: 540px;
+                    height: calc(100vh - 65px - 60px - 40px - 80px);
                 }
             }
         }
-    }
-    .inlet {
     }
 }
 </style>

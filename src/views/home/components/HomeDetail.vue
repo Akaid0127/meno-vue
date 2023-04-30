@@ -8,13 +8,13 @@
                 <p>Windows 也能用的「协作版 LCDP」</p>
             </div>
 
-            <n-input placeholder="输入手机号注册">
+            <n-input placeholder="输入邮箱注册">
                 <template #prefix>
                     <n-icon :component="ApplicationMobile" />
                 </template>
 
                 <template #suffix>
-                    <n-button strong secondary type="primary">免费注册</n-button>
+                    <n-button strong secondary type="primary" @click="handleReg">免费注册</n-button>
                 </template>
             </n-input>
 
@@ -59,12 +59,21 @@
 </template>
 
 <script setup>
+import { useRouter, useRoute } from "vue-router";
 import {
     ApplicationMobile,
     AirlineManageGates,
     Group,
     ShareKnowledge,
 } from "@vicons/carbon";
+
+// 定义路由
+const router = useRouter();
+const route = useRoute();
+
+const handleReg = () => {
+	router.push({ name: "login" });
+}
 </script>
 
 <style lang="scss" scoped>
@@ -74,12 +83,11 @@ import {
     padding: 20px 20px;
     display: flex;
     justify-content: center;
-    border-bottom: 1px solid black;
 }
 // 调整渐变背景
 .homedetail-content {
     width: 1880px;
-    height: 820px;
+    height: calc(100vh - 40px - 65px);
     border-radius: 25px;
     background-color: #bcecc8;
     background-image: radial-gradient(

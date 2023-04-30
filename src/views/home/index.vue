@@ -8,14 +8,7 @@
                 </n-layout-header>
                 <n-layout-content>
                     <HomeDetail></HomeDetail>
-                    <HomeBrief></HomeBrief>
-                    <HomeFeature></HomeFeature>
-                    <HomeCommunity></HomeCommunity>
-                    <HomeLink></HomeLink>
                 </n-layout-content>
-                <n-layout-footer>
-                    <HomeEnd></HomeEnd>
-                </n-layout-footer>
             </n-layout>
         </div>
     </div>
@@ -25,11 +18,6 @@
 // 组件
 import HomeNav from "./components/HomeNav.vue";
 import HomeDetail from "./components/HomeDetail.vue";
-import HomeBrief from "./components/HomeBrief.vue";
-import HomeFeature from "./components/HomeFeature.vue";
-import HomeCommunity from "./components/HomeCommunity.vue";
-import HomeLink from "./components/HomeLink.vue";
-import HomeEnd from "./components/HomeEnd.vue";
 </script>
 
 <style lang="scss" scoped>
@@ -37,16 +25,12 @@ import HomeEnd from "./components/HomeEnd.vue";
     height: 65px;
     position: fixed;
     top: 0;
-	z-index: 1;
+    z-index: 1;
 }
 
 .n-layout-content {
     margin-top: 65px;
-    min-height: 1800px;
+    min-height: calc(100vh - 65px);
     // background: rgba(128, 128, 128, 0.4);
-}
-
-.n-layout-footer {
-    min-height: 65px;
 }
 </style>s
