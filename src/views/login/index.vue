@@ -105,7 +105,12 @@ import { useRouter, useRoute } from "vue-router";
 import { useMessage } from "naive-ui";
 import { Bot } from "@vicons/carbon";
 import { userLogin, userReg } from "@/service";
+import useUserinfo from "@/stores/userinfo";
 
+// pinia
+const userinfoStore = useUserinfo(); // 用户状态
+
+// naive message
 const message = useMessage();
 
 // 定义路由
@@ -124,11 +129,11 @@ const handleBack = () => {
 };
 
 // 登录
+const formLoginRef = ref(null);
 const formLoginState = reactive({
     userName: "",
     passward: "",
 });
-
 const formLoginRule = {
     userName: {
         required: true,
@@ -141,9 +146,6 @@ const formLoginRule = {
         trigger: "blur",
     },
 };
-
-const formLoginRef = ref(null);
-
 const handleLogin = (e) => {
     e.preventDefault();
     formLoginRef.value?.validate((errors) => {
@@ -154,13 +156,23 @@ const handleLogin = (e) => {
                     passward: formLoginState.passward,
                 };
 
+                if (localStorage.removeItem("userJwt")) {
+                    localStorage.removeItem("userJwt");
+                }
                 userLogin(params).then(
                     (res) => {
                         // 读取token并存储localStorage
                         localStorage.setItem("userJwt", res.data.jwt);
+                        const responseData = res.data.user;
+                        const userData = {
+                            userId: responseData.id,
+                            userName: responseData.email,
+                            userEmail: responseData.username,
+                        };
+                        userinfoStore.setUserInfo(userData);
+                        router.push({ name: "work" });
                     },
                     (error) => {
-                        console.log(345);
                         if (error.response.status === 400) {
                             message.error("账号密码错误或账号不存在");
                         }
@@ -175,12 +187,12 @@ const handleLogin = (e) => {
 };
 
 // 注册
+const formRegRef = ref(null);
 const formRegState = reactive({
     userName: "",
     email: "",
     passward: "",
 });
-
 const formRegRule = {
     userName: {
         required: true,
@@ -198,9 +210,6 @@ const formRegRule = {
         trigger: "blur",
     },
 };
-
-const formRegRef = ref(null);
-
 const handleReg = (e) => {
     e.preventDefault();
     formRegRef.value?.validate((errors) => {
@@ -223,6 +232,14 @@ const handleReg = (e) => {
                     (res) => {
                         // 读取token并存储localStorage
                         localStorage.setItem("userJwt", res.data.jwt);
+                        const responseData = res.data.user;
+                        const userData = {
+                            userId: responseData.id,
+                            userName: responseData.email,
+                            userEmail: responseData.username,
+                        };
+                        userinfoStore.setUserInfo(userData);
+                        router.push({ name: "work" });
                     },
                     (error) => {
                         if (error.response.status === 400) {
