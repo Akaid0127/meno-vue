@@ -156,7 +156,7 @@ const handleLogin = (e) => {
                     passward: formLoginState.passward,
                 };
 
-                if (localStorage.removeItem("userJwt")) {
+                if (localStorage.getItem("userJwt") != null) {
                     localStorage.removeItem("userJwt");
                 }
                 userLogin(params).then(
@@ -166,8 +166,8 @@ const handleLogin = (e) => {
                         const responseData = res.data.user;
                         const userData = {
                             userId: responseData.id,
-                            userName: responseData.email,
-                            userEmail: responseData.username,
+                            userName: responseData.username,
+                            userEmail: responseData.email,
                         };
                         userinfoStore.setUserInfo(userData);
                         router.push({ name: "work" });
@@ -225,7 +225,7 @@ const handleReg = (e) => {
                     passward: formRegState.passward,
                 };
 
-                if (localStorage.removeItem("userJwt")) {
+                if (localStorage.getItem("userJwt") != null) {
                     localStorage.removeItem("userJwt");
                 }
                 userReg(params).then(
@@ -235,8 +235,8 @@ const handleReg = (e) => {
                         const responseData = res.data.user;
                         const userData = {
                             userId: responseData.id,
-                            userName: responseData.email,
-                            userEmail: responseData.username,
+                            userName: responseData.username,
+                            userEmail: responseData.email,
                         };
                         userinfoStore.setUserInfo(userData);
                         router.push({ name: "work" });

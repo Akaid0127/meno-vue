@@ -8,7 +8,7 @@
 
                 <n-layout>
                     <n-layout-header bordered>
-                        <WorkSearch />
+                        <WorkSearch :userName="userState.userName"/>
                     </n-layout-header>
                     <n-layout-content>
                         <WorkFile />
@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-import { onMounted } from "vue";
+import { reactive, onMounted } from "vue";
 import WorkNav from "./components/WorkNav.vue";
 import WorkSearch from "./components/WorkSearch.vue";
 import WorkFile from "./components/WorkFile.vue";
@@ -28,6 +28,10 @@ import useUserinfo from "@/stores/userinfo";
 
 // pinia
 const userinfoStore = useUserinfo(); // 用户状态
+
+const userState = reactive({
+    userName: userinfoStore.userInfo.userName,
+});
 
 onMounted(() => {
     console.log(userinfoStore.userInfo);

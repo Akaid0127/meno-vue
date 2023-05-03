@@ -47,7 +47,7 @@
                     <n-avatar :style="{
 						color: '#FFF',
 						backgroundColor: '#E381C6'
-						}">雷</n-avatar>
+						}">{{props.userName}}</n-avatar>
                 </div>
             </div>
         </div>
@@ -64,6 +64,12 @@ import {
     CloudDownload,
     Chat,
 } from "@vicons/carbon";
+
+const props = defineProps(["userName"]);
+
+
+
+
 </script>
 
 <style lang="scss" scoped>
