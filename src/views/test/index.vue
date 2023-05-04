@@ -30,7 +30,7 @@
 
 <script>
 import { defineComponent, ref } from "vue";
-
+console.log("test remote")
 export default defineComponent({
   setup() {
     const formRef = ref(null);
