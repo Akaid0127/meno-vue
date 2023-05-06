@@ -2,8 +2,14 @@
     <div class="login-wrapper">
         <div class="login-content">
             <div class="header">
-                <img class="logo" :src="imgState.logoImgLight" alt="低代码平台" />
-                <n-button strong secondary type="primary" @click="handleBack">返回首页</n-button>
+                <img
+                    class="logo"
+                    :src="imgState.logoImgLight"
+                    alt="低代码平台"
+                />
+                <n-button strong secondary type="primary" @click="handleBack"
+                    >返回首页</n-button
+                >
             </div>
 
             <div class="bottom">
@@ -13,34 +19,46 @@
 
                 <div class="right">
                     <div class="title">
-                        <n-icon>
-                            <Bot />
-                        </n-icon>快速 & 简易
+                        <n-icon> <Bot /> </n-icon>快速 & 简易
                     </div>
                     <div class="inlet">
                         <n-card>
                             <n-tabs
                                 class="card-tabs"
-                                default-value="signin"
+                                v-model:value="nTabState.nTabValue"
                                 size="large"
                                 animated
                                 justify-content="space-evenly"
                             >
-                                <n-tab-pane name="signin" tab="登录">
+                                <n-tab-pane
+                                    name="signin"
+                                    tab="登录"
+                                    @click="handleSignin"
+                                >
                                     <n-form
                                         ref="formLoginRef"
                                         :model="formLoginState"
                                         :rules="formLoginRule"
                                     >
-                                        <n-form-item-row label="用户名" path="userName">
+                                        <n-form-item-row
+                                            label="用户名"
+                                            path="userName"
+                                        >
                                             <n-input
-                                                v-model:value="formLoginState.userName"
+                                                v-model:value="
+                                                    formLoginState.userName
+                                                "
                                                 placeholder="请输入用户名"
                                             />
                                         </n-form-item-row>
-                                        <n-form-item-row label="密码" path="passward">
+                                        <n-form-item-row
+                                            label="密码"
+                                            path="passward"
+                                        >
                                             <n-input
-                                                v-model:value="formLoginState.passward"
+                                                v-model:value="
+                                                    formLoginState.passward
+                                                "
                                                 placeholder="请输入密码"
                                             />
                                         </n-form-item-row>
@@ -51,31 +69,51 @@
                                                 secondary
                                                 strong
                                                 @click="handleLogin"
-                                            >登录</n-button>
+                                                >登录</n-button
+                                            >
                                         </n-form-item-row>
                                     </n-form>
                                 </n-tab-pane>
-                                <n-tab-pane name="signup" tab="注册">
+                                <n-tab-pane
+                                    name="signup"
+                                    tab="注册"
+                                    @click="handleSignup"
+                                >
                                     <n-form
                                         ref="formRegRef"
                                         :model="formRegState"
                                         :rules="formRegRule"
                                     >
-                                        <n-form-item-row label="用户名" path="userName">
+                                        <n-form-item-row
+                                            label="用户名"
+                                            path="userName"
+                                        >
                                             <n-input
-                                                v-model:value="formRegState.userName"
+                                                v-model:value="
+                                                    formRegState.userName
+                                                "
                                                 placeholder="请输入用户名"
                                             />
                                         </n-form-item-row>
-                                        <n-form-item-row label="邮箱" path="email">
+                                        <n-form-item-row
+                                            label="邮箱"
+                                            path="email"
+                                        >
                                             <n-input
-                                                v-model:value="formRegState.email"
+                                                v-model:value="
+                                                    formRegState.email
+                                                "
                                                 placeholder="请输入邮箱"
                                             />
                                         </n-form-item-row>
-                                        <n-form-item-row label="密码" path="passward">
+                                        <n-form-item-row
+                                            label="密码"
+                                            path="passward"
+                                        >
                                             <n-input
-                                                v-model:value="formRegState.passward"
+                                                v-model:value="
+                                                    formRegState.passward
+                                                "
                                                 placeholder="请输入密码"
                                             />
                                         </n-form-item-row>
@@ -86,7 +124,8 @@
                                                 secondary
                                                 strong
                                                 @click="handleReg"
-                                            >注册</n-button>
+                                                >注册</n-button
+                                            >
                                         </n-form-item-row>
                                     </n-form>
                                 </n-tab-pane>
@@ -106,6 +145,30 @@ import { useMessage } from "naive-ui";
 import { Bot } from "@vicons/carbon";
 import { userLogin, userReg } from "@/service";
 import useUserinfo from "@/stores/userinfo";
+
+// 挂载
+onMounted(() => {
+    const tabValue = route.query.type;
+    if (tabValue === "toLogin") {
+        nTabState.nTabValue = "signin";
+    } else if (tabValue === "toReg") {
+        formRegState.email = route.query.regMail;
+        nTabState.nTabValue = "signup";
+    }
+});
+
+// 模态框默认值
+const nTabState = reactive({
+    nTabValue: "signin",
+});
+
+const handleSignin = () => {
+    nTabState.nTabValue = "signin";
+};
+
+const handleSignup = () => {
+    nTabState.nTabValue = "signup";
+};
 
 // pinia
 const userinfoStore = useUserinfo(); // 用户状态

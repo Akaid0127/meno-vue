@@ -4,7 +4,11 @@
         <div class="homenav-content">
             <img
                 class="logo"
-                :src="themeState.dark?imgState.logoImgDark:imgState.logoImgLight"
+                :src="
+                    themeState.dark
+                        ? imgState.logoImgDark
+                        : imgState.logoImgLight
+                "
                 alt="低代码平台"
             />
             <div class="tag-list">
@@ -23,7 +27,7 @@
                     secondary
                     circle
                     @click="modelBrn"
-                    :color="themeState.dark?'#fff':'#18A058'"
+                    :color="themeState.dark ? '#fff' : '#18A058'"
                 >
                     <template #icon>
                         <n-icon>
@@ -37,17 +41,19 @@
                     strong
                     secondary
                     type="tertiary"
-                    :color="themeState.dark?'#fff':'#18A058'"
+                    :color="themeState.dark ? '#fff' : '#18A058'"
                     @click="handleLogin"
-                >登录</n-button>
+                    >登录</n-button
+                >
                 <n-button
                     class="regisBtn"
                     strong
                     secondary
                     type="primary"
-                    :color="themeState.dark?'#fff':'#18A058'"
+                    :color="themeState.dark ? '#fff' : '#18A058'"
                     @click="handleRegister"
-                >免费体验</n-button>
+                    >免费体验</n-button
+                >
             </div>
         </div>
     </div>
@@ -86,12 +92,19 @@ onMounted(() => {
 
 // 登录
 function handleLogin() {
-    router.push({ name: "login" });
+    router.push({
+        name: "login",
+        query: { type: "toLogin" },
+    });
 }
 
 // 注册
 function handleRegister() {
-    router.push({ name: "work" });
+    // todo 暂时链接到这里
+    router.push({
+        name: "login",
+        query: { type: "toLogin" },
+    });
 }
 </script>
 

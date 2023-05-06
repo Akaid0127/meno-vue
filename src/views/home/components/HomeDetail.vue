@@ -8,13 +8,18 @@
                 <p>Windows 也能用的「协作版 LCDP」</p>
             </div>
 
-            <n-input placeholder="输入邮箱注册">
+            <n-input
+                placeholder="输入邮箱注册"
+                v-model:value="regState.regMail"
+            >
                 <template #prefix>
-                    <n-icon :component="ApplicationMobile" />
+                    <n-icon :component="MailAll" />
                 </template>
 
                 <template #suffix>
-                    <n-button strong secondary type="primary" @click="handleReg">免费注册</n-button>
+                    <n-button strong secondary type="primary" @click="handleReg"
+                        >免费注册</n-button
+                    >
                 </template>
             </n-input>
 
@@ -27,7 +32,9 @@
                         </n-icon>
                     </n-button>
                     <div class="subtitle">所见即是所得</div>
-                    <div class="content">快速构建用户界面，它允许用户使用可视化工具，来创建和编辑页面。</div>
+                    <div class="content">
+                        快速构建用户界面，它允许用户使用可视化工具，来创建和编辑页面。
+                    </div>
                 </n-card>
 
                 <n-card embedded :bordered="false">
@@ -39,7 +46,9 @@
                     </n-button>
 
                     <div class="subtitle">多人协作开发</div>
-                    <div class="content">用户可创建团队项目，邀请协作成员进行团队项目开发，管理项目日常协作。</div>
+                    <div class="content">
+                        用户可创建团队项目，邀请协作成员进行团队项目开发，管理项目日常协作。
+                    </div>
                 </n-card>
 
                 <n-card embedded :bordered="false">
@@ -51,7 +60,9 @@
                     </n-button>
 
                     <div class="subtitle">社区不断繁荣</div>
-                    <div class="content">平台社区资源共享，快速进行二次开发迭代，减少项目页面绘制时间。</div>
+                    <div class="content">
+                        平台社区资源共享，快速进行二次开发迭代，减少项目页面绘制时间。
+                    </div>
                 </n-card>
             </div>
         </div>
@@ -59,21 +70,50 @@
 </template>
 
 <script setup>
+import { reactive } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import {
-    ApplicationMobile,
+    MailAll,
     AirlineManageGates,
     Group,
     ShareKnowledge,
 } from "@vicons/carbon";
+import es from "naive-ui";
+import { useMessage } from "naive-ui";
 
 // 定义路由
 const router = useRouter();
 const route = useRoute();
 
+// naive message
+const message = useMessage();
+
+const regState = reactive({
+    regMail: "",
+});
+
 const handleReg = () => {
-	router.push({ name: "login" });
-}
+    // 邮箱验证正确后跳转
+    if (checkMail(regState.regMail)) {
+        router.push({
+            name: "login",
+            query: { regMail: regState.regMail, type: "toReg" },
+        });
+    } else {
+        message.warning("邮箱号码格式有误，请重新填写");
+    }
+    s;
+};
+
+// 邮箱验证
+const checkMail = (mailValue) => {
+    var regMail = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9])+/;
+    if (!regMail.test(mailValue)) {
+        return false;
+    } else {
+        return true;
+    }
+};
 </script>
 
 <style lang="scss" scoped>
@@ -92,8 +132,8 @@ const handleReg = () => {
     background-color: #bcecc8;
     background-image: radial-gradient(
             closest-side,
-            rgba(218,240,228, 1),
-            rgba(218,240,228, 0)
+            rgba(218, 240, 228, 1),
+            rgba(218, 240, 228, 0)
         ),
         radial-gradient(
             closest-side,
@@ -107,8 +147,8 @@ const handleReg = () => {
         ),
         radial-gradient(
             closest-side,
-            rgba(139,226,217, 1),
-            rgba(139,226,217, 0)
+            rgba(139, 226, 217, 1),
+            rgba(139, 226, 217, 0)
         ),
         radial-gradient(
             closest-side,
@@ -220,8 +260,8 @@ const handleReg = () => {
             height: 240px;
             display: flex;
             border-radius: 20px;
-            background-color: rgba($color: #DAF0E4, $alpha: 40%);
-			box-shadow: rgba(24,160,88,0.1) 0px 4px 12px;
+            background-color: rgba($color: #daf0e4, $alpha: 40%);
+            box-shadow: rgba(24, 160, 88, 0.1) 0px 4px 12px;
             .sectitle {
                 height: 40px;
                 width: 100px;
@@ -235,13 +275,13 @@ const handleReg = () => {
                     font-size: 26px;
                     display: inline-block;
                     padding-top: 1px;
-					margin-left: 4px;
+                    margin-left: 4px;
                 }
             }
             .subtitle {
                 font: bold 25px "SourceHanSansCN_Bold";
-				color: #18A058;
-				opacity: 0.7;
+                color: #18a058;
+                opacity: 0.7;
                 margin-bottom: 14px;
             }
             .content {
