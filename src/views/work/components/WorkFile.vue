@@ -18,7 +18,7 @@
                         </n-icon>
                     </n-button>
 
-                    <n-button class="add-btn">
+                    <n-button class="add-btn" @click="handleAddFold">
                         <div class="left">
                             <n-icon class="color-icon">
                                 <FolderAdd />
@@ -48,10 +48,48 @@
                             <Add />
                         </n-icon>
                     </n-button>
+
+                    <n-modal
+                        v-model:show="modalState.addFoldModal"
+                        class="custom-card"
+                        preset="card"
+                        :style="{ width: '400px' }"
+                        title="添加文件夹"
+                        size="huge"
+                        :bordered="false"
+                        :segmented="{ content: 'soft', footer: 'soft' }"
+                    >
+                        <template #header-extra></template>
+                        <n-input
+                            v-model:value="addFoldFormValue.fold_name"
+                            placeholder="输入文件夹名"
+                        />
+                        <template #footer>
+                            <n-button
+                                strong
+                                secondary
+                                @click="cancelFoldCallback"
+                                :style="{
+                                    width: '120px',
+                                    marginRight: '20px',
+                                    marginLeft: '30px',
+                                }"
+                            >
+                                取消
+                            </n-button>
+                            <n-button
+                                strong
+                                secondary
+                                type="primary"
+                                @click="submitFoldCallback"
+                                :style="{ width: '120px' }"
+                                >确定</n-button
+                            >
+                        </template>
+                    </n-modal>
                 </div>
             </div>
             <div class="split-line"></div>
-
             <div class="fold-scroll">
                 <n-scrollbar x-scrollable trigger="none">
                     <div class="fold-group">
@@ -76,7 +114,6 @@
             </div>
 
             <div class="split-line"></div>
-
             <div class="file-scroll">
                 <n-scrollbar trigger="none">
                     <div class="file-group">
@@ -111,7 +148,7 @@
 </template>
 
 <script setup>
-import { onMounted, reactive } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import {
     Add,
     DocumentAdd,
@@ -123,7 +160,7 @@ import {
 import { useRouter, useRoute } from "vue-router";
 import { useMessage } from "naive-ui";
 import moment from "moment";
-import { getUserFold, getUserFile } from "@/service";
+import { getUserFold, getUserFile, postFold } from "@/service";
 import useUserinfo from "@/stores/userinfo";
 
 // pinia
@@ -136,11 +173,7 @@ const route = useRoute();
 // naive message
 const message = useMessage();
 
-// 创建文件
-function handleAddFile() {
-    router.push({ name: "design" });
-}
-
+// 文件夹和文件初始化
 const contentState = reactive({
     userFolds: [],
     userFiles: [],
@@ -169,6 +202,57 @@ const dataInit = () => {
             console.log(error);
         }
     ); // 获取用户文件
+};
+
+// 模态框
+const modalState = reactive({
+    addFoldModal: false,
+    addFileModal: false,
+});
+
+// 添加文件夹
+const handleAddFold = () => {
+    modalState.addFoldModal = true;
+};
+
+const addFoldFormValue = reactive({
+    fold_name: "",
+});
+
+const submitFoldCallback = () => {
+    if (addFoldFormValue.fold_name !== "") {
+        const data = {
+            fold_name: addFoldFormValue.fold_name,
+            user: userinfoStore.userInfo.userId,
+            is_team_fold: false,
+            creations: null,
+        };
+        postFold(data).then(
+            (response) => {
+                dataInit();
+                message.success("添加成功");
+            },
+            (error) => {
+                console.log(error);
+                message.error("添加失败");
+            }
+        );
+        modalState.addFoldModal = false;
+    } else if (addFoldFormValue.fold_name === "") {
+        message.warning("输入为空");
+    } else {
+        message.error("添加失败");
+    }
+};
+
+const cancelFoldCallback = () => {
+    modalState.addFoldModal = false;
+    addFoldFormValue.fold_name = "";
+};
+
+// 添加文件
+const handleAddFile = () => {
+    router.push({ name: "design" });
 };
 
 onMounted(() => {
