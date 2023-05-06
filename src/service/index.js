@@ -87,6 +87,14 @@ export const getCategory = () => {
     })
 }
 
+// 获取文件夹下所有文件
+export const getFoldFiles = (data) => {
+    return axios({
+        url: `api/folds/${data.id}?populate=creations`,
+        method: 'get',
+    })
+}
+
 
 
 

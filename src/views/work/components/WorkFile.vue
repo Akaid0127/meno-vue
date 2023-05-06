@@ -154,7 +154,9 @@
                     </n-modal>
                 </div>
             </div>
+
             <div class="split-line"></div>
+
             <div class="fold-scroll">
                 <n-scrollbar x-scrollable trigger="none">
                     <div class="fold-group">
@@ -164,6 +166,7 @@
                             :title="item.fold_name"
                             hoverable
                             embedded
+                            @click="checkChildFiles(item)"
                         >
                             <template #header-extra>
                                 <n-icon size="22" color="#FFD485">
@@ -178,36 +181,81 @@
                 </n-scrollbar>
             </div>
 
-            <div class="split-line"></div>
-            <div class="file-scroll">
-                <n-scrollbar trigger="none">
-                    <div class="file-group">
-                        <n-card
-                            v-for="item in contentState.userFiles"
-                            :key="item.id"
-                            :title="item.cre_name"
-                            hoverable
-                            embedded
-                        >
-                            <template #header-extra>
-                                <n-icon size="22" color="#0e7a0d">
-                                    <Code />
-                                </n-icon>
-                            </template>
+            <n-tabs type="line" animated v-model:value="tabState.tabValue">
+                <n-tab-pane name="userFiles" tab="全部文件">
+                    <div class="file-scroll">
+                        <n-scrollbar trigger="none">
+                            <div class="file-group">
+                                <n-card
+                                    v-for="item in contentState.userFiles"
+                                    :key="item.id"
+                                    :title="item.cre_name"
+                                    hoverable
+                                    embedded
+                                >
+                                    <template #header-extra>
+                                        <n-icon size="22" color="#0e7a0d">
+                                            <Code />
+                                        </n-icon>
+                                    </template>
 
-                            文件夹状态：{{ item.cre_status }}
-                            <br />
-                            创建时间：{{
-                                moment(item.publishedAt).format("YYYY-MM-DD")
-                            }}
-                            <br />
-                            更新时间：{{
-                                moment(item.updatedAt).format("YYYY-MM-DD")
-                            }}
-                        </n-card>
+                                    文件夹状态：{{ item.cre_status }}
+                                    <br />
+                                    创建时间：{{
+                                        moment(item.publishedAt).format(
+                                            "YYYY-MM-DD"
+                                        )
+                                    }}
+                                    <br />
+                                    更新时间：{{
+                                        moment(item.updatedAt).format(
+                                            "YYYY-MM-DD"
+                                        )
+                                    }}
+                                </n-card>
+                            </div>
+                        </n-scrollbar>
                     </div>
-                </n-scrollbar>
-            </div>
+                </n-tab-pane>
+                <n-tab-pane name="foldFiles" :tab="tabState.foldTabName">
+                    <div v-if="contentState.foldFiles.length === 0">
+                        该文件夹下暂无文件
+                    </div>
+                    <div v-if="contentState.foldFiles !== 0">
+                        <n-scrollbar trigger="none">
+                            <div class="file-group">
+                                <n-card
+                                    v-for="item in contentState.foldFiles"
+                                    :key="item.id"
+                                    :title="item.cre_name"
+                                    hoverable
+                                    embedded
+                                >
+                                    <template #header-extra>
+                                        <n-icon size="22" color="#0e7a0d">
+                                            <Code />
+                                        </n-icon>
+                                    </template>
+
+                                    文件夹状态：{{ item.cre_status }}
+                                    <br />
+                                    创建时间：{{
+                                        moment(item.publishedAt).format(
+                                            "YYYY-MM-DD"
+                                        )
+                                    }}
+                                    <br />
+                                    更新时间：{{
+                                        moment(item.updatedAt).format(
+                                            "YYYY-MM-DD"
+                                        )
+                                    }}
+                                </n-card>
+                            </div>
+                        </n-scrollbar>
+                    </div>
+                </n-tab-pane>
+            </n-tabs>
         </div>
     </div>
 </template>
@@ -231,6 +279,7 @@ import {
     postFold,
     postFile,
     getCategory,
+    getFoldFiles,
 } from "@/service";
 import useUserinfo from "@/stores/userinfo";
 
@@ -248,6 +297,7 @@ const message = useMessage();
 const contentState = reactive({
     userFolds: [],
     userFiles: [],
+    foldFiles: [],
 });
 
 const dataInit = () => {
@@ -398,7 +448,6 @@ const submitFileCallback = () => {
                 message.success("添加成功");
 
                 // 跳转
-                
             },
             (error) => {
                 message.error("添加失败");
@@ -422,6 +471,34 @@ const cancelFileCallback = () => {
     addFileFormValue.category = null;
     modalState.addFileModal = false;
 };
+
+// 查看文件夹下文件
+const tabState = reactive({
+    tabValue: "userFiles",
+    foldTabName: "选定文件夹",
+});
+
+const checkChildFiles = (foldData) => {
+    contentState.foldFiles = [];
+    getFoldFiles({ id: foldData.id }).then(
+        (response) => {
+            const resFiles = response.data.data.attributes.creations.data;
+            for (let index = 0; index < resFiles.length; index++) {
+                contentState.foldFiles[index] = {
+                    id: resFiles[index].id,
+                    ...resFiles[index].attributes,
+                };
+            }
+            tabState.foldTabName = foldData.fold_name;
+            tabState.tabValue = "foldFiles";
+        },
+        (error) => {
+            message.error("未获取到文件");
+            console.log(error);
+        }
+    );
+};
+
 onMounted(() => {
     dataInit();
 });
@@ -501,10 +578,10 @@ onMounted(() => {
         }
     }
 
-    .file-scroll {
-        height: 620px;
-        margin-top: 10px;
+    .n-tab-pane {
+        height: 560px;
     }
+
     .file-group {
         user-select: none;
         display: flex;
