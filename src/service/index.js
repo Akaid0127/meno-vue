@@ -59,6 +59,34 @@ export const postFold = (data) => {
 }
 
 // 添加文件
+export const postFile = (data) => {
+    return axios({
+        url: 'api/creations',
+        method: 'post',
+        data: {
+            data: {
+                cre_name: data.cre_name,
+                cre_status: data.cre_status,
+                isPublic: data.isPublic,
+                is_team_file: data.is_team_file,
+                json_content: data.json_content,
+                fold: data.fold,
+                category: data.category,
+                user: data.user,
+                team: data.team,
+            }
+        }
+    })
+}
+
+// 获取所有分类
+export const getCategory = () => {
+    return axios({
+        url: 'api/categories',
+        method: 'get',
+    })
+}
+
 
 
 

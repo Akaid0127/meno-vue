@@ -87,6 +87,71 @@
                             >
                         </template>
                     </n-modal>
+
+                    <n-modal
+                        v-model:show="modalState.addFileModal"
+                        class="custom-card"
+                        preset="card"
+                        :style="{ width: '400px' }"
+                        title="添加文件"
+                        size="huge"
+                        :bordered="false"
+                        :segmented="{ content: 'soft', footer: 'soft' }"
+                    >
+                        <template #header-extra></template>
+
+                        <n-input
+                            v-model:value="addFileFormValue.cre_name"
+                            placeholder="输入文件名"
+                            :style="{ marginBottom: '20px' }"
+                        />
+
+                        <n-radio-group
+                            v-model:value="addFileFormValue.isPublic"
+                            :style="{ marginBottom: '20px' }"
+                        >
+                            <n-space>
+                                <n-radio :value="false">不公开</n-radio>
+                                <n-radio :value="true">对外公开</n-radio>
+                            </n-space>
+                        </n-radio-group>
+
+                        <n-select
+                            v-model:value="addFileFormValue.fold"
+                            :options="addFileOption.foldOption"
+                            placeholder="选择文件夹"
+                            :style="{ marginBottom: '20px' }"
+                        />
+                        <n-select
+                            v-model:value="addFileFormValue.category"
+                            :options="addFileOption.categoryOption"
+                            placeholder="选择分类"
+                            :style="{ marginBottom: '20px' }"
+                        />
+
+                        <template #footer>
+                            <n-button
+                                strong
+                                secondary
+                                @click="cancelFileCallback"
+                                :style="{
+                                    width: '120px',
+                                    marginRight: '20px',
+                                    marginLeft: '30px',
+                                }"
+                            >
+                                取消
+                            </n-button>
+                            <n-button
+                                strong
+                                secondary
+                                type="primary"
+                                @click="submitFileCallback"
+                                :style="{ width: '120px' }"
+                                >确定</n-button
+                            >
+                        </template>
+                    </n-modal>
                 </div>
             </div>
             <div class="split-line"></div>
@@ -160,7 +225,13 @@ import {
 import { useRouter, useRoute } from "vue-router";
 import { useMessage } from "naive-ui";
 import moment from "moment";
-import { getUserFold, getUserFile, postFold } from "@/service";
+import {
+    getUserFold,
+    getUserFile,
+    postFold,
+    postFile,
+    getCategory,
+} from "@/service";
 import useUserinfo from "@/stores/userinfo";
 
 // pinia
@@ -251,10 +322,106 @@ const cancelFoldCallback = () => {
 };
 
 // 添加文件
+const addFileFormValue = reactive({
+    cre_name: "",
+    isPublic: true,
+    fold: null,
+    category: null,
+});
+
+const addFileOption = reactive({
+    foldOption: [],
+    categoryOption: [],
+});
+
+const fileOptionInit = () => {
+    const userID = userinfoStore.userInfo.userId;
+    getUserFold({ id: userID }).then(
+        (response) => {
+            const resFolds = response.data.folds;
+            for (let index = 0; index < resFolds.length; index++) {
+                addFileOption.foldOption[index] = {
+                    label: resFolds[index].fold_name,
+                    value: resFolds[index].id,
+                };
+            }
+        },
+        (error) => {
+            message.error("未获取到用户文件夹");
+            console.log(error);
+        }
+    );
+
+    getCategory().then(
+        (response) => {
+            const resCategories = response.data.data;
+            for (let index = 0; index < resCategories.length; index++) {
+                addFileOption.categoryOption[index] = {
+                    label: resCategories[index].attributes.cate_name,
+                    value: resCategories[index].id,
+                };
+            }
+        },
+        (error) => {
+            message.error("未获取到分类");
+            console.log(error);
+        }
+    );
+}; // 添加文件表单的选择器配置初始化
+
 const handleAddFile = () => {
-    router.push({ name: "design" });
+    fileOptionInit();
+    modalState.addFileModal = true;
+    // router.push({ name: "design" });
 };
 
+const submitFileCallback = () => {
+    if (
+        addFileFormValue.cre_name !== "" &&
+        addFileFormValue.fold !== "" &&
+        addFileFormValue.category !== ""
+    ) {
+        const data = {
+            cre_name: addFileFormValue.cre_name,
+            cre_status: "刚创建",
+            isPublic: addFileFormValue.isPublic,
+            is_team_file: false,
+            json_content: null,
+            fold: Number(addFileFormValue.fold),
+            category: Number(addFileFormValue.category),
+            user: userinfoStore.userInfo.userId,
+            team: null,
+        };
+        postFile(data).then(
+            (response) => {
+                dataInit();
+                message.success("添加成功");
+
+                // 跳转
+                
+            },
+            (error) => {
+                message.error("添加失败");
+            }
+        );
+    } else if (
+        addFileFormValue.cre_name === "" ||
+        addFileFormValue.fold === null ||
+        addFileFormValue.category === null
+    ) {
+        message.warning("请完备信息");
+    } else {
+        message.error("添加失败");
+    }
+};
+
+const cancelFileCallback = () => {
+    addFileFormValue.cre_name = "";
+    addFileFormValue.isPublic = true;
+    addFileFormValue.fold = null;
+    addFileFormValue.category = null;
+    modalState.addFileModal = false;
+};
 onMounted(() => {
     dataInit();
 });
