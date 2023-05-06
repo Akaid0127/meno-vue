@@ -34,6 +34,7 @@ const userState = reactive({
 });
 
 onMounted(() => {
+    
     console.log(userinfoStore.userInfo);
 });
 </script>

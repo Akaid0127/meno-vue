@@ -101,10 +101,11 @@ function handleLogin() {
 // 注册
 function handleRegister() {
     // todo 暂时链接到这里
-    router.push({
-        name: "login",
-        query: { type: "toLogin" },
-    });
+    // router.push({
+    //     name: "login",
+    //     query: { type: "toLogin" },
+    // });
+    router.push({ name: "work" });
 }
 </script>
 
