@@ -192,6 +192,7 @@
                                     :title="item.cre_name"
                                     hoverable
                                     embedded
+                                    @click="fileToDesign(item.id)"
                                 >
                                     <template #header-extra>
                                         <n-icon size="22" color="#0e7a0d">
@@ -230,6 +231,7 @@
                                     :title="item.cre_name"
                                     hoverable
                                     embedded
+                                    @click="fileToDesign(item.id)"
                                 >
                                     <template #header-extra>
                                         <n-icon size="22" color="#0e7a0d">
@@ -497,6 +499,11 @@ const checkChildFiles = (foldData) => {
             console.log(error);
         }
     );
+};
+
+// 文件跳转设计界面
+const fileToDesign = (fileId) => {
+    router.push({ name: "design", query: { fileId } });
 };
 
 onMounted(() => {
