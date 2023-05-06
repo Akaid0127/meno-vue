@@ -15,7 +15,8 @@ request.interceptors.request.use(
 		let userinfo = window.localStorage.getItem('userJwt')
 		// 判断token存在再做配置
 		if (userinfo) {
-			let token = JSON.parse(userinfo).token
+            let results = JSON.stringify(userinfo);
+			let token = JSON.parse(results)
 			config.headers.Authorization = 'Bearer ' + token
 		}
 		return config;

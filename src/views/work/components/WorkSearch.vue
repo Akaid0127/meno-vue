@@ -1,6 +1,6 @@
 <template>
-    <div class="work-wrap">
-        <div class="work-content">
+    <div class="worksearch-wrap">
+        <div class="worksearch-content">
             <div class="left">
                 <div class="add">
                     <n-icon>
@@ -73,7 +73,7 @@ const props = defineProps(["userName"]);
 </script>
 
 <style lang="scss" scoped>
-.work-content {
+.worksearch-content {
     height: 60px;
     display: flex;
     align-items: center;

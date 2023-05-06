@@ -23,7 +23,8 @@ import {
 	NModal,
 	NConfigProvider,
 	NCode,
-	NMessageProvider
+	NMessageProvider,
+    NMenu
 } from 'naive-ui'
 
 const naive = create({
@@ -50,7 +51,8 @@ const naive = create({
 		NModal,
 		NConfigProvider,
 		NCode,
-		NMessageProvider
+		NMessageProvider,
+        NMenu
 	]
 })
 

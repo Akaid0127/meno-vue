@@ -24,3 +24,23 @@ export const userReg = (data) => {
 		}
 	})
 }
+
+// 获取单个用户的文件夹
+export const getUserFold = (data) => {
+	return axios({
+		url: `/api/users/${data.id}?populate=folds`,
+		method: 'get',
+	})
+}
+
+// 获取单个用户的文件
+export const getUserFile = (data) => {
+	return axios({
+		url: `api/users/${data.id}?populate=creations`,
+		method: 'get',
+	})
+}
+
+
+
+

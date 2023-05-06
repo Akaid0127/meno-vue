@@ -2,16 +2,6 @@
     <div class="workfile-wrap">
         <div class="workfile-cotent">
             <div class="top">
-                <div class="left">
-                    <div class="item">全部文件</div>
-                    <div class="item">我创建的</div>
-                    <div class="item">共享文件</div>
-                    <div class="item">回收站</div>
-                </div>
-                <div class="right"></div>
-            </div>
-            <div class="split-line"></div>
-            <div class="bottom">
                 <div class="add-group">
                     <n-button class="add-btn" @click="handleAddFile">
                         <div class="left">
@@ -60,51 +50,146 @@
                     </n-button>
                 </div>
             </div>
+            <div class="split-line"></div>
+
+            <div class="fold-scroll">
+                <n-scrollbar x-scrollable trigger="none">
+                    <div class="fold-group">
+                        <n-card
+                            v-for="item in contentState.userFolds"
+                            :key="item.id"
+                            :title="item.fold_name"
+                            hoverable
+                            embedded
+                        >
+                            <template #header-extra>
+                                <n-icon size="22" color="#FFD485">
+                                    <Folder />
+                                </n-icon>
+                            </template>
+                            创建时间：{{
+                                moment(item.publishedAt).format("YYYY-MM-DD")
+                            }}
+                        </n-card>
+                    </div>
+                </n-scrollbar>
+            </div>
+
+            <div class="split-line"></div>
+
+            <div class="file-scroll">
+                <n-scrollbar trigger="none">
+                    <div class="file-group">
+                        <n-card
+                            v-for="item in contentState.userFiles"
+                            :key="item.id"
+                            :title="item.cre_name"
+                            hoverable
+                            embedded
+                        >
+                            <template #header-extra>
+                                <n-icon size="22" color="#0e7a0d">
+                                    <Code />
+                                </n-icon>
+                            </template>
+
+                            文件夹状态：{{ item.cre_status }}
+                            <br />
+                            创建时间：{{
+                                moment(item.publishedAt).format("YYYY-MM-DD")
+                            }}
+                            <br />
+                            更新时间：{{
+                                moment(item.updatedAt).format("YYYY-MM-DD")
+                            }}
+                        </n-card>
+                    </div>
+                </n-scrollbar>
+            </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { Add, DocumentAdd, FolderAdd, Download } from "@vicons/carbon";
+import { onMounted, reactive } from "vue";
+import {
+    Add,
+    DocumentAdd,
+    FolderAdd,
+    Download,
+    Folder,
+    Code,
+} from "@vicons/carbon";
 import { useRouter, useRoute } from "vue-router";
+import { useMessage } from "naive-ui";
+import moment from "moment";
+import { getUserFold, getUserFile } from "@/service";
+import useUserinfo from "@/stores/userinfo";
+
+// pinia
+const userinfoStore = useUserinfo(); // 用户状态
 
 // 定义路由
 const router = useRouter();
 const route = useRoute();
 
+// naive message
+const message = useMessage();
 
 // 创建文件
 function handleAddFile() {
-	router.push({ name: "design" });
+    router.push({ name: "design" });
 }
 
+const contentState = reactive({
+    userFolds: [],
+    userFiles: [],
+});
+
+const dataInit = () => {
+    const userID = userinfoStore.userInfo.userId;
+    getUserFold({ id: userID }).then(
+        (response) => {
+            const resFolds = response.data.folds;
+            contentState.userFolds = [...resFolds];
+        },
+        (error) => {
+            message.error("未获取到用户文件夹");
+            console.log(error);
+        }
+    ); // 获取用户文件夹
+
+    getUserFile({ id: userID }).then(
+        (response) => {
+            const resFiles = response.data.creations;
+            contentState.userFiles = [...resFiles];
+        },
+        (error) => {
+            message.error("未获取到用户文件");
+            console.log(error);
+        }
+    ); // 获取用户文件
+};
+
+onMounted(() => {
+    dataInit();
+});
 </script>
 
 <style lang="scss" scoped>
 .workfile-cotent {
     padding: 15px 30px;
-    .top {
-        margin-bottom: 10px;
-        .left {
-            color: rgba(32, 32, 32, 0.8);
+    height: calc(100vh - 60px);
+    display: flex;
+    flex-direction: column;
 
-            display: flex;
-            .item {
-                margin-right: 20px;
-                &:hover {
-                    // 后面改为点击跳转
-                    color: #202020;
-                    font-weight: 700;
-                }
-            }
-        }
-    }
     .split-line {
         background: rgba(218, 218, 220, 0.6);
+        margin: 16px 0;
         height: 1px;
     }
-    .bottom {
-        margin-top: 24px;
+
+    .top {
         .add-group {
             display: flex;
             .add-btn {
@@ -142,6 +227,44 @@ function handleAddFile() {
                     font-size: 20px;
                 }
             }
+        }
+    }
+
+    .fold-scroll {
+        height: 120px;
+    }
+
+    .fold-group {
+        user-select: none;
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        margin-bottom: 16px;
+        .n-card {
+            display: inline-flex;
+            cursor: pointer;
+            margin-right: 16px;
+            width: 200px;
+            height: 100px;
+        }
+    }
+
+    .file-scroll {
+        height: 620px;
+        margin-top: 10px;
+    }
+    .file-group {
+        user-select: none;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        .n-card {
+            cursor: pointer;
+            margin-right: 16px;
+            margin-bottom: 16px;
+            width: 256px;
+            height: 150px;
         }
     }
 }

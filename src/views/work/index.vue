@@ -11,7 +11,7 @@
                         <WorkSearch :userName="userState.userName"/>
                     </n-layout-header>
                     <n-layout-content>
-                        <WorkFile />
+                        <router-view></router-view>
                     </n-layout-content>
                 </n-layout>
             </n-layout>
@@ -35,27 +35,29 @@ const userState = reactive({
 
 onMounted(() => {
     
-    console.log(userinfoStore.userInfo);
+    // console.log(userinfoStore.userInfo);
 });
 </script>
 
 <style lang="scss" scoped>
 .work-wrap {
     background-color: #fff;
+    height: 100vh;
 }
 
 .work-content {
     background-color: #fff;
     .n-layout-sider {
-        height: 929px;
     }
 
     .n-layout-header {
         background-color: #fff;
+        height: 60px;
     }
 
     .n-layout-content {
         background-color: #fff;
+        height: calc(100vh - 60px);
     }
 }
 </style>
