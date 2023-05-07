@@ -97,7 +97,7 @@ onMounted(() => {
 }
 
 .design-cotent {
-    height: 900px;
+    height: 100vh;
     width: 100%;
     .top {
         height: 50px;
@@ -110,20 +110,20 @@ onMounted(() => {
         flex-direction: row;
         .left {
             width: 280px;
-            height: 865px;
+            height: calc(100vh - 50px);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
         }
         .center {
             width: 100%;
-            height: 865px;
+            height: calc(100vh - 50px);
             border-left: 1px solid #d4d7de;
             border-right: 1px solid #d4d7de;
         }
         .right {
             width: 290px;
-            height: 865px;
+            height: calc(100vh - 50px);
         }
     }
 }
