@@ -4,7 +4,9 @@
             <n-layout>
                 <!-- 顶部工具栏 -->
                 <div class="top">
-                    <design-header />
+                    <design-header
+                        :fileInfo="{userName:infoState.userName,foldName:infoState.foldName,fileName:infoState.fileName}"
+                    />
                 </div>
 
                 <div class="bottom">
@@ -64,11 +66,10 @@ const initData = () => {
             infoState.fileContent = resFile.json_content;
             if (infoState.fileContent !== null) {
                 editingStore.resetBlocks(infoState.fileContent);
-            }else{
-                const tempData = []
+            } else {
+                const tempData = [];
                 editingStore.resetBlocks(tempData);
             }
-            
         },
         (error) => {
             console.log(error);

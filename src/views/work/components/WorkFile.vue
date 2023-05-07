@@ -60,10 +60,7 @@
                         :segmented="{ content: 'soft', footer: 'soft' }"
                     >
                         <template #header-extra></template>
-                        <n-input
-                            v-model:value="addFoldFormValue.fold_name"
-                            placeholder="输入文件夹名"
-                        />
+                        <n-input v-model:value="addFoldFormValue.fold_name" placeholder="输入文件夹名" />
                         <template #footer>
                             <n-button
                                 strong
@@ -74,17 +71,14 @@
                                     marginRight: '20px',
                                     marginLeft: '30px',
                                 }"
-                            >
-                                取消
-                            </n-button>
+                            >取消</n-button>
                             <n-button
                                 strong
                                 secondary
                                 type="primary"
                                 @click="submitFoldCallback"
                                 :style="{ width: '120px' }"
-                                >确定</n-button
-                            >
+                            >确定</n-button>
                         </template>
                     </n-modal>
 
@@ -139,17 +133,14 @@
                                     marginRight: '20px',
                                     marginLeft: '30px',
                                 }"
-                            >
-                                取消
-                            </n-button>
+                            >取消</n-button>
                             <n-button
                                 strong
                                 secondary
                                 type="primary"
                                 @click="submitFileCallback"
                                 :style="{ width: '120px' }"
-                                >确定</n-button
-                            >
+                            >确定</n-button>
                         </template>
                     </n-modal>
                 </div>
@@ -174,7 +165,7 @@
                                 </n-icon>
                             </template>
                             创建时间：{{
-                                moment(item.publishedAt).format("YYYY-MM-DD")
+                            moment(item.publishedAt).format("YYYY-MM-DD")
                             }}
                         </n-card>
                     </div>
@@ -199,19 +190,18 @@
                                             <Code />
                                         </n-icon>
                                     </template>
-
                                     文件夹状态：{{ item.cre_status }}
                                     <br />
                                     创建时间：{{
-                                        moment(item.publishedAt).format(
-                                            "YYYY-MM-DD"
-                                        )
+                                    moment(item.publishedAt).format(
+                                    "YYYY-MM-DD"
+                                    )
                                     }}
                                     <br />
                                     更新时间：{{
-                                        moment(item.updatedAt).format(
-                                            "YYYY-MM-DD"
-                                        )
+                                    moment(item.updatedAt).format(
+                                    "YYYY-MM-DD"
+                                    )
                                     }}
                                 </n-card>
                             </div>
@@ -219,9 +209,7 @@
                     </div>
                 </n-tab-pane>
                 <n-tab-pane name="foldFiles" :tab="tabState.foldTabName">
-                    <div v-if="contentState.foldFiles.length === 0">
-                        该文件夹下暂无文件
-                    </div>
+                    <div v-if="contentState.foldFiles.length === 0">该文件夹下暂无文件</div>
                     <div v-if="contentState.foldFiles !== 0">
                         <n-scrollbar trigger="none">
                             <div class="file-group">
@@ -238,19 +226,18 @@
                                             <Code />
                                         </n-icon>
                                     </template>
-
                                     文件夹状态：{{ item.cre_status }}
                                     <br />
                                     创建时间：{{
-                                        moment(item.publishedAt).format(
-                                            "YYYY-MM-DD"
-                                        )
+                                    moment(item.publishedAt).format(
+                                    "YYYY-MM-DD"
+                                    )
                                     }}
                                     <br />
                                     更新时间：{{
-                                        moment(item.updatedAt).format(
-                                            "YYYY-MM-DD"
-                                        )
+                                    moment(item.updatedAt).format(
+                                    "YYYY-MM-DD"
+                                    )
                                     }}
                                 </n-card>
                             </div>
@@ -284,9 +271,11 @@ import {
     getFoldFiles,
 } from "@/service";
 import useUserinfo from "@/stores/userinfo";
+import useEditing from "@/stores/editing";
 
 // pinia
 const userinfoStore = useUserinfo(); // 用户状态
+const editingStore = useEditing(); // 组件状态
 
 // 定义路由
 const router = useRouter();
@@ -503,6 +492,9 @@ const checkChildFiles = (foldData) => {
 
 // 文件跳转设计界面
 const fileToDesign = (fileId) => {
+    // 跳转之前Vuex的editing需置空
+    const tempData = [];
+    editingStore.resetBlocks(tempData);
     router.push({ name: "design", query: { fileId } });
 };
 

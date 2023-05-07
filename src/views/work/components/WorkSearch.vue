@@ -44,10 +44,12 @@
                     </n-icon>
                 </div>
                 <div class="user">
-                    <n-avatar :style="{
-						color: '#FFF',
-						backgroundColor: '#E381C6'
-						}">{{props.userName}}</n-avatar>
+                    <n-avatar
+                        :style="{
+						color: '#18A058',
+						backgroundColor: '#DAF0E4'
+						}"
+                    >{{props.userName}}</n-avatar>
                 </div>
             </div>
         </div>
@@ -66,10 +68,6 @@ import {
 } from "@vicons/carbon";
 
 const props = defineProps(["userName"]);
-
-
-
-
 </script>
 
 <style lang="scss" scoped>
@@ -137,12 +135,12 @@ const props = defineProps(["userName"]);
         }
 
         .user {
-			.n-avatar{
-				border-radius: 50%;
-				display: flex;
-				align-items: center;
-				font-size:14px;
-			}
+            .n-avatar {
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                font-size: 14px;
+            }
         }
     }
 }

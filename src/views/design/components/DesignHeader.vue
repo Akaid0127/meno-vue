@@ -9,10 +9,10 @@
 						color: '#18A058',
 						backgroundColor: '#DAF0E4'
 						}"
-                    >雷</n-avatar>
+                    >{{props.fileInfo.userName}}</n-avatar>
                 </div>
                 <div class="split-line"></div>
-                <div class="title">我的文件 / 未命名1</div>
+                <div class="title">{{props.fileInfo.foldName}} / {{props.fileInfo.fileName}}</div>
             </div>
             <div class="center">
                 <!-- 中间工具栏 -->
@@ -112,6 +112,9 @@ import useSnapshot from "@/stores/snapshot";
 import objToJson from "@/utils/objToJson";
 import objToHtml from "@/utils/objToHtml";
 import exportHtml from "@/utils/exportHtml";
+
+// props
+const props = defineProps(["fileInfo"]);
 
 // pinia
 const editingStore = useEditing(); // 组件状态
