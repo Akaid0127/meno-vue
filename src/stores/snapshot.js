@@ -29,22 +29,16 @@ const useSnapshot = defineStore('snapshot', {
 		// 存入数据快照
 		addSnapshot(data) {
 			this.snapshotIndex++
-			const tempArr = []
-			data.forEach(item => {
-				tempArr.push(this.deepClone(item))
-			});
-			// console.log(tempArr)
+			const tempArr = JSON.parse(JSON.stringify(data))
 			this.snapshotData.push(tempArr)
 		},
 
 		// 撤销操作
 		cancelOperate(data) {
-			if (this.snapshotIndex !== 0) {
-				const tempArr = []
-				data.forEach(item => {
-					tempArr.push(this.deepClone(item))
-				});
-				// console.log(tempArr)
+			console.log(this.snapshotIndex)
+			console.log(this.snapshotData)
+			if (this.snapshotIndex > 0 ) {
+				const tempArr = JSON.parse(JSON.stringify(data))
 				this.snapshotData.push(tempArr)
 				this.snapshotIndex--
 			}
@@ -52,12 +46,10 @@ const useSnapshot = defineStore('snapshot', {
 
 		// 返回操作
 		rebackOperate(data) {
+			console.log(this.snapshotIndex)
+			console.log(this.snapshotData)
 			if (this.snapshotIndex < this.snapshotData.length - 1) {
-				const tempArr = []
-				data.forEach(item => {
-					tempArr.push(this.deepClone(item))
-				});
-				// console.log(tempArr)
+				const tempArr = JSON.parse(JSON.stringify(data))
 				this.snapshotData.push(tempArr)
 				this.snapshotIndex++
 			}
