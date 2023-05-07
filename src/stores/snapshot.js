@@ -10,21 +10,21 @@ const useSnapshot = defineStore('snapshot', {
 		},
 
 		// 深拷贝
-		deepClone(source, target) {
-			var _tar = target || {};
-			for (var key in source) {
-				if (source.hasOwnProperty(key) && source[key] != null) {
-					if (typeof source[key] === "object") {
-						_tar[key] = (Object.prototype.toString.call(source[key]) === "[object Array]")
-							? [] : {};
-						this.deepClone(source[key], _tar[key]);
-					} else {
-						_tar[key] = source[key];
-					}
-				}
-			}
-			return _tar;
-		},
+		// deepClone(source, target) {
+		// 	var _tar = target || {};
+		// 	for (var key in source) {
+		// 		if (source.hasOwnProperty(key) && source[key] != null) {
+		// 			if (typeof source[key] === "object") {
+		// 				_tar[key] = (Object.prototype.toString.call(source[key]) === "[object Array]")
+		// 					? [] : {};
+		// 				this.deepClone(source[key], _tar[key]);
+		// 			} else {
+		// 				_tar[key] = source[key];
+		// 			}
+		// 		}
+		// 	}
+		// 	return _tar;
+		// },
 
 		// 存入数据快照
 		addSnapshot(data) {
@@ -35,8 +35,6 @@ const useSnapshot = defineStore('snapshot', {
 
 		// 撤销操作
 		cancelOperate(data) {
-			console.log(this.snapshotIndex)
-			console.log(this.snapshotData)
 			if (this.snapshotIndex > 0 ) {
 				const tempArr = JSON.parse(JSON.stringify(data))
 				this.snapshotData.push(tempArr)
@@ -46,8 +44,6 @@ const useSnapshot = defineStore('snapshot', {
 
 		// 返回操作
 		rebackOperate(data) {
-			console.log(this.snapshotIndex)
-			console.log(this.snapshotData)
 			if (this.snapshotIndex < this.snapshotData.length - 1) {
 				const tempArr = JSON.parse(JSON.stringify(data))
 				this.snapshotData.push(tempArr)
