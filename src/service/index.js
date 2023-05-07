@@ -98,7 +98,7 @@ export const getFoldFiles = (data) => {
 // 根据ID获取文件
 export const getFile = (data) => {
 	return axios({
-		url: `api/creations/${data.id}?populate=fold,user,team`,
+		url: `api/creations/${data.id}?populate=fold,user,team,category`,
 		method: 'get',
 	})
 }

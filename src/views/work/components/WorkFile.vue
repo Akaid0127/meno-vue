@@ -39,7 +39,7 @@
                         class="custom-card"
                         preset="card"
                         :style="{ width: '400px' }"
-                        title="添加文件夹"
+                        :title="modalState.foldModalMode==='add'?'添加文件夹':'修改文件夹'"
                         size="huge"
                         :bordered="false"
                         :segmented="{ content: 'soft', footer: 'soft' }"
@@ -73,7 +73,7 @@
                         class="custom-card"
                         preset="card"
                         :style="{ width: '400px' }"
-                        title="添加文件"
+                        :title="modalState.fileModalMode==='add'?'添加文件':'修改文件'"
                         size="huge"
                         :bordered="false"
                         :segmented="{ content: 'soft', footer: 'soft' }"
@@ -191,7 +191,6 @@
                                     :title="item.cre_name"
                                     hoverable
                                     embedded
-                                    @click="fileToDesign(item.id)"
                                 >
                                     <template #header-extra>
                                         <n-icon
@@ -202,17 +201,18 @@
                                         >
                                             <Edit />
                                         </n-icon>
-                                        <n-icon
-                                            size="16"
-                                            color="#606266"
-                                            :style="{marginRight:'6px'}"
-                                            @click="handleDeleteFile(item.id)"
-                                        >
-                                            <Delete />
-                                        </n-icon>
-                                        <n-icon size="22" color="#0e7a0d">
-                                            <Code />
-                                        </n-icon>
+                                        <n-popconfirm @positive-click="handleDeleteFile(item.id)">
+                                            <template #trigger>
+                                                <n-icon
+                                                    size="16"
+                                                    color="#606266"
+                                                    :style="{marginRight:'6px'}"
+                                                >
+                                                    <Delete />
+                                                </n-icon>
+                                            </template>
+                                            确定删除该{{item.cre_name}}吗
+                                        </n-popconfirm>
                                     </template>
                                     文件夹状态：{{ item.cre_status }}
                                     <br />
@@ -227,6 +227,14 @@
                                     "YYYY-MM-DD"
                                     )
                                     }}
+                                    <n-button strong secondary @click="fileToDesign(item.id)">
+                                        <template #icon>
+                                            <n-icon size="18" color="#0e7a0d">
+                                                <Code />
+                                            </n-icon>
+                                        </template>
+                                        开启设计
+                                    </n-button>
                                 </n-card>
                             </div>
                         </n-scrollbar>
@@ -243,7 +251,6 @@
                                     :title="item.cre_name"
                                     hoverable
                                     embedded
-                                    @click="fileToDesign(item.id)"
                                 >
                                     <template #header-extra>
                                         <n-icon
@@ -254,17 +261,18 @@
                                         >
                                             <Edit />
                                         </n-icon>
-                                        <n-icon
-                                            size="16"
-                                            color="#606266"
-                                            :style="{marginRight:'6px'}"
-                                            @click="handleDeleteFile(item.id)"
-                                        >
-                                            <Delete />
-                                        </n-icon>
-                                        <n-icon size="22" color="#0e7a0d">
-                                            <Code />
-                                        </n-icon>
+                                       <n-popconfirm @positive-click="handleDeleteFile(item.id)">
+                                            <template #trigger>
+                                                <n-icon
+                                                    size="16"
+                                                    color="#606266"
+                                                    :style="{marginRight:'6px'}"
+                                                >
+                                                    <Delete />
+                                                </n-icon>
+                                            </template>
+                                            确定删除该{{item.cre_name}}吗
+                                        </n-popconfirm>
                                     </template>
                                     文件夹状态：{{ item.cre_status }}
                                     <br />
@@ -279,6 +287,14 @@
                                     "YYYY-MM-DD"
                                     )
                                     }}
+                                    <n-button strong secondary @click="fileToDesign(item.id)">
+                                        <template #icon>
+                                            <n-icon size="18" color="#0e7a0d">
+                                                <Code />
+                                            </n-icon>
+                                        </template>
+                                        开启设计
+                                    </n-button>
                                 </n-card>
                             </div>
                         </n-scrollbar>
@@ -314,6 +330,7 @@ import {
     putFileInfo,
     deleteFold,
     deleteFile,
+    getFile,
 } from "@/service";
 import useUserinfo from "@/stores/userinfo";
 import useEditing from "@/stores/editing";
@@ -365,40 +382,61 @@ const dataInit = () => {
 const modalState = reactive({
     addFoldModal: false,
     addFileModal: false,
+    foldModalMode: "add",
+    fileModalMode: "add",
 });
 
 // 添加文件夹
 const handleAddFold = () => {
+    modalState.foldModalMode = "add";
     modalState.addFoldModal = true;
 };
 
 const addFoldFormValue = reactive({
+    curFoldId: 0,
     fold_name: "",
 });
 
 const submitFoldCallback = () => {
-    if (addFoldFormValue.fold_name !== "") {
+    if (modalState.foldModalMode === "add") {
+        if (addFoldFormValue.fold_name !== "") {
+            const data = {
+                fold_name: addFoldFormValue.fold_name,
+                user: userinfoStore.userInfo.userId,
+                is_team_fold: false,
+                creations: null,
+            };
+            postFold(data).then(
+                (response) => {
+                    dataInit();
+                    message.success("添加成功");
+                },
+                (error) => {
+                    console.log(error);
+                    message.error("添加失败");
+                }
+            );
+            modalState.addFoldModal = false;
+        } else if (addFoldFormValue.fold_name === "") {
+            message.warning("输入为空");
+        } else {
+            message.error("添加失败");
+        }
+    } else if (modalState.foldModalMode === "edit") {
         const data = {
+            id: addFoldFormValue.curFoldId,
             fold_name: addFoldFormValue.fold_name,
-            user: userinfoStore.userInfo.userId,
-            is_team_fold: false,
-            creations: null,
         };
-        postFold(data).then(
+        putFoldInfo(data).then(
             (response) => {
+                message.success("修改成功");
                 dataInit();
-                message.success("添加成功");
             },
             (error) => {
-                console.log(error);
-                message.error("添加失败");
+                message.error("修改失败");
             }
         );
         modalState.addFoldModal = false;
-    } else if (addFoldFormValue.fold_name === "") {
-        message.warning("输入为空");
-    } else {
-        message.error("添加失败");
     }
 };
 
@@ -409,6 +447,7 @@ const cancelFoldCallback = () => {
 
 // 添加文件
 const addFileFormValue = reactive({
+    curFileId: 0,
     cre_name: "",
     isPublic: true,
     fold: null,
@@ -456,48 +495,69 @@ const fileOptionInit = () => {
 }; // 添加文件表单的选择器配置初始化
 
 const handleAddFile = () => {
+    modalState.fileModalMode = "add";
     fileOptionInit();
     modalState.addFileModal = true;
     // router.push({ name: "design" });
 };
 
 const submitFileCallback = () => {
-    if (
-        addFileFormValue.cre_name !== "" &&
-        addFileFormValue.fold !== "" &&
-        addFileFormValue.category !== ""
-    ) {
+    if (modalState.fileModalMode === "add") {
+        if (
+            addFileFormValue.cre_name !== "" &&
+            addFileFormValue.fold !== "" &&
+            addFileFormValue.category !== ""
+        ) {
+            const data = {
+                cre_name: addFileFormValue.cre_name,
+                cre_status: "刚创建",
+                isPublic: addFileFormValue.isPublic,
+                is_team_file: false,
+                json_content: null,
+                fold: Number(addFileFormValue.fold),
+                category: Number(addFileFormValue.category),
+                user: userinfoStore.userInfo.userId,
+                team: null,
+            };
+            postFile(data).then(
+                (response) => {
+                    dataInit();
+                    message.success("添加成功");
+                    // 跳转
+                    modalState.addFileModal = false;
+                    fileToDesign(response.data.data.id);
+                },
+                (error) => {
+                    message.error("添加失败");
+                }
+            );
+        } else if (
+            addFileFormValue.cre_name === "" ||
+            addFileFormValue.fold === null ||
+            addFileFormValue.category === null
+        ) {
+            message.warning("请完备信息");
+        } else {
+            message.error("添加失败");
+        }
+    } else if (modalState.fileModalMode === "edit") {
         const data = {
+            id: addFileFormValue.curFileId,
             cre_name: addFileFormValue.cre_name,
-            cre_status: "刚创建",
             isPublic: addFileFormValue.isPublic,
-            is_team_file: false,
-            json_content: null,
-            fold: Number(addFileFormValue.fold),
-            category: Number(addFileFormValue.category),
-            user: userinfoStore.userInfo.userId,
-            team: null,
+            fold: addFileFormValue.fold,
+            category: addFileFormValue.category,
         };
-        postFile(data).then(
+        putFileInfo(data).then(
             (response) => {
                 dataInit();
-                message.success("添加成功");
-                // 跳转
-                modalState.addFileModal = false;
-                fileToDesign(response.data.data.id);
+                message.success("修改成功");
             },
             (error) => {
-                message.error("添加失败");
+                message.error("修改失败");
             }
         );
-    } else if (
-        addFileFormValue.cre_name === "" ||
-        addFileFormValue.fold === null ||
-        addFileFormValue.category === null
-    ) {
-        message.warning("请完备信息");
-    } else {
-        message.error("添加失败");
+        modalState.addFileModal = false;
     }
 };
 
@@ -507,6 +567,66 @@ const cancelFileCallback = () => {
     addFileFormValue.fold = null;
     addFileFormValue.category = null;
     modalState.addFileModal = false;
+};
+
+// 编辑文件夹
+const handleEditFold = (foldId) => {
+    addFoldFormValue.curFoldId = foldId;
+    const filterFold = contentState.userFolds.filter((item) => {
+        return item.id === foldId;
+    });
+    addFoldFormValue.fold_name = filterFold[0].fold_name;
+    modalState.foldModalMode = "edit";
+    modalState.addFoldModal = true;
+};
+
+// 编辑文件
+const handleEditFile = (fileId) => {
+    addFileFormValue.curFileId = fileId;
+    fileOptionInit();
+    getFile({ id: fileId }).then(
+        (response) => {
+            const resfile = response.data.data.attributes;
+            addFileFormValue.cre_name = resfile.cre_name;
+            addFileFormValue.isPublic = resfile.isPublic;
+            addFileFormValue.fold = resfile.fold.data.id;
+            addFileFormValue.category = resfile.category.data.id;
+        },
+        (error) => {
+            message.error("获取文件信息失败");
+            console.log(error);
+        }
+    );
+    modalState.fileModalMode = "edit";
+    modalState.addFileModal = true;
+};
+
+// 删除文件夹
+const handleDeleteFold = (foldId) => {
+    deleteFold({ id: foldId }).then(
+        (response) => {
+            message.success("删除成功");
+            dataInit();
+        },
+        (error) => {
+            message.error("删除失败");
+            console.log(error);
+        }
+    );
+};
+
+// 删除文件
+const handleDeleteFile = (fileId) => {
+    deleteFile({ id: fileId }).then(
+        (response) => {
+            message.success("删除成功");
+            dataInit();
+        },
+        (error) => {
+            message.error("删除失败");
+            console.log(error);
+        }
+    );
 };
 
 // 查看文件夹下文件
@@ -541,42 +661,6 @@ const fileToDesign = (fileId) => {
     const tempData = [];
     editingStore.resetBlocks(tempData);
     router.push({ name: "design", query: { fileId } });
-};
-
-// 编辑文件夹
-const handleEditFold = (foldId) => {
-	
-};
-
-// 删除文件夹
-const handleDeleteFold = (foldId) => {
-    deleteFold({ id: foldId }).then(
-        (response) => {
-            message.success("删除成功");
-            dataInit();
-        },
-        (error) => {
-            message.error("删除失败");
-            console.log(error);
-        }
-    );
-};
-
-// 编辑文件
-const handleEditFile = (fileId) => {};
-
-// 删除文件
-const handleDeleteFile = (fileId) => {
-    deleteFile({ id: fileId }).then(
-        (response) => {
-            message.success("删除成功");
-            dataInit();
-        },
-        (error) => {
-            message.error("删除失败");
-            console.log(error);
-        }
-    );
 };
 
 onMounted(() => {
@@ -672,7 +756,11 @@ onMounted(() => {
             margin-right: 16px;
             margin-bottom: 16px;
             width: 256px;
-            height: 150px;
+            height: 190px;
+            .n-button {
+                width: 210px;
+                margin-top: 10px;
+            }
         }
     }
 }
