@@ -3,21 +3,6 @@
         <div class="workfile-cotent">
             <div class="top">
                 <div class="add-group">
-                    <n-button class="add-btn" @click="handleAddFile">
-                        <div class="left">
-                            <n-icon class="color-icon">
-                                <DocumentAdd />
-                            </n-icon>
-                            <div class="content">
-                                <div class="title">创建文件</div>
-                                <div class="txt">页面开发设计</div>
-                            </div>
-                        </div>
-                        <n-icon class="add-icon">
-                            <Add />
-                        </n-icon>
-                    </n-button>
-
                     <n-button class="add-btn" @click="handleAddFold">
                         <div class="left">
                             <n-icon class="color-icon">
@@ -33,6 +18,22 @@
                         </n-icon>
                     </n-button>
 
+                    <n-button class="add-btn" @click="handleAddFile">
+                        <div class="left">
+                            <n-icon class="color-icon">
+                                <DocumentAdd />
+                            </n-icon>
+                            <div class="content">
+                                <div class="title">创建文件</div>
+                                <div class="txt">页面开发设计</div>
+                            </div>
+                        </div>
+                        <n-icon class="add-icon">
+                            <Add />
+                        </n-icon>
+                    </n-button>
+
+                    <!-- 添加文件夹模态框 -->
                     <n-modal
                         v-model:show="modalState.addFoldModal"
                         class="custom-card"
@@ -66,6 +67,7 @@
                         </template>
                     </n-modal>
 
+                    <!-- 添加文件模态框 -->
                     <n-modal
                         v-model:show="modalState.addFileModal"
                         class="custom-card"
@@ -144,6 +146,28 @@
                             @click="checkChildFiles(item)"
                         >
                             <template #header-extra>
+                                <n-icon
+                                    size="16"
+                                    color="#606266"
+                                    :style="{marginRight:'6px'}"
+                                    @click="handleEditFold(item.id)"
+                                >
+                                    <Edit />
+                                </n-icon>
+
+                                <n-popconfirm @positive-click="handleDeleteFold(item.id)">
+                                    <template #trigger>
+                                        <n-icon
+                                            size="16"
+                                            color="#606266"
+                                            :style="{marginRight:'6px'}"
+                                        >
+                                            <Delete />
+                                        </n-icon>
+                                    </template>
+                                    确定删除该{{item.fold_name}}吗
+                                </n-popconfirm>
+
                                 <n-icon size="22" color="#FFD485">
                                     <Folder />
                                 </n-icon>
@@ -170,6 +194,22 @@
                                     @click="fileToDesign(item.id)"
                                 >
                                     <template #header-extra>
+                                        <n-icon
+                                            size="16"
+                                            color="#606266"
+                                            :style="{marginRight:'6px'}"
+                                            @click="handleEditFile(item.id)"
+                                        >
+                                            <Edit />
+                                        </n-icon>
+                                        <n-icon
+                                            size="16"
+                                            color="#606266"
+                                            :style="{marginRight:'6px'}"
+                                            @click="handleDeleteFile(item.id)"
+                                        >
+                                            <Delete />
+                                        </n-icon>
                                         <n-icon size="22" color="#0e7a0d">
                                             <Code />
                                         </n-icon>
@@ -206,6 +246,22 @@
                                     @click="fileToDesign(item.id)"
                                 >
                                     <template #header-extra>
+                                        <n-icon
+                                            size="16"
+                                            color="#606266"
+                                            :style="{marginRight:'6px'}"
+                                            @click="handleEditFile(item.id)"
+                                        >
+                                            <Edit />
+                                        </n-icon>
+                                        <n-icon
+                                            size="16"
+                                            color="#606266"
+                                            :style="{marginRight:'6px'}"
+                                            @click="handleDeleteFile(item.id)"
+                                        >
+                                            <Delete />
+                                        </n-icon>
                                         <n-icon size="22" color="#0e7a0d">
                                             <Code />
                                         </n-icon>
@@ -241,6 +297,8 @@ import {
     FolderAdd,
     Folder,
     Code,
+    Edit,
+    Delete,
 } from "@vicons/carbon";
 import { useRouter, useRoute } from "vue-router";
 import { useMessage } from "naive-ui";
@@ -252,6 +310,10 @@ import {
     postFile,
     getCategory,
     getFoldFiles,
+    putFoldInfo,
+    putFileInfo,
+    deleteFold,
+    deleteFile,
 } from "@/service";
 import useUserinfo from "@/stores/userinfo";
 import useEditing from "@/stores/editing";
@@ -420,8 +482,9 @@ const submitFileCallback = () => {
             (response) => {
                 dataInit();
                 message.success("添加成功");
-
                 // 跳转
+                modalState.addFileModal = false;
+                fileToDesign(response.data.data.id);
             },
             (error) => {
                 message.error("添加失败");
@@ -478,6 +541,42 @@ const fileToDesign = (fileId) => {
     const tempData = [];
     editingStore.resetBlocks(tempData);
     router.push({ name: "design", query: { fileId } });
+};
+
+// 编辑文件夹
+const handleEditFold = (foldId) => {
+	
+};
+
+// 删除文件夹
+const handleDeleteFold = (foldId) => {
+    deleteFold({ id: foldId }).then(
+        (response) => {
+            message.success("删除成功");
+            dataInit();
+        },
+        (error) => {
+            message.error("删除失败");
+            console.log(error);
+        }
+    );
+};
+
+// 编辑文件
+const handleEditFile = (fileId) => {};
+
+// 删除文件
+const handleDeleteFile = (fileId) => {
+    deleteFile({ id: fileId }).then(
+        (response) => {
+            message.success("删除成功");
+            dataInit();
+        },
+        (error) => {
+            message.error("删除失败");
+            console.log(error);
+        }
+    );
 };
 
 onMounted(() => {
@@ -554,7 +653,7 @@ onMounted(() => {
             display: inline-flex;
             cursor: pointer;
             margin-right: 16px;
-            width: 200px;
+            width: 240px;
             height: 100px;
         }
     }

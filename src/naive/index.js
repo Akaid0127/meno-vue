@@ -27,7 +27,8 @@ import {
     NMenu,
     NRadioGroup,
     NRadio,
-    NSpace
+    NSpace,
+	NPopconfirm
 } from 'naive-ui'
 
 const naive = create({
@@ -58,7 +59,8 @@ const naive = create({
         NMenu,
         NRadioGroup,
         NRadio,
-        NSpace
+        NSpace,
+		NPopconfirm
 	]
 })
 
