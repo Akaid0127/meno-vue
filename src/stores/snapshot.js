@@ -2,6 +2,13 @@ import { defineStore } from 'pinia'
 
 const useSnapshot = defineStore('snapshot', {
 	actions: {
+		// 重置操作快照
+		resetSnapshot(data) {
+			this.snapshotData.splice(0, this.snapshotData.length)
+			this.snapshotData.push(JSON.parse(JSON.stringify(data))) // 注意消除响应式
+			this.snapshotIndex = 0
+		},
+
 		// 深拷贝
 		deepClone(source, target) {
 			var _tar = target || {};

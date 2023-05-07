@@ -200,6 +200,9 @@ const saveExit = () => {
         (response) => {
             message.success("保存成功");
             router.push({ name: "work" });
+            const tempData = [];
+            editingStore.resetBlocks(tempData);
+            snapshotStore.resetSnapshot(tempData);
         },
         (error) => {
             message.error("保存失败");

@@ -492,7 +492,6 @@ const checkChildFiles = (foldData) => {
 
 // 文件跳转设计界面
 const fileToDesign = (fileId) => {
-    // 跳转之前Vuex的editing需置空
     const tempData = [];
     editingStore.resetBlocks(tempData);
     router.push({ name: "design", query: { fileId } });

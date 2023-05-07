@@ -36,6 +36,7 @@ import { ref, onMounted, reactive } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { getFile } from "@/service";
 import useEditing from "@/stores/editing";
+import useSnapshot from "@/stores/snapshot";
 import DesignHeader from "./components/DesignHeader.vue";
 import DesignSupply from "./components/DesignSupply.vue";
 import DesignLevel from "./components/DesignLevel.vue";
@@ -48,6 +49,7 @@ const route = useRoute();
 
 // pinia
 const editingStore = useEditing(); // 组件状态
+const snapshotStore = useSnapshot(); // 快照状态
 
 const infoState = reactive({
     userName: "",
@@ -64,6 +66,7 @@ const initData = () => {
             infoState.foldName = resFile.fold.data.attributes.fold_name;
             infoState.fileName = resFile.cre_name;
             infoState.fileContent = resFile.json_content;
+			snapshotStore.resetSnapshot(resFile.json_content);
             if (infoState.fileContent !== null) {
                 editingStore.resetBlocks(infoState.fileContent);
             } else {
