@@ -35,8 +35,8 @@ const props = defineProps(["block", "blockFocus"]);
 let blockState = reactive({
     component: props.block.component,
     propValue: props.block.propValue,
-    propUrl: "",
-    propIndex: 11,
+    propUrl: props.block.propUrl ? props.block.propUrl : "",
+    propIndex: props.block.propIndex ? props.block.propIndex : 11,
     key: props.block.key,
     styleDefault: {},
     style: {

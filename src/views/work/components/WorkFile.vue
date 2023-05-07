@@ -33,22 +33,6 @@
                         </n-icon>
                     </n-button>
 
-                    <n-button class="add-btn">
-                        <div class="left">
-                            <n-icon class="color-icon">
-                                <Download />
-                            </n-icon>
-                            <div class="content">
-                                <div class="title">导入文件</div>
-                                <div class="txt">导入Json、HTML...</div>
-                            </div>
-                        </div>
-
-                        <n-icon class="add-icon">
-                            <Add />
-                        </n-icon>
-                    </n-button>
-
                     <n-modal
                         v-model:show="modalState.addFoldModal"
                         class="custom-card"
@@ -255,7 +239,6 @@ import {
     Add,
     DocumentAdd,
     FolderAdd,
-    Download,
     Folder,
     Code,
 } from "@vicons/carbon";
