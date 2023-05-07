@@ -97,7 +97,7 @@
                         <n-code :code="codeState.htmlCode" language="javascript" show-line-numbers />
                     </n-scrollbar>
                 </n-modal>
-                <n-button strong secondary type="success">保存退出</n-button>
+                <n-button strong secondary type="success" @click="saveExit">保存退出</n-button>
             </div>
         </div>
     </div>
@@ -105,6 +105,8 @@
 
 <script setup>
 import { reactive } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { useMessage } from "naive-ui";
 import { Reply, Delete, Image as viconImage, EditOff } from "@vicons/carbon";
 import emitter from "@/mitt/event";
 import useEditing from "@/stores/editing";
@@ -112,9 +114,17 @@ import useSnapshot from "@/stores/snapshot";
 import objToJson from "@/utils/objToJson";
 import objToHtml from "@/utils/objToHtml";
 import exportHtml from "@/utils/exportHtml";
+import { putFileContent } from "@/service/index";
+
+// 路由
+const router = useRouter();
+const route = useRoute();
 
 // props
 const props = defineProps(["fileInfo"]);
+
+// naive message
+const message = useMessage();
 
 // pinia
 const editingStore = useEditing(); // 组件状态
@@ -178,6 +188,24 @@ const handleExportJson = () => {
 // 下载Html
 const handleExportHtml = () => {
     exportHtml("html", codeState.htmlCode);
+};
+
+// 保存退出
+const saveExit = () => {
+    const data = {
+        id: route.query.fileId,
+        json_content: JSON.parse(JSON.stringify(editingStore.pageData.blocks)),
+    };
+    putFileContent(data).then(
+        (response) => {
+            message.success("保存成功");
+            router.push({ name: "work" });
+        },
+        (error) => {
+            message.error("保存失败");
+            console.log(error);
+        }
+    );
 };
 </script>
 

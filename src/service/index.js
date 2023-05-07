@@ -103,6 +103,16 @@ export const getFile = (data) => {
     })
 }
 
-
-
+// 修改作品content
+export const putFileContent = (data) => {
+	return axios({
+		url: `api/creations/${data.id}`,
+		method: 'put',
+		data: {
+			data: {
+				json_content: data.json_content,
+			}
+		}
+	})
+}
 
