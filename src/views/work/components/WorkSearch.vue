@@ -27,33 +27,20 @@
             <div class="right">
                 <div class="function-btn">
                     <n-button>
-                        <n-icon> <CopyLink /> </n-icon>素材库迁移
-                    </n-button>
-                </div>
-                <div class="function-btn">
-                    <n-button>
-                        <n-icon> <CloudDownload /> </n-icon>文件导入
+                        <n-icon> <CopyLink /> </n-icon>其他文件迁移
                     </n-button>
                 </div>
                 <div class="split-line"></div>
                 <div class="theme">
+                    <!-- 主题化 -->
                     <n-icon>
                         <Sun />
                     </n-icon>
                 </div>
-                <div class="news">
-                    <n-icon>
-                        <Chat />
-                    </n-icon>
-                </div>
                 <div class="user">
-                    <n-avatar
-                        :style="{
-                            color: '#18A058',
-                            backgroundColor: '#DAF0E4',
-                        }"
-                        >{{ props.userName }}</n-avatar
-                    >
+                    <n-button strong secondary circle type="primary">
+                           {{ props.userName }}
+                    </n-button>
                 </div>
             </div>
         </div>
@@ -150,23 +137,6 @@ const handleSearch = () => {
             }
         }
 
-        .news {
-            .n-icon {
-                display: flex;
-                align-items: center;
-                font-size: 20px;
-                margin-right: 20px;
-            }
-        }
-
-        .user {
-            .n-avatar {
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                font-size: 14px;
-            }
-        }
     }
 }
 </style>
