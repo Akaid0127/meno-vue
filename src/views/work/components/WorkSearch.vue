@@ -72,6 +72,7 @@ import { useRouter, useRoute } from "vue-router";
 import { useMessage, NIcon } from "naive-ui";
 import moment from "moment";
 import { getUserSelf } from "@/service";
+import useUserinfo from "@/stores/userinfo";
 import {
     Search,
     Sun,
@@ -157,6 +158,9 @@ const handleSelect = (key) => {
             }
         );
     } else if (String(key) === "loginOut") {
+        router.push({ name: "index" });
+        localStorage.removeItem("userJwt");
+        useUserinfo.clearUserInfo()
     }
 };
 </script>
