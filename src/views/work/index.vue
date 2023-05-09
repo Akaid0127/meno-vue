@@ -8,7 +8,10 @@
 
                 <n-layout>
                     <n-layout-header bordered>
-                        <WorkSearch :userName="userState.userName"/>
+                        <WorkSearch
+                            :userName="userState.userName"
+                            @getSearchVaule="handleSearchVaule"
+                        />
                     </n-layout-header>
                     <n-layout-content>
                         <router-view></router-view>
@@ -25,16 +28,21 @@ import WorkNav from "./components/WorkNav.vue";
 import WorkSearch from "./components/WorkSearch.vue";
 import WorkFile from "./components/WorkFile.vue";
 import useUserinfo from "@/stores/userinfo";
-
+import emitter from "@/mitt/event";
 // pinia
 const userinfoStore = useUserinfo(); // 用户状态
 
+// 用户信息
 const userState = reactive({
     userName: userinfoStore.userInfo.userName,
 });
 
+// 处理搜索框内容
+const handleSearchVaule = (data) => {
+    emitter.emit("getSearchValue", data.searchValue);
+};
+
 onMounted(() => {
-    
     // console.log(userinfoStore.userInfo);
 });
 </script>

@@ -39,13 +39,20 @@
                         class="custom-card"
                         preset="card"
                         :style="{ width: '400px' }"
-                        :title="modalState.foldModalMode==='add'?'添加文件夹':'修改文件夹'"
+                        :title="
+                            modalState.foldModalMode === 'add'
+                                ? '添加文件夹'
+                                : '修改文件夹'
+                        "
                         size="huge"
                         :bordered="false"
                         :segmented="{ content: 'soft', footer: 'soft' }"
                     >
                         <template #header-extra></template>
-                        <n-input v-model:value="addFoldFormValue.fold_name" placeholder="输入文件夹名" />
+                        <n-input
+                            v-model:value="addFoldFormValue.fold_name"
+                            placeholder="输入文件夹名"
+                        />
                         <template #footer>
                             <n-button
                                 strong
@@ -56,14 +63,16 @@
                                     marginRight: '20px',
                                     marginLeft: '30px',
                                 }"
-                            >取消</n-button>
+                                >取消</n-button
+                            >
                             <n-button
                                 strong
                                 secondary
                                 type="primary"
                                 @click="submitFoldCallback"
                                 :style="{ width: '120px' }"
-                            >确定</n-button>
+                                >确定</n-button
+                            >
                         </template>
                     </n-modal>
 
@@ -73,7 +82,11 @@
                         class="custom-card"
                         preset="card"
                         :style="{ width: '400px' }"
-                        :title="modalState.fileModalMode==='add'?'添加文件':'修改文件'"
+                        :title="
+                            modalState.fileModalMode === 'add'
+                                ? '添加文件'
+                                : '修改文件'
+                        "
                         size="huge"
                         :bordered="false"
                         :segmented="{ content: 'soft', footer: 'soft' }"
@@ -119,14 +132,16 @@
                                     marginRight: '20px',
                                     marginLeft: '30px',
                                 }"
-                            >取消</n-button>
+                                >取消</n-button
+                            >
                             <n-button
                                 strong
                                 secondary
                                 type="primary"
                                 @click="submitFileCallback"
                                 :style="{ width: '120px' }"
-                            >确定</n-button>
+                                >确定</n-button
+                            >
                         </template>
                     </n-modal>
                 </div>
@@ -149,23 +164,25 @@
                                 <n-icon
                                     size="16"
                                     color="#606266"
-                                    :style="{marginRight:'6px'}"
+                                    :style="{ marginRight: '6px' }"
                                     @click="handleEditFold(item.id)"
                                 >
                                     <Edit />
                                 </n-icon>
 
-                                <n-popconfirm @positive-click="handleDeleteFold(item.id)">
+                                <n-popconfirm
+                                    @positive-click="handleDeleteFold(item.id)"
+                                >
                                     <template #trigger>
                                         <n-icon
                                             size="16"
                                             color="#606266"
-                                            :style="{marginRight:'6px'}"
+                                            :style="{ marginRight: '6px' }"
                                         >
                                             <Delete />
                                         </n-icon>
                                     </template>
-                                    确定删除该{{item.fold_name}}吗
+                                    确定删除该{{ item.fold_name }}吗
                                 </n-popconfirm>
 
                                 <n-icon size="22" color="#FFD485">
@@ -173,7 +190,7 @@
                                 </n-icon>
                             </template>
                             创建时间：{{
-                            moment(item.publishedAt).format("YYYY-MM-DD")
+                                moment(item.publishedAt).format("YYYY-MM-DD")
                             }}
                         </n-card>
                     </div>
@@ -196,38 +213,48 @@
                                         <n-icon
                                             size="16"
                                             color="#606266"
-                                            :style="{marginRight:'6px'}"
+                                            :style="{ marginRight: '6px' }"
                                             @click="handleEditFile(item.id)"
                                         >
                                             <Edit />
                                         </n-icon>
-                                        <n-popconfirm @positive-click="handleDeleteFile(item.id)">
+                                        <n-popconfirm
+                                            @positive-click="
+                                                handleDeleteFile(item.id)
+                                            "
+                                        >
                                             <template #trigger>
                                                 <n-icon
                                                     size="16"
                                                     color="#606266"
-                                                    :style="{marginRight:'6px'}"
+                                                    :style="{
+                                                        marginRight: '6px',
+                                                    }"
                                                 >
                                                     <Delete />
                                                 </n-icon>
                                             </template>
-                                            确定删除该{{item.cre_name}}吗
+                                            确定删除该{{ item.cre_name }}吗
                                         </n-popconfirm>
                                     </template>
                                     文件夹状态：{{ item.cre_status }}
                                     <br />
                                     创建时间：{{
-                                    moment(item.publishedAt).format(
-                                    "YYYY-MM-DD"
-                                    )
+                                        moment(item.publishedAt).format(
+                                            "YYYY-MM-DD"
+                                        )
                                     }}
                                     <br />
                                     更新时间：{{
-                                    moment(item.updatedAt).format(
-                                    "YYYY-MM-DD"
-                                    )
+                                        moment(item.updatedAt).format(
+                                            "YYYY-MM-DD"
+                                        )
                                     }}
-                                    <n-button strong secondary @click="fileToDesign(item.id)">
+                                    <n-button
+                                        strong
+                                        secondary
+                                        @click="fileToDesign(item.id)"
+                                    >
                                         <template #icon>
                                             <n-icon size="18" color="#0e7a0d">
                                                 <Code />
@@ -240,8 +267,11 @@
                         </n-scrollbar>
                     </div>
                 </n-tab-pane>
+
                 <n-tab-pane name="foldFiles" :tab="tabState.foldTabName">
-                    <div v-if="contentState.foldFiles.length === 0">该文件夹下暂无文件</div>
+                    <div v-if="contentState.foldFiles.length === 0">
+                        该文件夹下暂无文件
+                    </div>
                     <div v-if="contentState.foldFiles !== 0">
                         <n-scrollbar trigger="none">
                             <div class="file-group">
@@ -256,38 +286,48 @@
                                         <n-icon
                                             size="16"
                                             color="#606266"
-                                            :style="{marginRight:'6px'}"
+                                            :style="{ marginRight: '6px' }"
                                             @click="handleEditFile(item.id)"
                                         >
                                             <Edit />
                                         </n-icon>
-                                       <n-popconfirm @positive-click="handleDeleteFile(item.id)">
+                                        <n-popconfirm
+                                            @positive-click="
+                                                handleDeleteFile(item.id)
+                                            "
+                                        >
                                             <template #trigger>
                                                 <n-icon
                                                     size="16"
                                                     color="#606266"
-                                                    :style="{marginRight:'6px'}"
+                                                    :style="{
+                                                        marginRight: '6px',
+                                                    }"
                                                 >
                                                     <Delete />
                                                 </n-icon>
                                             </template>
-                                            确定删除该{{item.cre_name}}吗
+                                            确定删除该{{ item.cre_name }}吗
                                         </n-popconfirm>
                                     </template>
                                     文件夹状态：{{ item.cre_status }}
                                     <br />
                                     创建时间：{{
-                                    moment(item.publishedAt).format(
-                                    "YYYY-MM-DD"
-                                    )
+                                        moment(item.publishedAt).format(
+                                            "YYYY-MM-DD"
+                                        )
                                     }}
                                     <br />
                                     更新时间：{{
-                                    moment(item.updatedAt).format(
-                                    "YYYY-MM-DD"
-                                    )
+                                        moment(item.updatedAt).format(
+                                            "YYYY-MM-DD"
+                                        )
                                     }}
-                                    <n-button strong secondary @click="fileToDesign(item.id)">
+                                    <n-button
+                                        strong
+                                        secondary
+                                        @click="fileToDesign(item.id)"
+                                    >
                                         <template #icon>
                                             <n-icon size="18" color="#0e7a0d">
                                                 <Code />
@@ -300,6 +340,72 @@
                         </n-scrollbar>
                     </div>
                 </n-tab-pane>
+
+                <n-tab-pane name="searchFiles" tab="搜索文件">
+                    <n-scrollbar trigger="none">
+                        <div class="file-group">
+                            <n-card
+                                v-for="item in searchState.searchFiles"
+                                :key="item.id"
+                                :title="item.cre_name"
+                                hoverable
+                                embedded
+                            >
+                                <template #header-extra>
+                                    <n-icon
+                                        size="16"
+                                        color="#606266"
+                                        :style="{ marginRight: '6px' }"
+                                        @click="handleEditFile(item.id)"
+                                    >
+                                        <Edit />
+                                    </n-icon>
+                                    <n-popconfirm
+                                        @positive-click="
+                                            handleDeleteFile(item.id)
+                                        "
+                                    >
+                                        <template #trigger>
+                                            <n-icon
+                                                size="16"
+                                                color="#606266"
+                                                :style="{
+                                                    marginRight: '6px',
+                                                }"
+                                            >
+                                                <Delete />
+                                            </n-icon>
+                                        </template>
+                                        确定删除该{{ item.cre_name }}吗
+                                    </n-popconfirm>
+                                </template>
+                                文件夹状态：{{ item.cre_status }}
+                                <br />
+                                创建时间：{{
+                                    moment(item.publishedAt).format(
+                                        "YYYY-MM-DD"
+                                    )
+                                }}
+                                <br />
+                                更新时间：{{
+                                    moment(item.updatedAt).format("YYYY-MM-DD")
+                                }}
+                                <n-button
+                                    strong
+                                    secondary
+                                    @click="fileToDesign(item.id)"
+                                >
+                                    <template #icon>
+                                        <n-icon size="18" color="#0e7a0d">
+                                            <Code />
+                                        </n-icon>
+                                    </template>
+                                    开启设计
+                                </n-button>
+                            </n-card>
+                        </div>
+                    </n-scrollbar>
+                </n-tab-pane>
             </n-tabs>
         </div>
     </div>
@@ -307,6 +413,12 @@
 
 <script setup>
 import { onMounted, reactive, ref } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { useMessage } from "naive-ui";
+import moment from "moment";
+import emitter from "@/mitt/event";
+import useUserinfo from "@/stores/userinfo";
+import useEditing from "@/stores/editing";
 import {
     Add,
     DocumentAdd,
@@ -316,9 +428,6 @@ import {
     Edit,
     Delete,
 } from "@vicons/carbon";
-import { useRouter, useRoute } from "vue-router";
-import { useMessage } from "naive-ui";
-import moment from "moment";
 import {
     getUserFold,
     getUserFile,
@@ -332,8 +441,6 @@ import {
     deleteFile,
     getFile,
 } from "@/service";
-import useUserinfo from "@/stores/userinfo";
-import useEditing from "@/stores/editing";
 
 // pinia
 const userinfoStore = useUserinfo(); // 用户状态
@@ -629,7 +736,14 @@ const handleDeleteFile = (fileId) => {
     );
 };
 
-// 查看文件夹下文件
+// 文件跳转设计界面
+const fileToDesign = (fileId) => {
+    const tempData = [];
+    editingStore.resetBlocks(tempData);
+    router.push({ name: "design", query: { fileId } });
+};
+
+// 查看文件夹栏下文件
 const tabState = reactive({
     tabValue: "userFiles",
     foldTabName: "选定文件夹",
@@ -656,12 +770,20 @@ const checkChildFiles = (foldData) => {
     );
 };
 
-// 文件跳转设计界面
-const fileToDesign = (fileId) => {
-    const tempData = [];
-    editingStore.resetBlocks(tempData);
-    router.push({ name: "design", query: { fileId } });
-};
+// 查看搜索文件栏下文件
+const searchState = reactive({
+    searchValue: "",
+    searchFiles: [],
+});
+
+emitter.on("getSearchValue", (searchValue) => {
+    const userFiles = JSON.parse(JSON.stringify(contentState.userFiles));
+    const resUserFiles = userFiles.filter((item) => {
+        return item.cre_name.indexOf(searchValue) != -1;
+    });
+    searchState.searchFiles = [...resUserFiles]
+    tabState.tabValue = "searchFiles";
+});
 
 onMounted(() => {
     dataInit();
