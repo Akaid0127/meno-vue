@@ -160,3 +160,11 @@ export const deleteFile = (data) => {
 		method: 'delete',
 	})
 }
+
+// 获取用户
+export const getUserSelf = () => {
+	return axios({
+		url: "api/users/me",
+		method: 'get',
+	})
+}

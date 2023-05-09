@@ -28,7 +28,8 @@ import {
     NRadioGroup,
     NRadio,
     NSpace,
-	NPopconfirm
+	NPopconfirm,
+    NDropdown
 } from 'naive-ui'
 
 const naive = create({
@@ -60,7 +61,8 @@ const naive = create({
         NRadioGroup,
         NRadio,
         NSpace,
-		NPopconfirm
+		NPopconfirm,
+        NDropdown
 	]
 })
 

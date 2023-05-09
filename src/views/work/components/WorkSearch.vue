@@ -38,19 +38,40 @@
                     </n-icon>
                 </div>
                 <div class="user">
-                    <n-button strong secondary circle type="primary">
-                           {{ props.userName }}
-                    </n-button>
+                    <n-dropdown
+                        :options="dropState.userOptions"
+                        trigger="hover"
+                        @select="handleSelect"
+                    >
+                        <n-button strong secondary circle type="primary">
+                            {{ props.userName }}
+                        </n-button>
+                    </n-dropdown>
                 </div>
+
+                <n-modal
+                    v-model:show="modalState.infoModal"
+                    class="custom-card"
+                    preset="card"
+                    :style="{ width: '300px' }"
+                    title="用户资料"
+                    :bordered="false"
+                >
+                    <p>用户姓名：{{ userState.userName }}</p>
+                    <p>用户邮箱：{{ userState.email }}</p>
+                    <p>创建时间：{{ userState.createDate }}</p>
+                </n-modal>
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { reactive } from "vue";
-import { useMessage } from "naive-ui";
-
+import { h, defineComponent, reactive } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { useMessage, NIcon } from "naive-ui";
+import moment from "moment";
+import { getUserSelf } from "@/service";
 import {
     Search,
     Sun,
@@ -58,7 +79,13 @@ import {
     CopyLink,
     CloudDownload,
     Chat,
+    UserAvatar,
+    NextOutline,
 } from "@vicons/carbon";
+
+// 路由
+const router = useRouter();
+const route = useRoute();
 
 // props
 const props = defineProps(["userName"]);
@@ -80,6 +107,56 @@ const handleSearch = () => {
         message.warning("搜索输入为空");
     } else {
         message.error("系统错误");
+    }
+};
+
+// 右上角用户下拉
+const renderIcon = (icon) => {
+    return () => {
+        return h(NIcon, null, {
+            default: () => h(icon),
+        });
+    };
+};
+const dropState = reactive({
+    userOptions: [
+        {
+            label: "用户资料",
+            key: "userInfo",
+            icon: renderIcon(UserAvatar),
+        },
+        {
+            label: "退出登录",
+            key: "loginOut",
+            icon: renderIcon(NextOutline),
+        },
+    ],
+});
+const modalState = reactive({
+    infoModal: false,
+}); // 用户信息模态框
+const userState = reactive({
+    userName: "",
+    email: "",
+    createDate: "",
+});
+const handleSelect = (key) => {
+    if (String(key) === "userInfo") {
+        modalState.infoModal = true;
+        getUserSelf().then(
+            (response) => {
+                const resUser = response.data;
+                const { username, email, createdAt } = resUser;
+                userState.userName = username;
+                userState.email = email;
+                userState.createDate = moment(createdAt).format("YYYY-MM-DD");
+            },
+            (error) => {
+                message.error("获取失败");
+                console.log(error);
+            }
+        );
+    } else if (String(key) === "loginOut") {
     }
 };
 </script>
@@ -136,7 +213,6 @@ const handleSearch = () => {
                 margin-left: 8px;
             }
         }
-
     }
 }
 </style>
