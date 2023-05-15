@@ -190,7 +190,7 @@
                                 </n-icon>
                             </template>
                             创建时间：{{
-                                moment(item.publishedAt).format("YYYY-MM-DD")
+                                moment(item.publishedAt).format('YYYY-MM-DD')
                             }}
                         </n-card>
                     </div>
@@ -241,13 +241,13 @@
                                     <br />
                                     创建时间：{{
                                         moment(item.publishedAt).format(
-                                            "YYYY-MM-DD"
+                                            'YYYY-MM-DD'
                                         )
                                     }}
                                     <br />
                                     更新时间：{{
                                         moment(item.updatedAt).format(
-                                            "YYYY-MM-DD"
+                                            'YYYY-MM-DD'
                                         )
                                     }}
                                     <n-button
@@ -314,13 +314,13 @@
                                     <br />
                                     创建时间：{{
                                         moment(item.publishedAt).format(
-                                            "YYYY-MM-DD"
+                                            'YYYY-MM-DD'
                                         )
                                     }}
                                     <br />
                                     更新时间：{{
                                         moment(item.updatedAt).format(
-                                            "YYYY-MM-DD"
+                                            'YYYY-MM-DD'
                                         )
                                     }}
                                     <n-button
@@ -383,12 +383,12 @@
                                 <br />
                                 创建时间：{{
                                     moment(item.publishedAt).format(
-                                        "YYYY-MM-DD"
+                                        'YYYY-MM-DD'
                                     )
                                 }}
                                 <br />
                                 更新时间：{{
-                                    moment(item.updatedAt).format("YYYY-MM-DD")
+                                    moment(item.updatedAt).format('YYYY-MM-DD')
                                 }}
                                 <n-button
                                     strong
@@ -412,13 +412,13 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import { useMessage } from "naive-ui";
-import moment from "moment";
-import emitter from "@/mitt/event";
-import useUserinfo from "@/stores/userinfo";
-import useEditing from "@/stores/editing";
+import { onMounted, reactive, ref } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { useMessage } from 'naive-ui'
+import moment from 'moment'
+import emitter from '@/mitt/event'
+import useUserinfo from '@/stores/userinfo'
+import useEditing from '@/stores/editing'
 import {
     Add,
     DocumentAdd,
@@ -427,7 +427,7 @@ import {
     Code,
     Edit,
     Delete,
-} from "@vicons/carbon";
+} from '@vicons/carbon'
 import {
     getUserFold,
     getUserFile,
@@ -440,184 +440,184 @@ import {
     deleteFold,
     deleteFile,
     getFile,
-} from "@/service";
+} from '@/service'
 
 // pinia
-const userinfoStore = useUserinfo(); // 用户状态
-const editingStore = useEditing(); // 组件状态
+const userinfoStore = useUserinfo() // 用户状态
+const editingStore = useEditing() // 组件状态
 
 // 定义路由
-const router = useRouter();
-const route = useRoute();
+const router = useRouter()
+const route = useRoute()
 
 // naive message
-const message = useMessage();
+const message = useMessage()
 
 // 文件夹和文件初始化
 const contentState = reactive({
     userFolds: [],
     userFiles: [],
     foldFiles: [],
-});
+})
 
 const dataInit = () => {
-    const userID = userinfoStore.userInfo.userId;
+    const userID = userinfoStore.userInfo.userId
     getUserFold({ id: userID }).then(
         (response) => {
-            const resFolds = response.data.folds;
-            contentState.userFolds = [...resFolds];
+            const resFolds = response.data.folds
+            contentState.userFolds = [...resFolds]
         },
         (error) => {
-            message.error("未获取到用户文件夹");
-            console.log(error);
+            message.error('未获取到用户文件夹')
+            console.log(error)
         }
-    ); // 获取用户文件夹
+    ) // 获取用户文件夹
 
     getUserFile({ id: userID }).then(
         (response) => {
-            const resFiles = response.data.creations;
-            contentState.userFiles = [...resFiles];
+            const resFiles = response.data.creations
+            contentState.userFiles = [...resFiles]
         },
         (error) => {
-            message.error("未获取到用户文件");
-            console.log(error);
+            message.error('未获取到用户文件')
+            console.log(error)
         }
-    ); // 获取用户文件
-};
+    ) // 获取用户文件
+}
 
 // 模态框
 const modalState = reactive({
     addFoldModal: false,
     addFileModal: false,
-    foldModalMode: "add",
-    fileModalMode: "add",
-});
+    foldModalMode: 'add',
+    fileModalMode: 'add',
+})
 
 // 添加文件夹
 const handleAddFold = () => {
-    modalState.foldModalMode = "add";
-    modalState.addFoldModal = true;
-};
+    modalState.foldModalMode = 'add'
+    modalState.addFoldModal = true
+}
 
 const addFoldFormValue = reactive({
     curFoldId: 0,
-    fold_name: "",
-});
+    fold_name: '',
+})
 
 const submitFoldCallback = () => {
-    if (modalState.foldModalMode === "add") {
-        if (addFoldFormValue.fold_name !== "") {
+    if (modalState.foldModalMode === 'add') {
+        if (addFoldFormValue.fold_name !== '') {
             const data = {
                 fold_name: addFoldFormValue.fold_name,
                 user: userinfoStore.userInfo.userId,
                 is_team_fold: false,
                 creations: null,
-            };
+            }
             postFold(data).then(
                 (response) => {
-                    dataInit();
-                    message.success("添加成功");
+                    dataInit()
+                    message.success('添加成功')
                 },
                 (error) => {
-                    console.log(error);
-                    message.error("添加失败");
+                    console.log(error)
+                    message.error('添加失败')
                 }
-            );
-            modalState.addFoldModal = false;
-        } else if (addFoldFormValue.fold_name === "") {
-            message.warning("输入为空");
+            )
+            modalState.addFoldModal = false
+        } else if (addFoldFormValue.fold_name === '') {
+            message.warning('输入为空')
         } else {
-            message.error("添加失败");
+            message.error('添加失败')
         }
-    } else if (modalState.foldModalMode === "edit") {
+    } else if (modalState.foldModalMode === 'edit') {
         const data = {
             id: addFoldFormValue.curFoldId,
             fold_name: addFoldFormValue.fold_name,
-        };
+        }
         putFoldInfo(data).then(
             (response) => {
-                message.success("修改成功");
-                dataInit();
+                message.success('修改成功')
+                dataInit()
             },
             (error) => {
-                message.error("修改失败");
+                message.error('修改失败')
             }
-        );
-        modalState.addFoldModal = false;
+        )
+        modalState.addFoldModal = false
     }
-};
+}
 
 const cancelFoldCallback = () => {
-    modalState.addFoldModal = false;
-    addFoldFormValue.fold_name = "";
-};
+    modalState.addFoldModal = false
+    addFoldFormValue.fold_name = ''
+}
 
 // 添加文件
 const addFileFormValue = reactive({
     curFileId: 0,
-    cre_name: "",
+    cre_name: '',
     isPublic: true,
     fold: null,
     category: null,
-});
+})
 
 const addFileOption = reactive({
     foldOption: [],
     categoryOption: [],
-});
+})
 
 const fileOptionInit = () => {
-    const userID = userinfoStore.userInfo.userId;
+    const userID = userinfoStore.userInfo.userId
     getUserFold({ id: userID }).then(
         (response) => {
-            const resFolds = response.data.folds;
+            const resFolds = response.data.folds
             for (let index = 0; index < resFolds.length; index++) {
                 addFileOption.foldOption[index] = {
                     label: resFolds[index].fold_name,
                     value: resFolds[index].id,
-                };
+                }
             }
         },
         (error) => {
-            message.error("未获取到用户文件夹");
-            console.log(error);
+            message.error('未获取到用户文件夹')
+            console.log(error)
         }
-    );
+    )
 
     getCategory().then(
         (response) => {
-            const resCategories = response.data.data;
+            const resCategories = response.data.data
             for (let index = 0; index < resCategories.length; index++) {
                 addFileOption.categoryOption[index] = {
                     label: resCategories[index].attributes.cate_name,
                     value: resCategories[index].id,
-                };
+                }
             }
         },
         (error) => {
-            message.error("未获取到分类");
-            console.log(error);
+            message.error('未获取到分类')
+            console.log(error)
         }
-    );
-}; // 添加文件表单的选择器配置初始化
+    )
+} // 添加文件表单的选择器配置初始化
 
 const handleAddFile = () => {
-    modalState.fileModalMode = "add";
-    fileOptionInit();
-    modalState.addFileModal = true;
+    modalState.fileModalMode = 'add'
+    fileOptionInit()
+    modalState.addFileModal = true
     // router.push({ name: "design" });
-};
+}
 
 const submitFileCallback = () => {
-    if (modalState.fileModalMode === "add") {
+    if (modalState.fileModalMode === 'add') {
         if (
-            addFileFormValue.cre_name !== "" &&
-            addFileFormValue.fold !== "" &&
-            addFileFormValue.category !== ""
+            addFileFormValue.cre_name !== '' &&
+            addFileFormValue.fold !== '' &&
+            addFileFormValue.category !== ''
         ) {
             const data = {
                 cre_name: addFileFormValue.cre_name,
-                cre_status: "刚创建",
+                cre_status: '刚创建',
                 isPublic: addFileFormValue.isPublic,
                 is_team_file: false,
                 json_content: null,
@@ -625,169 +625,169 @@ const submitFileCallback = () => {
                 category: Number(addFileFormValue.category),
                 user: userinfoStore.userInfo.userId,
                 team: null,
-            };
+            }
             postFile(data).then(
                 (response) => {
-                    dataInit();
-                    message.success("添加成功");
+                    dataInit()
+                    message.success('添加成功')
                     // 跳转
-                    modalState.addFileModal = false;
-                    fileToDesign(response.data.data.id);
+                    modalState.addFileModal = false
+                    fileToDesign(response.data.data.id)
                 },
                 (error) => {
-                    message.error("添加失败");
+                    message.error('添加失败')
                 }
-            );
+            )
         } else if (
-            addFileFormValue.cre_name === "" ||
+            addFileFormValue.cre_name === '' ||
             addFileFormValue.fold === null ||
             addFileFormValue.category === null
         ) {
-            message.warning("请完备信息");
+            message.warning('请完备信息')
         } else {
-            message.error("添加失败");
+            message.error('添加失败')
         }
-    } else if (modalState.fileModalMode === "edit") {
+    } else if (modalState.fileModalMode === 'edit') {
         const data = {
             id: addFileFormValue.curFileId,
             cre_name: addFileFormValue.cre_name,
             isPublic: addFileFormValue.isPublic,
             fold: addFileFormValue.fold,
             category: addFileFormValue.category,
-        };
+        }
         putFileInfo(data).then(
             (response) => {
-                dataInit();
-                message.success("修改成功");
+                dataInit()
+                message.success('修改成功')
             },
             (error) => {
-                message.error("修改失败");
+                message.error('修改失败')
             }
-        );
-        modalState.addFileModal = false;
+        )
+        modalState.addFileModal = false
     }
-};
+}
 
 const cancelFileCallback = () => {
-    addFileFormValue.cre_name = "";
-    addFileFormValue.isPublic = true;
-    addFileFormValue.fold = null;
-    addFileFormValue.category = null;
-    modalState.addFileModal = false;
-};
+    addFileFormValue.cre_name = ''
+    addFileFormValue.isPublic = true
+    addFileFormValue.fold = null
+    addFileFormValue.category = null
+    modalState.addFileModal = false
+}
 
 // 编辑文件夹
 const handleEditFold = (foldId) => {
-    addFoldFormValue.curFoldId = foldId;
+    addFoldFormValue.curFoldId = foldId
     const filterFold = contentState.userFolds.filter((item) => {
-        return item.id === foldId;
-    });
-    addFoldFormValue.fold_name = filterFold[0].fold_name;
-    modalState.foldModalMode = "edit";
-    modalState.addFoldModal = true;
-};
+        return item.id === foldId
+    })
+    addFoldFormValue.fold_name = filterFold[0].fold_name
+    modalState.foldModalMode = 'edit'
+    modalState.addFoldModal = true
+}
 
 // 编辑文件
 const handleEditFile = (fileId) => {
-    addFileFormValue.curFileId = fileId;
-    fileOptionInit();
+    addFileFormValue.curFileId = fileId
+    fileOptionInit()
     getFile({ id: fileId }).then(
         (response) => {
-            const resfile = response.data.data.attributes;
-            addFileFormValue.cre_name = resfile.cre_name;
-            addFileFormValue.isPublic = resfile.isPublic;
-            addFileFormValue.fold = resfile.fold.data.id;
-            addFileFormValue.category = resfile.category.data.id;
+            const resfile = response.data.data.attributes
+            addFileFormValue.cre_name = resfile.cre_name
+            addFileFormValue.isPublic = resfile.isPublic
+            addFileFormValue.fold = resfile.fold.data.id
+            addFileFormValue.category = resfile.category.data.id
         },
         (error) => {
-            message.error("获取文件信息失败");
-            console.log(error);
+            message.error('获取文件信息失败')
+            console.log(error)
         }
-    );
-    modalState.fileModalMode = "edit";
-    modalState.addFileModal = true;
-};
+    )
+    modalState.fileModalMode = 'edit'
+    modalState.addFileModal = true
+}
 
 // 删除文件夹
 const handleDeleteFold = (foldId) => {
     deleteFold({ id: foldId }).then(
         (response) => {
-            message.success("删除成功");
-            dataInit();
+            message.success('删除成功')
+            dataInit()
         },
         (error) => {
-            message.error("删除失败");
-            console.log(error);
+            message.error('删除失败')
+            console.log(error)
         }
-    );
-};
+    )
+}
 
 // 删除文件
 const handleDeleteFile = (fileId) => {
     deleteFile({ id: fileId }).then(
         (response) => {
-            message.success("删除成功");
-            dataInit();
+            message.success('删除成功')
+            dataInit()
         },
         (error) => {
-            message.error("删除失败");
-            console.log(error);
+            message.error('删除失败')
+            console.log(error)
         }
-    );
-};
+    )
+}
 
 // 文件跳转设计界面
 const fileToDesign = (fileId) => {
-    const tempData = [];
-    editingStore.resetBlocks(tempData);
-    router.push({ name: "design", query: { fileId } });
-};
+    const tempData = []
+    editingStore.resetBlocks(tempData)
+    router.push({ name: 'design', query: { fileId } })
+}
 
 // 查看文件夹栏下文件
 const tabState = reactive({
-    tabValue: "userFiles",
-    foldTabName: "选定文件夹",
-});
+    tabValue: 'userFiles',
+    foldTabName: '选定文件夹',
+})
 
 const checkChildFiles = (foldData) => {
-    contentState.foldFiles = [];
+    contentState.foldFiles = []
     getFoldFiles({ id: foldData.id }).then(
         (response) => {
-            const resFiles = response.data.data.attributes.creations.data;
+            const resFiles = response.data.data.attributes.creations.data
             for (let index = 0; index < resFiles.length; index++) {
                 contentState.foldFiles[index] = {
                     id: resFiles[index].id,
                     ...resFiles[index].attributes,
-                };
+                }
             }
-            tabState.foldTabName = foldData.fold_name;
-            tabState.tabValue = "foldFiles";
+            tabState.foldTabName = foldData.fold_name
+            tabState.tabValue = 'foldFiles'
         },
         (error) => {
-            message.error("未获取到文件");
-            console.log(error);
+            message.error('未获取到文件')
+            console.log(error)
         }
-    );
-};
+    )
+}
 
 // 查看搜索文件栏下文件
 const searchState = reactive({
-    searchValue: "",
+    searchValue: '',
     searchFiles: [],
-});
+})
 
-emitter.on("getSearchValue", (searchValue) => {
-    const userFiles = JSON.parse(JSON.stringify(contentState.userFiles));
+emitter.on('getSearchValue', (searchValue) => {
+    const userFiles = JSON.parse(JSON.stringify(contentState.userFiles))
     const resUserFiles = userFiles.filter((item) => {
-        return item.cre_name.indexOf(searchValue) != -1;
-    });
+        return item.cre_name.indexOf(searchValue) != -1
+    })
     searchState.searchFiles = [...resUserFiles]
-    tabState.tabValue = "searchFiles";
-});
+    tabState.tabValue = 'searchFiles'
+})
 
 onMounted(() => {
-    dataInit();
-});
+    dataInit()
+})
 </script>
 
 <style lang="scss" scoped>

@@ -4,41 +4,49 @@
             <div class="title">组件数：{{ blocksState.blocks.length }}</div>
             <div class="list">
                 <div
-                    :class="curState.curKey===item.key?'item-focus':'item'"
+                    :class="
+                        curState.curKey === item.key ? 'item-focus' : 'item'
+                    "
                     v-for="item in blocksState.blocks"
                     :key="item.key"
-                    @click="() => {handleClickBlock(item.key)}"
-                >{{ item.propValue }}</div>
+                    @click="
+                        () => {
+                            handleClickBlock(item.key)
+                        }
+                    "
+                >
+                    {{ item.propValue }}
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { reactive, onMounted } from "vue";
-import useEditing from "@/stores/editing";
-import emitter from "@/mitt/event";
+import { reactive, onMounted } from 'vue'
+import useEditing from '@/stores/editing'
+import emitter from '@/mitt/event'
 
 // pinia
-const editingStore = useEditing();
+const editingStore = useEditing()
 
 // 渲染组件列表
 const blocksState = {
     blocks: editingStore.pageData.blocks,
-};
+}
 
 // 列表绑定画布组件focus状态
 const curState = reactive({
-    curKey: "",
-});
-emitter.on("getCurBlock", (data) => {
-    curState.curKey = data;
-});
+    curKey: '',
+})
+emitter.on('getCurBlock', (data) => {
+    curState.curKey = data
+})
 
 // 点击列表绑定画布组件focus状态
 const handleClickBlock = (key) => {
-    emitter.emit("setCurBlock", key);
-};
+    emitter.emit('setCurBlock', key)
+}
 
 // 点击列表组件实现画布组件focus
 </script>

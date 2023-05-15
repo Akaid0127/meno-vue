@@ -23,28 +23,28 @@
 </template>
 
 <script setup>
-import { reactive, onMounted } from "vue";
-import WorkNav from "./components/WorkNav.vue";
-import WorkSearch from "./components/WorkSearch.vue";
-import WorkFile from "./components/WorkFile.vue";
-import useUserinfo from "@/stores/userinfo";
-import emitter from "@/mitt/event";
+import { reactive, onMounted } from 'vue'
+import WorkNav from './components/WorkNav.vue'
+import WorkSearch from './components/WorkSearch.vue'
+import WorkFile from './components/WorkFile.vue'
+import useUserinfo from '@/stores/userinfo'
+import emitter from '@/mitt/event'
 // pinia
-const userinfoStore = useUserinfo(); // 用户状态
+const userinfoStore = useUserinfo() // 用户状态
 
 // 用户信息
 const userState = reactive({
     userName: userinfoStore.userInfo.userName,
-});
+})
 
 // 处理搜索框内容
 const handleSearchVaule = (data) => {
-    emitter.emit("getSearchValue", data.searchValue);
-};
+    emitter.emit('getSearchValue', data.searchValue)
+}
 
 onMounted(() => {
     // console.log(userinfoStore.userInfo);
-});
+})
 </script>
 
 <style lang="scss" scoped>

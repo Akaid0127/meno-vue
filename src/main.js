@@ -19,6 +19,6 @@ app.use(pinia)
 // 注册全局组件
 app.use(gobalComponents)
 // 右键菜单
-app.use(ContextMenu)     
+app.use(ContextMenu)
 // 挂载
 app.mount('#app')

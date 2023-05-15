@@ -60,42 +60,42 @@
 </template>
 
 <script setup>
-import { reactive, onMounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import { Sun, Moon } from "@vicons/carbon";
+import { reactive, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { Sun, Moon } from '@vicons/carbon'
 
 // 定义路由
-const router = useRouter();
-const route = useRoute();
+const router = useRouter()
+const route = useRoute()
 
 // logo
 const imgState = reactive({
-    logoImgLight: require("assets/logo/menocode-row-white.png"),
-    logoImgDark: require("assets/logo/menocode-row-black.png"),
-});
+    logoImgLight: require('assets/logo/menocode-row-white.png'),
+    logoImgDark: require('assets/logo/menocode-row-black.png'),
+})
 
 // 黑白主题切换
 const themeState = reactive({
     dark: false,
-});
+})
 function modelBrn() {
-    themeState.dark = !themeState.dark;
+    themeState.dark = !themeState.dark
     if (themeState.dark) {
-        window.document.documentElement.setAttribute("data-theme", "dark");
+        window.document.documentElement.setAttribute('data-theme', 'dark')
     } else {
-        window.document.documentElement.setAttribute("data-theme", "light");
+        window.document.documentElement.setAttribute('data-theme', 'light')
     }
 }
 onMounted(() => {
-    window.document.documentElement.setAttribute("data-theme", "light");
-});
+    window.document.documentElement.setAttribute('data-theme', 'light')
+})
 
 // 登录
 function handleLogin() {
     router.push({
-        name: "login",
-        query: { type: "toLogin" },
-    });
+        name: 'login',
+        query: { type: 'toLogin' },
+    })
 }
 
 // 注册
@@ -105,17 +105,17 @@ function handleRegister() {
     //     name: "login",
     //     query: { type: "toLogin" },
     // });
-    router.push({ name: "work" });
+    router.push({ name: 'work' })
 }
 </script>
 
 
 
 <style lang="scss" scoped>
-@import "styles/common/common";
+@import 'styles/common/common';
 .homenav-wrap {
-    @include background_color_nav("background_color_nav");
-    @include text_color_nav("text_color_nav");
+    @include background_color_nav('background_color_nav');
+    @include text_color_nav('text_color_nav');
     transition: background 1s, color 0.6s;
     width: 100%;
     display: flex;

@@ -35,7 +35,7 @@
 </template>
 
 <script setup>
-import { reactive, defineComponent, h, onMounted } from "vue";
+import { reactive, defineComponent, h, onMounted } from 'vue'
 import {
     RecentlyViewed,
     AlignBoxMiddleLeft,
@@ -43,30 +43,30 @@ import {
     FlightInternational,
     Add,
     ArrowRight,
-} from "@vicons/carbon";
-import { RouterLink,useRouter, useRoute } from "vue-router";
-import { NIcon, useMessage } from "naive-ui";
+} from '@vicons/carbon'
+import { RouterLink, useRouter, useRoute } from 'vue-router'
+import { NIcon, useMessage } from 'naive-ui'
 
 onMounted(() => {
     meunState.menuRouteValue = route.name
-});
+})
 
 // 定义路由
-const router = useRouter();
-const route = useRoute();
+const router = useRouter()
+const route = useRoute()
 
 // 侧边栏图片
 const imgState = reactive({
-    logoImg: require("assets/logo/menocode-row.png"),
-});
+    logoImg: require('assets/logo/menocode-row.png'),
+})
 
 // 左侧菜单
 function renderIcon(icon) {
-    return () => h(NIcon, null, { default: () => h(icon) });
+    return () => h(NIcon, null, { default: () => h(icon) })
 }
 
 const meunState = reactive({
-    menuRouteValue: "",
+    menuRouteValue: '',
     menuOptions: [
         {
             label: () =>
@@ -74,12 +74,12 @@ const meunState = reactive({
                     RouterLink,
                     {
                         to: {
-                            name: "workFile",
+                            name: 'workFile',
                         },
                     },
-                    { default: () => "个人文件" }
+                    { default: () => '个人文件' }
                 ),
-            key: "workFile",
+            key: 'workFile',
             icon: renderIcon(AlignBoxMiddleLeft),
         },
         {
@@ -88,34 +88,34 @@ const meunState = reactive({
                     RouterLink,
                     {
                         to: {
-                            name: "workRecent",
+                            name: 'workRecent',
                         },
                     },
-                    { default: () => "最近文件" }
+                    { default: () => '最近文件' }
                 ),
-            key: "workRecent",
+            key: 'workRecent',
             icon: renderIcon(RecentlyViewed),
         },
-                {
+        {
             label: () =>
                 h(
                     RouterLink,
                     {
                         to: {
-                            name: "community",
+                            name: 'community',
                         },
                     },
-                    { default: () => "资源社区" }
+                    { default: () => '资源社区' }
                 ),
-            key: "community",
+            key: 'community',
             icon: renderIcon(FlightInternational),
         },
     ],
-});
+})
 
 const handleUpdateValue = (key, item) => {
-    console.log(item);
-};
+    console.log(item)
+}
 </script>
 
 <style lang="scss" scoped>

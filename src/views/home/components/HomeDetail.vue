@@ -70,50 +70,50 @@
 </template>
 
 <script setup>
-import { reactive } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { reactive } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import {
     MailAll,
     AirlineManageGates,
     Group,
     ShareKnowledge,
-} from "@vicons/carbon";
-import es from "naive-ui";
-import { useMessage } from "naive-ui";
+} from '@vicons/carbon'
+import es from 'naive-ui'
+import { useMessage } from 'naive-ui'
 
 // 定义路由
-const router = useRouter();
-const route = useRoute();
+const router = useRouter()
+const route = useRoute()
 
 // naive message
-const message = useMessage();
+const message = useMessage()
 
 const regState = reactive({
-    regMail: "",
-});
+    regMail: '',
+})
 
 const handleReg = () => {
     // 邮箱验证正确后跳转
     if (checkMail(regState.regMail)) {
         router.push({
-            name: "login",
-            query: { regMail: regState.regMail, type: "toReg" },
-        });
+            name: 'login',
+            query: { regMail: regState.regMail, type: 'toReg' },
+        })
     } else {
-        message.warning("邮箱号码格式有误，请重新填写");
+        message.warning('邮箱号码格式有误，请重新填写')
     }
-    s;
-};
+    s
+}
 
 // 邮箱验证
 const checkMail = (mailValue) => {
-    var regMail = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9])+/;
+    var regMail = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9])+/
     if (!regMail.test(mailValue)) {
-        return false;
+        return false
     } else {
-        return true;
+        return true
     }
-};
+}
 </script>
 
 <style lang="scss" scoped>
@@ -191,7 +191,7 @@ const checkMail = (mailValue) => {
     }
 
     .homedetail-content ::after {
-        content: "";
+        content: '';
         display: block;
         position: fixed;
         width: 100%;
@@ -210,13 +210,13 @@ const checkMail = (mailValue) => {
     align-items: center;
     justify-content: center;
     .title {
-        font: bold 4rem/4.64rem "SourceHanSansCN_Bold";
+        font: bold 4rem/4.64rem 'SourceHanSansCN_Bold';
         margin-bottom: 30px;
     }
 
     .summary {
-        font: 400 1rem/1.5rem "PingFang SC", "Microsoft YaHei",
-            "Microsoft JhengHei", "黑体", arial, "STHeiti", "宋体";
+        font: 400 1rem/1.5rem 'PingFang SC', 'Microsoft YaHei',
+            'Microsoft JhengHei', '黑体', arial, 'STHeiti', '宋体';
         font-size: 20px;
         color: #243042;
         opacity: 0.8;
@@ -269,7 +269,7 @@ const checkMail = (mailValue) => {
                 border-radius: 10px;
                 display: flex;
                 align-items: center;
-                font: bold 24px "SourceHanSansCN_Bold";
+                font: bold 24px 'SourceHanSansCN_Bold';
                 margin-bottom: 16px;
                 .n-icon {
                     font-size: 26px;
@@ -279,14 +279,14 @@ const checkMail = (mailValue) => {
                 }
             }
             .subtitle {
-                font: bold 25px "SourceHanSansCN_Bold";
+                font: bold 25px 'SourceHanSansCN_Bold';
                 color: #18a058;
                 opacity: 0.7;
                 margin-bottom: 14px;
             }
             .content {
-                font: 400 22px "PingFang SC", "Microsoft YaHei",
-                    "Microsoft JhengHei", "黑体", arial, "STHeiti", "宋体";
+                font: 400 22px 'PingFang SC', 'Microsoft YaHei',
+                    'Microsoft JhengHei', '黑体', arial, 'STHeiti', '宋体';
                 opacity: 0.7;
             }
         }

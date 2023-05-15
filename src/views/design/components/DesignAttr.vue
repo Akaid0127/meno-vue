@@ -1,7 +1,12 @@
 <template>
     <div class="designattr-wrap">
         <div class="designattr-content">
-            <n-tabs type="line" animated default-value="attrStyle" justify-content="space-evenly">
+            <n-tabs
+                type="line"
+                animated
+                default-value="attrStyle"
+                justify-content="space-evenly"
+            >
                 <n-tab-pane tab="样式" name="attrStyle">
                     <div class="style-list">
                         <n-form label-placement="left" label-width="auto">
@@ -11,14 +16,26 @@
                                 :label="styleLabelList[key]"
                             >
                                 <n-input-number
-                                    v-if="key == 'width'||key == 'height'||key == 'top'
-									||key == 'left'||key == 'zIndex'||key == 'borderWidth'
-									||key == 'opacity'||key == 'borderRadius'||key == 'fontSize'"
+                                    v-if="
+                                        key == 'width' ||
+                                        key == 'height' ||
+                                        key == 'top' ||
+                                        key == 'left' ||
+                                        key == 'zIndex' ||
+                                        key == 'borderWidth' ||
+                                        key == 'opacity' ||
+                                        key == 'borderRadius' ||
+                                        key == 'fontSize'
+                                    "
                                     v-model:value="curState.curStyle[key]"
                                     placeholder="请输入数值"
                                 />
                                 <n-color-picker
-                                    v-else-if="key == 'backgroundColor'||key == 'borderColor'||key == 'color'"
+                                    v-else-if="
+                                        key == 'backgroundColor' ||
+                                        key == 'borderColor' ||
+                                        key == 'color'
+                                    "
                                     v-model:value="curState.curStyle[key]"
                                     :show-alpha="true"
                                 />
@@ -53,7 +70,10 @@
                     <n-scrollbar style="max-height: 860px" trigger="none">
                         <div class="content-list">
                             <n-form label-placement="top" label-width="auto">
-                                <n-form-item v-if="curState.curComponent==='m-input'" label="输入提示">
+                                <n-form-item
+                                    v-if="curState.curComponent === 'm-input'"
+                                    label="输入提示"
+                                >
                                     <n-input
                                         v-model:value="curState.curValue"
                                         type="text"
@@ -61,8 +81,10 @@
                                     />
                                 </n-form-item>
                                 <n-form-item
-                                    v-if="curState.curComponent==='m-text'
-								||curState.curComponent==='m-button'"
+                                    v-if="
+                                        curState.curComponent === 'm-text' ||
+                                        curState.curComponent === 'm-button'
+                                    "
                                     label="组件内容"
                                 >
                                     <n-input
@@ -73,9 +95,13 @@
                                 </n-form-item>
 
                                 <n-form-item
-                                    v-if="curState.curComponent==='m-rectangle'
-								||curState.curComponent==='m-circular'
-								||curState.curComponent==='m-image'"
+                                    v-if="
+                                        curState.curComponent ===
+                                            'm-rectangle' ||
+                                        curState.curComponent ===
+                                            'm-circular' ||
+                                        curState.curComponent === 'm-image'
+                                    "
                                     label="组件名称"
                                 >
                                     <n-input
@@ -85,7 +111,10 @@
                                     />
                                 </n-form-item>
 
-                                <n-form-item v-if="curState.curComponent==='m-image'" label="图片链接">
+                                <n-form-item
+                                    v-if="curState.curComponent === 'm-image'"
+                                    label="图片链接"
+                                >
                                     <n-input
                                         v-model:value="curState.curImgUrl"
                                         type="textarea"
@@ -93,16 +122,25 @@
                                     />
                                 </n-form-item>
 
-                                <div v-if="curState.curComponent==='m-icon'" class="icon-list">
+                                <div
+                                    v-if="curState.curComponent === 'm-icon'"
+                                    class="icon-list"
+                                >
                                     <div
-                                        v-for="(item,index) in svgArr"
+                                        v-for="(item, index) in svgArr"
                                         :key="item.name"
                                         class="icon-item"
                                     >
-                                        <n-button strong secondary @click="handleClickIcon(index)">
+                                        <n-button
+                                            strong
+                                            secondary
+                                            @click="handleClickIcon(index)"
+                                        >
                                             <template #icon>
                                                 <n-icon>
-                                                    <div v-html="item.svgValue"></div>
+                                                    <div
+                                                        v-html="item.svgValue"
+                                                    ></div>
                                                 </n-icon>
                                             </template>
                                         </n-button>
@@ -110,12 +148,13 @@
                                 </div>
                             </n-form>
                             <n-button
-                                v-if="curState.curComponent!=='m-icon'"
+                                v-if="curState.curComponent !== 'm-icon'"
                                 strong
                                 secondary
                                 type="primary"
                                 @click="handleUpdataContent"
-                            >更新内容</n-button>
+                                >更新内容</n-button
+                            >
                         </div>
                     </n-scrollbar>
                 </n-tab-pane>
@@ -128,77 +167,77 @@
 </template>
 
 <script setup>
-import { reactive, watch } from "vue";
-import emitter from "@/mitt/event";
-import styleLabelList from "@/components-unit/styleList";
-import useEditing from "@/stores/editing";
-import svgArr from "@/components-unit/iconData";
+import { reactive, watch } from 'vue'
+import emitter from '@/mitt/event'
+import styleLabelList from '@/components-unit/styleList'
+import useEditing from '@/stores/editing'
+import svgArr from '@/components-unit/iconData'
 
 // 表单
 const formState = reactive({
     borderStyleSelect: [
-        { value: "dotted", label: "点线" },
-        { value: "dashed", label: "虚线" },
-        { value: "solid", label: "实线" },
-        { value: "double", label: "双边" },
-        { value: "none", label: "无边" },
+        { value: 'dotted', label: '点线' },
+        { value: 'dashed', label: '虚线' },
+        { value: 'solid', label: '实线' },
+        { value: 'double', label: '双边' },
+        { value: 'none', label: '无边' },
     ],
     fontStyleSelect: [
-        { value: "normal", label: "正常" },
-        { value: "italic", label: "斜体" },
+        { value: 'normal', label: '正常' },
+        { value: 'italic', label: '斜体' },
     ],
     fontWeightSelect: [
-        { value: "normal", label: "正常" },
-        { value: "bold", label: "加粗" },
+        { value: 'normal', label: '正常' },
+        { value: 'bold', label: '加粗' },
     ],
-});
+})
 
 // pinia
-const editingStore = useEditing();
+const editingStore = useEditing()
 
 // 当前组件数据
 const curState = reactive({
-    curkey: "",
+    curkey: '',
     curStyle: {},
     styleKeys: [],
-    curValue: "",
-    curComponent: "",
-    curImgUrl: "",
-});
-emitter.on("getCurStyle", (data) => {
-    curState.curkey = data.key;
-    curState.curStyle = data.style;
-    curState.styleKeys = Object.keys(data.style);
-    curState.curValue = data.propValue;
-    curState.curComponent = data.component;
-});
+    curValue: '',
+    curComponent: '',
+    curImgUrl: '',
+})
+emitter.on('getCurStyle', (data) => {
+    curState.curkey = data.key
+    curState.curStyle = data.style
+    curState.styleKeys = Object.keys(data.style)
+    curState.curValue = data.propValue
+    curState.curComponent = data.component
+})
 
 // 监听表单数据
 watch(
     () => curState.curStyle,
     (curStyle) => {
-        editingStore.updateBlockStyle(curState.curkey, curStyle);
+        editingStore.updateBlockStyle(curState.curkey, curStyle)
         const curData = {
             key: curState.curkey,
             style: curState.curStyle,
-        };
-        emitter.emit("setCurStyle", curData); // 设置焦点组件属性
+        }
+        emitter.emit('setCurStyle', curData) // 设置焦点组件属性
     },
     {
         deep: true,
     }
-);
+)
 
 // 监听内容提交
 const handleUpdataContent = () => {
     const curData = {
         key: curState.curkey,
         value: curState.curValue,
-        imgUrl: curState.curComponent === "m-image" ? curState.curImgUrl : "",
+        imgUrl: curState.curComponent === 'm-image' ? curState.curImgUrl : '',
         componentType: curState.curComponent,
-    };
-    emitter.emit("setCurContent", curData); // 设置焦点组件内容
-};
+    }
+    emitter.emit('setCurContent', curData) // 设置焦点组件内容
+}
 
 // 监听图标提交
 const handleClickIcon = (index) => {
@@ -207,9 +246,9 @@ const handleClickIcon = (index) => {
         value: curState.curValue,
         componentType: curState.curComponent,
         iconIndex: index,
-    };
-    emitter.emit("setCurIcon", curData);
-};
+    }
+    emitter.emit('setCurIcon', curData)
+}
 </script>
 
 <style lang="scss" scoped>

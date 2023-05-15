@@ -16,8 +16,8 @@
 
 <script setup>
 // 组件
-import HomeNav from "./components/HomeNav.vue";
-import HomeDetail from "./components/HomeDetail.vue";
+import HomeNav from './components/HomeNav.vue'
+import HomeDetail from './components/HomeDetail.vue'
 </script>
 
 <style lang="scss" scoped>

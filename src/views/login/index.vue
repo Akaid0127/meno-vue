@@ -139,142 +139,142 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import { useMessage } from "naive-ui";
-import { Bot } from "@vicons/carbon";
-import { userLogin, userReg } from "@/service";
-import useUserinfo from "@/stores/userinfo";
+import { ref, reactive, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { useMessage } from 'naive-ui'
+import { Bot } from '@vicons/carbon'
+import { userLogin, userReg } from '@/service'
+import useUserinfo from '@/stores/userinfo'
 
 // 挂载
 onMounted(() => {
-    const tabValue = route.query.type;
-    if (tabValue === "toLogin") {
-        nTabState.nTabValue = "signin";
-    } else if (tabValue === "toReg") {
-        formRegState.email = route.query.regMail;
-        nTabState.nTabValue = "signup";
+    const tabValue = route.query.type
+    if (tabValue === 'toLogin') {
+        nTabState.nTabValue = 'signin'
+    } else if (tabValue === 'toReg') {
+        formRegState.email = route.query.regMail
+        nTabState.nTabValue = 'signup'
     }
-});
+})
 
 // 模态框默认值
 const nTabState = reactive({
-    nTabValue: "signin",
-});
+    nTabValue: 'signin',
+})
 
 const handleSignin = () => {
-    nTabState.nTabValue = "signin";
-};
+    nTabState.nTabValue = 'signin'
+}
 
 const handleSignup = () => {
-    nTabState.nTabValue = "signup";
-};
+    nTabState.nTabValue = 'signup'
+}
 
 // pinia
-const userinfoStore = useUserinfo(); // 用户状态
+const userinfoStore = useUserinfo() // 用户状态
 
 // naive message
-const message = useMessage();
+const message = useMessage()
 
 // 定义路由
-const router = useRouter();
-const route = useRoute();
+const router = useRouter()
+const route = useRoute()
 
 // logo
 const imgState = reactive({
-    logoImgLight: require("assets/logo/menocode-row-white.png"),
-    logoImgDark: require("assets/logo/menocode-row-black.png"),
-    bgImg: require("assets/bg/bg-login1.jpg"),
-});
+    logoImgLight: require('assets/logo/menocode-row-white.png'),
+    logoImgDark: require('assets/logo/menocode-row-black.png'),
+    bgImg: require('assets/bg/bg-login1.jpg'),
+})
 
 const handleBack = () => {
-    router.push({ name: "home" });
-};
+    router.push({ name: 'home' })
+}
 
 // 登录
-const formLoginRef = ref(null);
+const formLoginRef = ref(null)
 const formLoginState = reactive({
-    userName: "",
-    passward: "",
-});
+    userName: '',
+    passward: '',
+})
 const formLoginRule = {
     userName: {
         required: true,
-        message: "请输入姓名",
-        trigger: "blur",
+        message: '请输入姓名',
+        trigger: 'blur',
     },
     passward: {
         required: true,
-        message: "请输入密码",
-        trigger: "blur",
+        message: '请输入密码',
+        trigger: 'blur',
     },
-};
+}
 const handleLogin = (e) => {
-    e.preventDefault();
+    e.preventDefault()
     formLoginRef.value?.validate((errors) => {
         if (!errors) {
             if (formLoginState.userName && formLoginState.passward) {
                 const params = {
                     userName: formLoginState.userName,
                     passward: formLoginState.passward,
-                };
+                }
 
-                if (localStorage.getItem("userJwt") != null) {
-                    localStorage.removeItem("userJwt");
+                if (localStorage.getItem('userJwt') != null) {
+                    localStorage.removeItem('userJwt')
                 }
                 userLogin(params).then(
                     (res) => {
                         // 读取token并存储localStorage
-                        localStorage.setItem("userJwt", res.data.jwt);
-                        const responseData = res.data.user;
+                        localStorage.setItem('userJwt', res.data.jwt)
+                        const responseData = res.data.user
                         const userData = {
                             userId: responseData.id,
                             userName: responseData.username,
                             userEmail: responseData.email,
-                        };
-                        userinfoStore.setUserInfo(userData);
-                        router.push({ name: "work" });
+                        }
+                        userinfoStore.setUserInfo(userData)
+                        router.push({ name: 'work' })
                     },
                     (error) => {
                         if (error.response.status === 400) {
-                            message.error("账号密码错误或账号不存在");
+                            message.error('账号密码错误或账号不存在')
                         }
                     }
-                );
+                )
             }
         } else {
-            console.log(errors);
-            message.error("请补全信息");
+            console.log(errors)
+            message.error('请补全信息')
         }
-    });
-};
+    })
+}
 
 // 注册
-const formRegRef = ref(null);
+const formRegRef = ref(null)
 const formRegState = reactive({
-    userName: "",
-    email: "",
-    passward: "",
-});
+    userName: '',
+    email: '',
+    passward: '',
+})
 const formRegRule = {
     userName: {
         required: true,
-        message: "请输入姓名",
-        trigger: "blur",
+        message: '请输入姓名',
+        trigger: 'blur',
     },
     email: {
         required: true,
-        message: "请输入邮箱",
-        trigger: "blur",
+        message: '请输入邮箱',
+        trigger: 'blur',
     },
     passward: {
         required: true,
-        message: "请输入密码",
-        trigger: "blur",
+        message: '请输入密码',
+        trigger: 'blur',
     },
-};
+}
 const handleReg = (e) => {
-    e.preventDefault();
+    e.preventDefault()
     formRegRef.value?.validate((errors) => {
         if (!errors) {
             if (
@@ -286,40 +286,40 @@ const handleReg = (e) => {
                     userName: formRegState.userName,
                     email: formRegState.email,
                     passward: formRegState.passward,
-                };
+                }
 
-                if (localStorage.getItem("userJwt") != null) {
-                    localStorage.removeItem("userJwt");
+                if (localStorage.getItem('userJwt') != null) {
+                    localStorage.removeItem('userJwt')
                 }
                 userReg(params).then(
                     (res) => {
                         // 读取token并存储localStorage
-                        localStorage.setItem("userJwt", res.data.jwt);
-                        const responseData = res.data.user;
+                        localStorage.setItem('userJwt', res.data.jwt)
+                        const responseData = res.data.user
                         const userData = {
                             userId: responseData.id,
                             userName: responseData.username,
                             userEmail: responseData.email,
-                        };
-                        userinfoStore.setUserInfo(userData);
-                        router.push({ name: "work" });
+                        }
+                        userinfoStore.setUserInfo(userData)
+                        router.push({ name: 'work' })
                     },
                     (error) => {
                         if (error.response.status === 400) {
-                            message.error(error.response.data.error.message);
+                            message.error(error.response.data.error.message)
                         }
                     }
-                );
+                )
             }
         } else {
-            console.log(errors);
+            console.log(errors)
         }
-    });
-};
+    })
+}
 </script>
 
 <style lang="scss" scoped>
-@import "styles/common/common";
+@import 'styles/common/common';
 .login-wrapper {
     background-color: #f3f7fb;
     width: 100%;
@@ -444,7 +444,7 @@ const handleReg = (e) => {
                 padding-top: 40px;
                 margin-bottom: 40px;
 
-                font: bold 40px "SourceHanSansCN_Bold";
+                font: bold 40px 'SourceHanSansCN_Bold';
                 color: #53a058;
                 opacity: 0.8;
             }

@@ -1,8 +1,6 @@
 <template>
     <div class="community-wrap">
-        <div class="community-content">
-            community
-        </div>
+        <div class="community-content">community</div>
     </div>
 </template>
 

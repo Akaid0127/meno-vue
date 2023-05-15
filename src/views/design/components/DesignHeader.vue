@@ -6,13 +6,17 @@
                 <div class="user">
                     <n-avatar
                         :style="{
-						color: '#18A058',
-						backgroundColor: '#DAF0E4'
-						}"
-                    >{{props.fileInfo.userName}}</n-avatar>
+                            color: '#18A058',
+                            backgroundColor: '#DAF0E4',
+                        }"
+                        >{{ props.fileInfo.userName }}</n-avatar
+                    >
                 </div>
                 <div class="split-line"></div>
-                <div class="title">{{props.fileInfo.foldName}} / {{props.fileInfo.fileName}}</div>
+                <div class="title">
+                    {{ props.fileInfo.foldName }} /
+                    {{ props.fileInfo.fileName }}
+                </div>
             </div>
             <div class="center">
                 <!-- 中间工具栏 -->
@@ -60,14 +64,20 @@
                     v-model:show="showModal.jsonModal"
                     class="custom-card"
                     preset="card"
-                    :style="{width:'740px',height:'700px'}"
+                    :style="{ width: '740px', height: '700px' }"
                     title="JSON数据"
                     size="huge"
                     :bordered="true"
-                    :segmented="{content:'soft',footer:'soft'}"
+                    :segmented="{ content: 'soft', footer: 'soft' }"
                 >
                     <template #header-extra>
-                        <n-button strong secondary type="primary" @click="handleExportJson">下载Json</n-button>
+                        <n-button
+                            strong
+                            secondary
+                            type="primary"
+                            @click="handleExportJson"
+                            >下载Json</n-button
+                        >
                     </template>
                     <n-scrollbar style="max-height: 560px" trigger="none">
                         <n-code
@@ -84,132 +94,144 @@
                     v-model:show="showModal.htmlModal"
                     class="custom-card"
                     preset="card"
-                    :style="{width:'740px',height:'700px'}"
+                    :style="{ width: '740px', height: '700px' }"
                     title="HTML数据"
                     size="huge"
                     :bordered="true"
-                    :segmented="{content:'soft',footer:'soft'}"
+                    :segmented="{ content: 'soft', footer: 'soft' }"
                 >
                     <template #header-extra>
-                        <n-button strong secondary type="primary" @click="handleExportHtml">下载HTML</n-button>
+                        <n-button
+                            strong
+                            secondary
+                            type="primary"
+                            @click="handleExportHtml"
+                            >下载HTML</n-button
+                        >
                     </template>
                     <n-scrollbar style="max-height: 560px" trigger="none">
-                        <n-code :code="codeState.htmlCode" language="javascript" show-line-numbers />
+                        <n-code
+                            :code="codeState.htmlCode"
+                            language="javascript"
+                            show-line-numbers
+                        />
                     </n-scrollbar>
                 </n-modal>
-                <n-button strong secondary type="success" @click="saveExit">保存退出</n-button>
+                <n-button strong secondary type="success" @click="saveExit"
+                    >保存退出</n-button
+                >
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { reactive } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import { useMessage } from "naive-ui";
-import { Reply, Delete, Image as viconImage, EditOff } from "@vicons/carbon";
-import emitter from "@/mitt/event";
-import useEditing from "@/stores/editing";
-import useSnapshot from "@/stores/snapshot";
-import objToJson from "@/utils/objToJson";
-import objToHtml from "@/utils/objToHtml";
-import exportHtml from "@/utils/exportHtml";
-import { putFileContent } from "@/service/index";
+import { reactive } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { useMessage } from 'naive-ui'
+import { Reply, Delete, Image as viconImage, EditOff } from '@vicons/carbon'
+import emitter from '@/mitt/event'
+import useEditing from '@/stores/editing'
+import useSnapshot from '@/stores/snapshot'
+import objToJson from '@/utils/objToJson'
+import objToHtml from '@/utils/objToHtml'
+import exportHtml from '@/utils/exportHtml'
+import { putFileContent } from '@/service/index'
 
 // 路由
-const router = useRouter();
-const route = useRoute();
+const router = useRouter()
+const route = useRoute()
 
 // props
-const props = defineProps(["fileInfo"]);
+const props = defineProps(['fileInfo'])
 
 // naive message
-const message = useMessage();
+const message = useMessage()
 
 // pinia
-const editingStore = useEditing(); // 组件状态
-const snapshotStore = useSnapshot(); // 快照状态
+const editingStore = useEditing() // 组件状态
+const snapshotStore = useSnapshot() // 快照状态
 
 // 撤销
 const handlePrevious = () => {
-    snapshotStore.cancelOperate([...editingStore.pageData.blocks]);
+    snapshotStore.cancelOperate([...editingStore.pageData.blocks])
     // 拿取快照重置editingStore的数据
-    const tempData = snapshotStore.snapshotData[snapshotStore.snapshotIndex];
-    editingStore.resetBlocks(tempData);
-    emitter.emit("setOperateStyle", tempData);
-};
+    const tempData = snapshotStore.snapshotData[snapshotStore.snapshotIndex]
+    editingStore.resetBlocks(tempData)
+    emitter.emit('setOperateStyle', tempData)
+}
 
 // 反撤销
 const handleReback = () => {
-    snapshotStore.rebackOperate([...editingStore.pageData.blocks]);
-    const tempData = snapshotStore.snapshotData[snapshotStore.snapshotIndex];
-    editingStore.resetBlocks(tempData);
-    emitter.emit("setOperateStyle", tempData);
-};
+    snapshotStore.rebackOperate([...editingStore.pageData.blocks])
+    const tempData = snapshotStore.snapshotData[snapshotStore.snapshotIndex]
+    editingStore.resetBlocks(tempData)
+    emitter.emit('setOperateStyle', tempData)
+}
 
 // 取消选择
 const handleCancelChoose = () => {
-    editingStore.setCurBlock("");
-    emitter.emit("setCancelChoose");
-};
+    editingStore.setCurBlock('')
+    emitter.emit('setCancelChoose')
+}
 
 // 清空画布
 const handleEmpty = () => {
-    editingStore.delBlockAll();
-};
+    editingStore.delBlockAll()
+}
 
 // 导出Json
 const showModal = reactive({
     jsonModal: false,
     htmlModal: false,
-});
+})
 const codeState = reactive({
     jsonCode: ``,
     htmlCode: ``,
-});
+})
 const handleDeriveJson = () => {
-    showModal.jsonModal = true;
-    const jsonData = objToJson(editingStore.pageData.blocks);
-    codeState.jsonCode = `${jsonData}`;
-};
+    showModal.jsonModal = true
+    const jsonData = objToJson(editingStore.pageData.blocks)
+    codeState.jsonCode = `${jsonData}`
+}
 
 // 导出HTML
 const handleDeriveHtml = () => {
-    showModal.htmlModal = true;
-    const htmlData = objToHtml(editingStore.pageData.blocks);
-    codeState.htmlCode = `${htmlData}`;
-};
+    showModal.htmlModal = true
+    const htmlData = objToHtml(editingStore.pageData.blocks)
+    codeState.htmlCode = `${htmlData}`
+}
 
 // 下载JSON
 const handleExportJson = () => {
-    exportHtml("json", codeState.jsonCode);
-};
+    exportHtml('json', codeState.jsonCode)
+}
 
 // 下载Html
 const handleExportHtml = () => {
-    exportHtml("html", codeState.htmlCode);
-};
+    exportHtml('html', codeState.htmlCode)
+}
 
 // 保存退出
 const saveExit = () => {
     const data = {
         id: route.query.fileId,
         json_content: JSON.parse(JSON.stringify(editingStore.pageData.blocks)),
-    };
+    }
     putFileContent(data).then(
         (response) => {
-            message.success("保存成功");
-            router.push({ name: "work" });
-            const tempData = [];
-            editingStore.resetBlocks(tempData);
-            snapshotStore.resetSnapshot(tempData);
+            message.success('保存成功')
+            router.push({ name: 'work' })
+            const tempData = []
+            editingStore.resetBlocks(tempData)
+            snapshotStore.resetSnapshot(tempData)
         },
         (error) => {
-            message.error("保存失败");
-            console.log(error);
+            message.error('保存失败')
+            console.log(error)
         }
-    );
-};
+    )
+}
 </script>
 
 <style lang="scss" scoped>
