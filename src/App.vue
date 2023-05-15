@@ -1,4 +1,7 @@
 <template>
+    <n-message-provider>
+        <MessageApi />
+    </n-message-provider>
     <!-- message消息提醒 -->
     <n-message-provider>
         <!-- 代码高亮 -->
@@ -14,10 +17,9 @@
 import { onMounted } from 'vue'
 import hljs from 'highlight.js/lib/core'
 import javascript from 'highlight.js/lib/languages/javascript'
-import { useMessage } from 'naive-ui'
+import MessageApi from "@/components/MessageApi.vue";
 
 hljs.registerLanguage('javascript', javascript)
-window.$message = useMessage()
 
 // 页面适配
 const bodyScale = () => {
