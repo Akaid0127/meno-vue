@@ -137,7 +137,7 @@
                 </n-tab-pane>
 
                 <n-tab-pane name="oneMFileTab" tab="近一个月文件">
-                                        <div class="file-scroll">
+                    <div class="file-scroll">
                         <n-scrollbar trigger="none">
                             <div class="file-group">
                                 <n-card
@@ -207,7 +207,7 @@
                 </n-tab-pane>
 
                 <n-tab-pane name="threeMFileTab" tab="近三个月文件">
-                                        <div class="file-scroll">
+                    <div class="file-scroll">
                         <n-scrollbar trigger="none">
                             <div class="file-group">
                                 <n-card
@@ -286,6 +286,7 @@ import { useMessage } from 'naive-ui'
 import { useRouter, useRoute } from 'vue-router'
 import moment from 'moment'
 import useUserinfo from '@/stores/userinfo'
+import useEditing from '@/stores/editing'
 import { Code, Edit, Delete } from '@vicons/carbon'
 import {
     getUserFold,
@@ -307,6 +308,7 @@ const route = useRoute()
 
 // pinia
 const userinfoStore = useUserinfo() // 用户状态
+const editingStore = useEditing() // 组件状态
 
 // naive message
 const message = useMessage()
