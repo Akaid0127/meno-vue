@@ -1,5 +1,5 @@
 <template>
-加入团队
+    团队
 </template>
 
 <script setup>
