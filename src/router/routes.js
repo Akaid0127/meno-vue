@@ -7,6 +7,11 @@ import Community from "@/views/community"; // 资源社区
 import WorkFile from "@/views/work/components/WorkFile"; // 工作台个人文件
 import WorkRecent from "@/views/work/components/WorkRecent"; // 工作台最近文件
 
+import WorkCreaTeam from "@/views/work/components/WorkCreaTeam"; // 创建团队
+import WorkPartTeam from "@/views/work/components/WorkPartTeam"; // 加入团队
+
+
+
 import Test from '@/views/test';
 
 const routes = [
@@ -30,6 +35,8 @@ const routes = [
         children: [
             { name: 'workFile', path: '/work/file', component: WorkFile },
             { name: 'workRecent', path: '/work/recent', component: WorkRecent },
+            { name: 'workCreaTeam', path: '/work/createam', component: WorkCreaTeam },
+            { name: 'workPartTeam', path: '/work/partteam', component: WorkPartTeam },
         ],
 
     },

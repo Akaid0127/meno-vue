@@ -8,28 +8,8 @@
                 @update:value="handleUpdateValue"
                 default-value="workFile"
                 v-model:value="meunState.menuRouteValue"
+                accordion
             />
-
-            <div class="split-line"></div>
-
-            <!-- <div class="team">
-                <div class="title">
-                    <span>团队</span>
-                    <n-icon>
-                        <Add />
-                    </n-icon>
-                </div>
-                <div class="item">
-                    <n-avatar
-                        :style="{
-                            color: '#FFFFFF',
-                            backgroundColor: '#CE6D84',
-                        }"
-                        >前</n-avatar
-                    >
-                    <div class="name">前端美工队</div>
-                </div>
-            </div> -->
         </div>
     </div>
 </template>
@@ -43,6 +23,8 @@ import {
     FlightInternational,
     Add,
     ArrowRight,
+    LicenseThirdPartyDraft,
+    Events,
 } from '@vicons/carbon'
 import { RouterLink, useRouter, useRoute } from 'vue-router'
 import { NIcon, useMessage } from 'naive-ui'
@@ -102,6 +84,34 @@ const meunState = reactive({
                     RouterLink,
                     {
                         to: {
+                            name: 'workCreaTeam',
+                        },
+                    },
+                    { default: () => '创建团队' }
+                ),
+            key: 'workCreaTeam',
+            icon: renderIcon(LicenseThirdPartyDraft),
+        },
+        {
+            label: () =>
+                h(
+                    RouterLink,
+                    {
+                        to: {
+                            name: 'workPartTeam',
+                        },
+                    },
+                    { default: () => '加入团队' }
+                ),
+            key: 'workPartTeam',
+            icon: renderIcon(Events),
+        },
+        {
+            label: () =>
+                h(
+                    RouterLink,
+                    {
+                        to: {
                             name: 'community',
                         },
                     },
@@ -114,7 +124,7 @@ const meunState = reactive({
 })
 
 const handleUpdateValue = (key, item) => {
-    console.log(item)
+    // console.log(item)
 }
 </script>
 
@@ -129,40 +139,6 @@ const handleUpdateValue = (key, item) => {
         height: 25px;
         margin-bottom: 10px;
         margin-left: 20px;
-    }
-
-    .split-line {
-        background: rgba(218, 218, 220, 0.6);
-        height: 1px;
-        margin: 8px;
-    }
-
-    .team {
-        .title {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 13px;
-            padding: 0 8px;
-            color: rgba(32, 32, 32, 0.8);
-            .n-icon {
-                font-size: 18px;
-                color: #202020;
-            }
-        }
-        .item {
-            display: flex;
-            align-items: center;
-            .n-avatar {
-                width: 40px;
-                height: 40px;
-                font-size: 25px;
-                border-radius: 8px;
-                transform: scale(0.45, 0.45);
-            }
-            .name {
-            }
-        }
     }
 }
 </style>
