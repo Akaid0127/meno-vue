@@ -302,6 +302,7 @@ const handleReg = (e) => {
                             userEmail: responseData.email,
                         }
                         userinfoStore.setUserInfo(userData)
+                        message.success('注册成功')
                         router.push({ name: 'work' })
                     },
                     (error) => {

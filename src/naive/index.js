@@ -29,7 +29,8 @@ import {
     NRadio,
     NSpace,
     NPopconfirm,
-    NDropdown
+    NDropdown,
+    NTag
 } from 'naive-ui'
 
 const naive = create({
@@ -62,7 +63,8 @@ const naive = create({
         NRadio,
         NSpace,
         NPopconfirm,
-        NDropdown
+        NDropdown,
+        NTag
     ]
 })
 
