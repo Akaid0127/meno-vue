@@ -30,7 +30,8 @@ import {
     NSpace,
     NPopconfirm,
     NDropdown,
-    NTag
+    NTag,
+	NDivider
 } from 'naive-ui'
 
 const naive = create({
@@ -64,7 +65,8 @@ const naive = create({
         NSpace,
         NPopconfirm,
         NDropdown,
-        NTag
+        NTag,
+		NDivider
     ]
 })
 

@@ -1,6 +1,147 @@
 <template>
     <div class="work-team-content">
-        <div class="team-file"></div>
+        <div class="team-file">
+            <div class="opera-group">
+                <n-button ghost color="#606266">
+                    <template #icon>
+                        <n-icon>
+                            <FolderDetailsReference />
+                        </n-icon>
+                    </template>
+                    管理团队文件夹
+                </n-button>
+                <n-button ghost color="#606266">
+                    <template #icon>
+                        <n-icon>
+                            <VolumeFileStorage />
+                        </n-icon>
+                    </template>
+                    管理团队文件
+                </n-button>
+                <n-button ghost color="#606266">
+                    <template #icon>
+                        <n-icon>
+                            <TaskAssetView />
+                        </n-icon>
+                    </template>
+                    管理团队任务看板
+                </n-button>
+            </div>
+
+            <div class="fold-group">
+                <n-scrollbar x-scrollable trigger="none">
+                    <div class="fold-item">
+                        <n-card
+                            v-for="item in contentState.teamFolds"
+                            :key="item.id"
+                            :title="item.fold_name"
+                            hoverable
+                            embedded
+                        >
+                            <template #header-extra>
+                                <n-icon size="22" color="#FFD485">
+                                    <Folder />
+                                </n-icon>
+                            </template>
+                            创建时间：{{
+                            moment(item.publishedAt).format('YYYY-MM-DD')
+                            }}
+                        </n-card>
+                    </div>
+                </n-scrollbar>
+            </div>
+
+            <div class="file-group">
+                <n-tabs type="line" animated v-model:value="tabState.tabValue">
+                    <n-tab-pane name="userFiles" tab="全部文件">
+                        <div class="file-scroll">
+                            <n-scrollbar trigger="none">
+                                <div class="file-item">
+                                    <n-card
+                                        v-for="item in contentState.teamFiles"
+                                        :key="item.id"
+                                        :title="item.cre_name"
+                                        hoverable
+                                        embedded
+                                    >
+                                        <template #header-extra>
+                                            <n-icon size="22" color="#18A058">
+                                                <AlignBoxMiddleLeft />
+                                            </n-icon>
+                                        </template>
+                                        文件夹状态：{{ item.cre_status }}
+                                        <br />
+                                        创建时间：{{
+                                        moment(item.publishedAt).format(
+                                        'YYYY-MM-DD'
+                                        )
+                                        }}
+                                        <br />
+                                        更新时间：{{
+                                        moment(item.updatedAt).format(
+                                        'YYYY-MM-DD'
+                                        )
+                                        }}
+                                        <n-button strong secondary>
+                                            <template #icon>
+                                                <n-icon size="18" color="#0e7a0d">
+                                                    <Code />
+                                                </n-icon>
+                                            </template>
+                                            开启设计
+                                        </n-button>
+                                    </n-card>
+                                </div>
+                            </n-scrollbar>
+                        </div>
+                    </n-tab-pane>
+
+                    <n-tab-pane name="foldFiles" :tab="tabState.foldTabName">
+                        <div v-if="contentState.foldFiles.length === 0">该文件夹下暂无文件</div>
+                        <div v-if="contentState.foldFiles !== 0">
+                            <n-scrollbar trigger="none">
+                                <div class="file-item">
+                                    <n-card
+                                        v-for="item in contentState.foldFiles"
+                                        :key="item.id"
+                                        :title="item.cre_name"
+                                        hoverable
+                                        embedded
+                                    >
+                                        <template #header-extra>
+                                            <n-icon size="22" color="#18A058">
+                                                <AlignBoxMiddleLeft />
+                                            </n-icon>
+                                        </template>
+                                        文件夹状态：{{ item.cre_status }}
+                                        <br />
+                                        创建时间：{{
+                                        moment(item.publishedAt).format(
+                                        'YYYY-MM-DD'
+                                        )
+                                        }}
+                                        <br />
+                                        更新时间：{{
+                                        moment(item.updatedAt).format(
+                                        'YYYY-MM-DD'
+                                        )
+                                        }}
+                                        <n-button strong secondary>
+                                            <template #icon>
+                                                <n-icon size="18" color="#0e7a0d">
+                                                    <Code />
+                                                </n-icon>
+                                            </template>
+                                            开启设计
+                                        </n-button>
+                                    </n-card>
+                                </div>
+                            </n-scrollbar>
+                        </div>
+                    </n-tab-pane>
+                </n-tabs>
+            </div>
+        </div>
         <div class="team-bulletin">
             <div class="user-info">
                 <n-card
@@ -16,27 +157,13 @@
                     卡片内容
                     <template #action>
                         <div class="operation">
-                            <n-button strong secondary type="tertiary">
-                                创建团队
-                            </n-button>
-                            <n-button strong secondary type="primary">
-                                加入团队
-                            </n-button>
+                            <n-button strong secondary type="tertiary">创建团队</n-button>
+                            <n-button strong secondary type="primary">加入团队</n-button>
                         </div>
                     </template>
                 </n-card>
             </div>
             <div class="bulletin-group">
-                <div class="title">
-                    <n-button icon-placement="left" tertiary type="primary">
-                        <template #icon>
-                            <n-icon>
-                                <TaskAssetView />
-                            </n-icon>
-                        </template>
-                        编辑团队任务看板
-                    </n-button>
-                </div>
                 <div class="bulletin-content">
                     <n-scrollbar trigger="none">
                         <div class="item">
@@ -55,7 +182,48 @@
 </template>
 
 <script setup>
-import { TaskAssetView } from '@vicons/carbon'
+import { reactive } from "vue";
+import moment from "moment";
+import {
+    FolderDetailsReference,
+    VolumeFileStorage,
+    TaskAssetView,
+    Folder,
+    Code,
+    AlignBoxMiddleLeft,
+} from "@vicons/carbon";
+
+const contentState = reactive({
+    teamFolds: [
+        { id: 1, fold_name: "团队文件夹123", publishedAt: "2023/5/21" },
+        { id: 1, fold_name: "团队文件夹123", publishedAt: "2023/5/21" },
+        { id: 1, fold_name: "团队文件夹123", publishedAt: "2023/5/21" },
+        { id: 1, fold_name: "团队文件夹123", publishedAt: "2023/5/21" },
+    ],
+    teamFiles: [
+        {
+            id: 1,
+            cre_name: "团队文件夹123",
+            cre_status: "待审核",
+            publishedAt: "2023/5/21",
+            updatedAt: "2023/5/21",
+        },
+    ],
+    foldFiles: [
+        {
+            id: 1,
+            cre_name: "团队文件夹123",
+            cre_status: "待审核",
+            publishedAt: "2023/5/21",
+            updatedAt: "2023/5/21",
+        },
+    ],
+});
+
+const tabState = reactive({
+    tabValue: "userFiles",
+    foldTabName: "选定文件夹",
+});
 </script>
 
 <style lang="scss" scoped>
@@ -63,18 +231,69 @@ import { TaskAssetView } from '@vicons/carbon'
     padding: 15px 30px;
     height: calc(100vh - 60px);
     display: flex;
+    padding: 20px;
 
     .team-file {
         width: 80%;
         height: 100%;
         margin-right: 20px;
-        border: 1px solid red;
+        .opera-group {
+            display: flex;
+            margin-bottom: 16px;
+            .n-button {
+                height: 45px;
+                margin-right: 20px;
+            }
+        }
+
+        .fold-group {
+            height: 120px;
+            .fold-item {
+                user-select: none;
+                display: flex;
+                align-items: center;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                margin-bottom: 16px;
+                .n-card {
+                    display: inline-flex;
+                    cursor: pointer;
+                    margin-right: 16px;
+                    width: 240px;
+                    height: 100px;
+                }
+            }
+        }
+
+        .file-group {
+            height: 550px;
+            .n-tab-pane {
+                height: 560px;
+            }
+
+            .file-item {
+                user-select: none;
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                .n-card {
+                    cursor: pointer;
+                    margin-right: 16px;
+                    margin-bottom: 16px;
+                    width: 256px;
+                    height: 190px;
+                    .n-button {
+                        width: 210px;
+                        margin-top: 10px;
+                    }
+                }
+            }
+        }
     }
 
     .team-bulletin {
         width: 20%;
         height: 100%;
-        border: 1px solid red;
         padding: 10px;
         .user-info {
             height: 210px;
@@ -93,21 +312,13 @@ import { TaskAssetView } from '@vicons/carbon'
             height: calc(100% - 220px);
             background-color: #f8f8f8;
             padding: 10px;
-            .title {
-                width: 100%;
-                display: flex;
-                justify-content: center;
-                margin-bottom: 10px;
-            }
 
-            .bulletin-content{
+            .bulletin-content {
                 height: calc(100% - 40px);
-                .item{
+                .item {
                     margin-bottom: 10px;
                 }
             }
-
-            
         }
     }
 }
