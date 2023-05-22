@@ -6,10 +6,10 @@ import Community from "@/views/community"; // 资源社区
 
 import WorkFile from "@/views/work/components/WorkFile"; // 工作台个人文件
 import WorkRecent from "@/views/work/components/WorkRecent"; // 工作台最近文件
-
 import WorkTeam from "@/views/work/components/WorkTeam"; // 团队
 
-
+import CommClass from "@/views/community/components/CommClass" // 社区分类
+import CommRetrieval from "@/views/community/components/CommRetrieval" // 社区检索
 
 import Test from '@/views/test';
 
@@ -48,7 +48,12 @@ const routes = [
     {
         name: 'community',
         path: '/community',
-        component: Community
+        component: Community,
+        redirect: { name: 'commClass' },
+        children: [
+            { name: 'commClass', path: '/community/class', component: CommClass },
+            { name: 'commRetrieval', path: '/community/retrieval', component: CommRetrieval },
+        ],
     },
 
     {
