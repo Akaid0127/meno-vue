@@ -167,11 +167,29 @@
                 <div class="bulletin-content">
                     <n-scrollbar trigger="none">
                         <div class="item">
-                            <n-card title="更新任务" hoverable>
+                            <n-card title="项目一" hoverable>
+                                <template #header-extra>
+                                    <n-tag type="success">已完成</n-tag>
+                                </template>
+                                登录页迭代
+                            </n-card>
+                        </div>
+
+                        <div class="item">
+                            <n-card title="项目二" hoverable>
                                 <template #header-extra>
                                     <n-tag type="info">正在跟进</n-tag>
                                 </template>
-                                全部推翻重构
+                                后台管理页完善
+                            </n-card>
+                        </div>
+
+                        <div class="item">
+                            <n-card title="项目二" hoverable>
+                                <template #header-extra>
+                                    <n-tag type="info">正在跟进</n-tag>
+                                </template>
+                                后台管理页提测
                             </n-card>
                         </div>
                     </n-scrollbar>
@@ -195,18 +213,53 @@ import {
 
 const contentState = reactive({
     teamFolds: [
-        { id: 1, fold_name: "团队文件夹123", publishedAt: "2023/5/21" },
-        { id: 1, fold_name: "团队文件夹123", publishedAt: "2023/5/21" },
-        { id: 1, fold_name: "团队文件夹123", publishedAt: "2023/5/21" },
-        { id: 1, fold_name: "团队文件夹123", publishedAt: "2023/5/21" },
+        { id: 1, fold_name: "项目一文件夹", publishedAt: "2023/5/11" },
+        { id: 1, fold_name: "项目二文件夹", publishedAt: "2023/5/23" },
+        { id: 1, fold_name: "项目三文件夹", publishedAt: "2023/5/21" },
+        { id: 1, fold_name: "项目四文件夹", publishedAt: "2023/5/12" },
     ],
     teamFiles: [
         {
             id: 1,
-            cre_name: "团队文件夹123",
+            cre_name: "登录页",
             cre_status: "待审核",
             publishedAt: "2023/5/21",
-            updatedAt: "2023/5/21",
+            updatedAt: "2023/5/23",
+        },
+        {
+            id: 1,
+            cre_name: "订单管理页",
+            cre_status: "待审核",
+            publishedAt: "2023/5/11",
+            updatedAt: "2023/5/15",
+        },
+        {
+            id: 1,
+            cre_name: "运输管理页",
+            cre_status: "待审核",
+            publishedAt: "2023/5/15",
+            updatedAt: "2023/5/16",
+        },
+        {
+            id: 1,
+            cre_name: "采购管理页",
+            cre_status: "待审核",
+            publishedAt: "2023/5/18",
+            updatedAt: "2023/5/19",
+        },
+        {
+            id: 1,
+            cre_name: "交付管理页",
+            cre_status: "待审核",
+            publishedAt: "2023/5/21",
+            updatedAt: "2023/5/25",
+        },
+        {
+            id: 1,
+            cre_name: "员工管理页",
+            cre_status: "待审核",
+            publishedAt: "2023/5/01",
+            updatedAt: "2023/5/11",
         },
     ],
     foldFiles: [

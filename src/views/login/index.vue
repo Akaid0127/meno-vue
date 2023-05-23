@@ -2,34 +2,20 @@
     <div class="login-wrapper">
         <div class="login-content">
             <div class="header">
-                <img
-                    class="logo"
-                    :src="imgState.logoImgLight"
-                    alt="低代码平台"
-                />
-                <n-button strong secondary type="primary" @click="handleBack"
-                    >返回首页</n-button
-                >
+                <img class="logo" :src="imgState.logoImgLight" alt="低代码平台" />
+                <n-button strong secondary type="primary" @click="handleBack">返回首页</n-button>
             </div>
 
             <div class="bottom">
                 <div class="left">
                     <div class="show">
-                        <img
-                            class="logo"
-                            :src="imgState.introduceImg"
-                            alt="设计页"
-                        />
+                        <img class="logo" :src="imgState.introduceImg" alt="设计页" />
                     </div>
                 </div>
 
                 <div class="right">
                     <div class="title">
-                        <img
-                            class="logo"
-                            :src="imgState.logoSingle"
-                            alt="低代码平台"
-                        />
+                        <img class="logo" :src="imgState.logoSingle" alt="低代码平台" />
                         <div class="txt">快速 & 简易</div>
                     </div>
                     <div class="inlet">
@@ -41,20 +27,13 @@
                                 animated
                                 justify-content="space-evenly"
                             >
-                                <n-tab-pane
-                                    name="signin"
-                                    tab="登录"
-                                    @click="handleSignin"
-                                >
+                                <n-tab-pane name="signin" tab="登录" @click="handleSignin">
                                     <n-form
                                         ref="formLoginRef"
                                         :model="formLoginState"
                                         :rules="formLoginRule"
                                     >
-                                        <n-form-item-row
-                                            label="用户名"
-                                            path="userName"
-                                        >
+                                        <n-form-item-row label="用户名" path="userName">
                                             <n-input
                                                 v-model:value="
                                                     formLoginState.userName
@@ -62,11 +41,10 @@
                                                 placeholder="请输入用户名"
                                             />
                                         </n-form-item-row>
-                                        <n-form-item-row
-                                            label="密码"
-                                            path="passward"
-                                        >
+                                        <n-form-item-row label="密码" path="passward">
                                             <n-input
+                                                type="password"
+                                                show-password-on="mousedown"
                                                 v-model:value="
                                                     formLoginState.passward
                                                 "
@@ -80,25 +58,17 @@
                                                 secondary
                                                 strong
                                                 @click="handleLogin"
-                                                >登录</n-button
-                                            >
+                                            >登录</n-button>
                                         </n-form-item-row>
                                     </n-form>
                                 </n-tab-pane>
-                                <n-tab-pane
-                                    name="signup"
-                                    tab="注册"
-                                    @click="handleSignup"
-                                >
+                                <n-tab-pane name="signup" tab="注册" @click="handleSignup">
                                     <n-form
                                         ref="formRegRef"
                                         :model="formRegState"
                                         :rules="formRegRule"
                                     >
-                                        <n-form-item-row
-                                            label="用户名"
-                                            path="userName"
-                                        >
+                                        <n-form-item-row label="用户名" path="userName">
                                             <n-input
                                                 v-model:value="
                                                     formRegState.userName
@@ -106,10 +76,7 @@
                                                 placeholder="请输入用户名"
                                             />
                                         </n-form-item-row>
-                                        <n-form-item-row
-                                            label="邮箱"
-                                            path="email"
-                                        >
+                                        <n-form-item-row label="邮箱" path="email">
                                             <n-input
                                                 v-model:value="
                                                     formRegState.email
@@ -117,10 +84,7 @@
                                                 placeholder="请输入邮箱"
                                             />
                                         </n-form-item-row>
-                                        <n-form-item-row
-                                            label="密码"
-                                            path="passward"
-                                        >
+                                        <n-form-item-row label="密码" path="passward">
                                             <n-input
                                                 v-model:value="
                                                     formRegState.passward
@@ -135,8 +99,7 @@
                                                 secondary
                                                 strong
                                                 @click="handleReg"
-                                                >注册</n-button
-                                            >
+                                            >注册</n-button>
                                         </n-form-item-row>
                                     </n-form>
                                 </n-tab-pane>
@@ -150,144 +113,144 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { useMessage } from 'naive-ui'
+import { ref, reactive, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { useMessage } from "naive-ui";
 
-import { userLogin, userReg } from '@/service'
-import useUserinfo from '@/stores/userinfo'
+import { userLogin, userReg } from "@/service";
+import useUserinfo from "@/stores/userinfo";
 
 // 挂载
 onMounted(() => {
-    const tabValue = route.query.type
-    if (tabValue === 'toLogin') {
-        nTabState.nTabValue = 'signin'
-    } else if (tabValue === 'toReg') {
-        formRegState.email = route.query.regMail
-        nTabState.nTabValue = 'signup'
+    const tabValue = route.query.type;
+    if (tabValue === "toLogin") {
+        nTabState.nTabValue = "signin";
+    } else if (tabValue === "toReg") {
+        formRegState.email = route.query.regMail;
+        nTabState.nTabValue = "signup";
     }
-})
+});
 
 // 模态框默认值
 const nTabState = reactive({
-    nTabValue: 'signin',
-})
+    nTabValue: "signin",
+});
 
 const handleSignin = () => {
-    nTabState.nTabValue = 'signin'
-}
+    nTabState.nTabValue = "signin";
+};
 
 const handleSignup = () => {
-    nTabState.nTabValue = 'signup'
-}
+    nTabState.nTabValue = "signup";
+};
 
 // pinia
-const userinfoStore = useUserinfo() // 用户状态
+const userinfoStore = useUserinfo(); // 用户状态
 
 // naive message
-const message = useMessage()
+const message = useMessage();
 
 // 定义路由
-const router = useRouter()
-const route = useRoute()
+const router = useRouter();
+const route = useRoute();
 
 // logo
 const imgState = reactive({
-    logoSingle: require('assets/logo/menocode-green-single.png'),
-    logoImgLight: require('assets/logo/menocode-row-white.png'),
-    logoImgDark: require('assets/logo/menocode-row-black.png'),
-    bgImg: require('assets/bg/bg-login1.jpg'),
-    introduceImg: require('assets/normal/introduceImg.png')
-})
+    logoSingle: require("assets/logo/menocode-green-single.png"),
+    logoImgLight: require("assets/logo/menocode-row-white.png"),
+    logoImgDark: require("assets/logo/menocode-row-black.png"),
+    bgImg: require("assets/bg/bg-login1.jpg"),
+    introduceImg: require("assets/normal/introduceImg.png"),
+});
 
 const handleBack = () => {
-    router.push({ name: 'home' })
-}
+    router.push({ name: "home" });
+};
 
 // 登录
-const formLoginRef = ref(null)
+const formLoginRef = ref(null);
 const formLoginState = reactive({
-    userName: '',
-    passward: '',
-})
+    userName: "",
+    passward: "",
+});
 const formLoginRule = {
     userName: {
         required: true,
-        message: '请输入姓名',
-        trigger: 'blur',
+        message: "请输入姓名",
+        trigger: "blur",
     },
     passward: {
         required: true,
-        message: '请输入密码',
-        trigger: 'blur',
+        message: "请输入密码",
+        trigger: "blur",
     },
-}
+};
 const handleLogin = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     formLoginRef.value?.validate((errors) => {
         if (!errors) {
             if (formLoginState.userName && formLoginState.passward) {
                 const params = {
                     userName: formLoginState.userName,
                     passward: formLoginState.passward,
-                }
+                };
 
-                if (localStorage.getItem('userJwt') != null) {
-                    localStorage.removeItem('userJwt')
+                if (localStorage.getItem("userJwt") != null) {
+                    localStorage.removeItem("userJwt");
                 }
                 userLogin(params).then(
                     (res) => {
                         // 读取token并存储localStorage
-                        localStorage.setItem('userJwt', res.data.jwt)
-                        const responseData = res.data.user
+                        localStorage.setItem("userJwt", res.data.jwt);
+                        const responseData = res.data.user;
                         const userData = {
                             userId: responseData.id,
                             userName: responseData.username,
                             userEmail: responseData.email,
-                        }
-                        userinfoStore.setUserInfo(userData)
-                        router.push({ name: 'work' })
+                        };
+                        userinfoStore.setUserInfo(userData);
+                        router.push({ name: "work" });
                     },
                     (error) => {
                         if (error.response.status === 400) {
-                            message.error('账号密码错误或账号不存在')
+                            message.error("账号密码错误或账号不存在");
                         }
                     }
-                )
+                );
             }
         } else {
-            console.log(errors)
-            message.error('请补全信息')
+            console.log(errors);
+            message.error("请补全信息");
         }
-    })
-}
+    });
+};
 
 // 注册
-const formRegRef = ref(null)
+const formRegRef = ref(null);
 const formRegState = reactive({
-    userName: '',
-    email: '',
-    passward: '',
-})
+    userName: "",
+    email: "",
+    passward: "",
+});
 const formRegRule = {
     userName: {
         required: true,
-        message: '请输入姓名',
-        trigger: 'blur',
+        message: "请输入姓名",
+        trigger: "blur",
     },
     email: {
         required: true,
-        message: '请输入邮箱',
-        trigger: 'blur',
+        message: "请输入邮箱",
+        trigger: "blur",
     },
     passward: {
         required: true,
-        message: '请输入密码',
-        trigger: 'blur',
+        message: "请输入密码",
+        trigger: "blur",
     },
-}
+};
 const handleReg = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     formRegRef.value?.validate((errors) => {
         if (!errors) {
             if (
@@ -299,41 +262,41 @@ const handleReg = (e) => {
                     userName: formRegState.userName,
                     email: formRegState.email,
                     passward: formRegState.passward,
-                }
+                };
 
-                if (localStorage.getItem('userJwt') != null) {
-                    localStorage.removeItem('userJwt')
+                if (localStorage.getItem("userJwt") != null) {
+                    localStorage.removeItem("userJwt");
                 }
                 userReg(params).then(
                     (res) => {
                         // 读取token并存储localStorage
-                        localStorage.setItem('userJwt', res.data.jwt)
-                        const responseData = res.data.user
+                        localStorage.setItem("userJwt", res.data.jwt);
+                        const responseData = res.data.user;
                         const userData = {
                             userId: responseData.id,
                             userName: responseData.username,
                             userEmail: responseData.email,
-                        }
-                        userinfoStore.setUserInfo(userData)
-                        message.success('注册成功')
-                        router.push({ name: 'work' })
+                        };
+                        userinfoStore.setUserInfo(userData);
+                        message.success("注册成功");
+                        router.push({ name: "work" });
                     },
                     (error) => {
                         if (error.response.status === 400) {
-                            message.error(error.response.data.error.message)
+                            message.error(error.response.data.error.message);
                         }
                     }
-                )
+                );
             }
         } else {
-            console.log(errors)
+            console.log(errors);
         }
-    })
-}
+    });
+};
 </script>
 
 <style lang="scss" scoped>
-@import 'styles/common/common';
+@import "styles/common/common";
 .login-wrapper {
     background-color: #f3f7fb;
     width: 100%;
@@ -442,11 +405,11 @@ const handleReg = (e) => {
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                .logo{
+                .logo {
                     width: 90%;
                     border-radius: 20px;
                     opacity: 0.9;
-                    box-shadow:1px 3px 12px #909399;
+                    box-shadow: 1px 3px 12px #909399;
                 }
             }
         }
@@ -471,7 +434,7 @@ const handleReg = (e) => {
                 padding-top: 40px;
                 margin-bottom: 40px;
 
-                font: bold 40px 'SourceHanSansCN_Bold';
+                font: bold 40px "SourceHanSansCN_Bold";
                 color: #53a058;
                 opacity: 0.8;
             }
