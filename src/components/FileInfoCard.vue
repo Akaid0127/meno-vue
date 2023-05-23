@@ -3,8 +3,8 @@
         <div class="file-image"></div>
         <div class="info-content">
             <div class="left">
-                <div class="title">设计页面一</div>
-                <div class="user">阿萨德</div>
+                <div class="title">{{ fileInfo.fileName }}</div>
+                <div class="user">{{ fileInfo.userName }}</div>
             </div>
 
             <div class="right">
@@ -12,13 +12,13 @@
                     <n-icon>
                         <Favorite />
                     </n-icon>
-                    2121
+                    {{ fileInfo.likeNum }}
                 </div>
                 <div class="opre-copy">
                     <n-icon>
                         <Copy />
                     </n-icon>
-                    109
+                    {{ fileInfo.copyNum }}
                 </div>
             </div>
         </div>
@@ -26,7 +26,24 @@
 </template>
 
 <script setup>
+import { reactive, onMounted } from 'vue'
 import { Favorite, Copy } from '@vicons/carbon'
+const props = defineProps(['fileInfo'])
+
+onMounted(() => {
+    setFileCover()
+})
+
+// 设置文件封面
+const fileState = reactive({
+    fileInfo:props.fileInfo
+})
+const setFileCover = () => {
+    console.log(fileState.fileInfo.fileContent)
+}
+
+
+
 </script>
 
 <style lang="scss" scoped>
@@ -70,7 +87,7 @@ import { Favorite, Copy } from '@vicons/carbon'
             flex-direction: column;
             align-items: flex-start;
 
-            .n-icon{
+            .n-icon {
                 margin-bottom: 4px;
                 margin-right: 4px;
             }

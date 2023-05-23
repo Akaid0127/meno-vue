@@ -170,3 +170,13 @@ export const getUserSelf = () => {
         method: 'get',
     })
 }
+
+// 获取所有文件夹
+export const getAllFiles = () => {
+    return axios({
+        url: "/api/creations?populate=user",
+        method: 'get',
+    })
+}
+
+
