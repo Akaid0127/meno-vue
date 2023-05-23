@@ -6,9 +6,10 @@
                     <img
                         src="https://img.js.design/assets/static/04655ded30771e94bfa72bf9dab3cbbf.png"
                         class="hidden"
-                    /><img
+                    />
+                    <img
                         src="https://img.js.design/assets/static/5919906512ce08100909398cda8fe302.png"
-                        class=""
+                        class
                     />
                 </div>
             </div>
@@ -23,25 +24,20 @@
                 </div>
                 <div class="search-box">
                     <div>
-                        <n-input
-                            placeholder="搜索作品、用户"
-                            class="search-inp"
-                        >
+                        <n-input placeholder="搜索作品、用户" class="search-inp">
                             <template #prefix>
                                 <n-icon color="#0e7a0d" :component="Search" />
                             </template>
                         </n-input>
                     </div>
                     <div class="btn-group">
-                        <n-button type="primary" ghost> 全部 </n-button>
+                        <n-button type="primary" ghost>全部</n-button>
 
                         <n-button
                             type="tertiary"
                             v-for="item in cateState.cateArr"
                             :key="item.cateId"
-                        >
-                            {{ item.cateName }}
-                        </n-button>
+                        >{{ item.cateName }}</n-button>
                     </div>
                 </div>
             </div>
@@ -68,81 +64,81 @@
 </template>
 
 <script setup>
-import { reactive, onMounted } from 'vue'
-import { Search } from '@vicons/carbon'
-import FileInfoCard from '@/components/FileInfoCard'
-import AuthorList from '@/components/AuthorList'
-import useUserinfo from '@/stores/userinfo'
-import { getCategory, getAllFiles } from '@/service'
+import { reactive, onMounted } from "vue";
+import { Search } from "@vicons/carbon";
+import FileInfoCard from "@/components/FileInfoCard";
+import AuthorList from "@/components/AuthorList";
+import useUserinfo from "@/stores/userinfo";
+import { getCategory, getAllFiles } from "@/service";
 
 // 挂载
 onMounted(() => {
-    setTimeSlot()
-    setUserName()
-    setCateArr()
-    setTopFile()
-})
+    setTimeSlot();
+    setUserName();
+    setCateArr();
+    setTopFile();
+});
 
 // 时间招呼
 const timeState = reactive({
-    timeSlot: '',
-})
+    timeSlot: "",
+});
 const setTimeSlot = () => {
-    let timeNow = new Date()
-    let hours = timeNow.getHours()
-    let text = ``
+    let timeNow = new Date();
+    let hours = timeNow.getHours();
+    let text = ``;
     if (hours >= 0 && hours <= 10) {
-        text = `早上好`
+        text = `早上好`;
     } else if (hours > 10 && hours <= 14) {
-        text = `中午好`
+        text = `中午好`;
     } else if (hours > 14 && hours <= 18) {
-        text = `下午好`
+        text = `下午好`;
     } else if (hours > 18 && hours <= 24) {
-        text = `晚上好`
+        text = `晚上好`;
     }
-    timeState.timeSlot = text
-}
+    timeState.timeSlot = text;
+};
 
 // 获取当前用户
-const userinfoStore = useUserinfo()
+const userinfoStore = useUserinfo();
 const userState = reactive({
-    userName: '',
-})
+    userName: "",
+});
 const setUserName = () => {
-    userState.userName = userinfoStore.userInfo.userName
-}
+    userState.userName = userinfoStore.userInfo.userName;
+};
 
 // 获取所有分类
 const cateState = reactive({
     cateArr: [],
-})
+});
 const setCateArr = () => {
     getCategory().then(
         (response) => {
-            const resCategories = response.data.data
+            const resCategories = response.data.data;
             for (let index = 0; index < resCategories.length; index++) {
                 cateState.cateArr[index] = {
                     cateId: resCategories[index].id,
                     cateName: resCategories[index].attributes.cate_name,
-                }
+                };
             }
         },
         (error) => {
-            console.log(error)
+            console.log(error);
         }
-    )
-}
+    );
+};
 
 // 获取前六位作品
 const fileState = reactive({
     topFileArr: [],
-})
+});
 const setTopFile = () => {
     // 获取所有文件
     getAllFiles().then(
         (response) => {
-            const resFiles = response.data.data
-            let resArr = []
+            const resFiles = response.data.data;
+            let resArr = [];
             for (let index = 0; index < resFiles.length; index++) {
                 if (
                     resFiles[index].attributes.is_team_file === false &&
@@ -158,19 +154,19 @@ const setTopFile = () => {
                         userName:
                             resFiles[index].attributes.user.data.attributes
                                 .username,
-                    }
-                    resArr.push(fileObj)
+                    };
+                    resArr.push(fileObj);
                 }
             }
             resArr.sort(function (a, b) {
-                return b.likeNum - a.likeNum
-            })
-            resArr = resArr.slice(0, 6)
-            fileState.topFileArr = [...resArr]
+                return b.likeNum - a.likeNum;
+            });
+            resArr = resArr.slice(0, 6);
+            fileState.topFileArr = [...resArr];
         },
         (error) => {}
-    )
-}
+    );
+};
 </script>
 
 <style lang="scss" scoped>
@@ -239,7 +235,7 @@ const setTopFile = () => {
                 color: #000;
                 font-weight: 500;
                 font-size: 30px;
-                font-family: 'Inter', -apple-system, BlinkMacSystemFont,
+                font-family: "Inter", -apple-system, BlinkMacSystemFont,
                     Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans,
                     Helvetica Neue, sans-serif;
             }

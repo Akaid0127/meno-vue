@@ -1,6 +1,8 @@
 <template>
     <div class="file-card">
-        <div class="file-image"></div>
+        <div class="file-image">
+            <img :src="fileState.fileCover" alt="详情" />
+        </div>
         <div class="info-content">
             <div class="left">
                 <div class="title">{{ fileInfo.fileName }}</div>
@@ -26,24 +28,34 @@
 </template>
 
 <script setup>
-import { reactive, onMounted } from 'vue'
-import { Favorite, Copy } from '@vicons/carbon'
-const props = defineProps(['fileInfo'])
+import { reactive, onMounted } from "vue";
+import { Favorite, Copy } from "@vicons/carbon";
+import { getSingleFiles, getImage } from "@/service";
+
+const props = defineProps(["fileInfo"]);
 
 onMounted(() => {
-    setFileCover()
-})
+    setFileCover();
+});
 
 // 设置文件封面
 const fileState = reactive({
-    fileInfo:props.fileInfo
-})
+    fileInfo: props.fileInfo,
+    fileCover: "",
+});
 const setFileCover = () => {
-    console.log(fileState.fileInfo.fileContent)
-}
-
-
-
+    getSingleFiles({ id: fileState.fileInfo.fileId }).then(
+        (response) => {
+            const coverUrl = `http://localhost:1337${response.data.data.attributes.cover.data.attributes.formats.small.url}`;
+            fileState.fileCover = coverUrl;
+        },
+        (error) => {
+            console.log(error);
+        }
+    );
+    // console.log(fileState.fileInfo.fileId);
+    // console.log(fileState.fileInfo.fileContent);
+};
 </script>
 
 <style lang="scss" scoped>
@@ -58,11 +70,19 @@ const setFileCover = () => {
     .file-image {
         background-color: #d4d7de;
         width: 100%;
+		height: 200px;
         flex: 3;
+        img {
+            display: block;
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
     }
 
     .info-content {
         width: 100%;
+		height: 40px;
         flex: 1;
         display: flex;
         justify-content: space-between;
