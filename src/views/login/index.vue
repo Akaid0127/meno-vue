@@ -14,12 +14,23 @@
 
             <div class="bottom">
                 <div class="left">
-                    <div class="show"></div>
+                    <div class="show">
+                        <img
+                            class="logo"
+                            :src="imgState.introduceImg"
+                            alt="设计页"
+                        />
+                    </div>
                 </div>
 
                 <div class="right">
                     <div class="title">
-                        <n-icon> <Bot /> </n-icon>快速 & 简易
+                        <img
+                            class="logo"
+                            :src="imgState.logoSingle"
+                            alt="低代码平台"
+                        />
+                        <div class="txt">快速 & 简易</div>
                     </div>
                     <div class="inlet">
                         <n-card>
@@ -182,9 +193,11 @@ const route = useRoute()
 
 // logo
 const imgState = reactive({
+    logoSingle: require('assets/logo/menocode-green-single.png'),
     logoImgLight: require('assets/logo/menocode-row-white.png'),
     logoImgDark: require('assets/logo/menocode-row-black.png'),
     bgImg: require('assets/bg/bg-login1.jpg'),
+    introduceImg: require('assets/normal/introduceImg.png')
 })
 
 const handleBack = () => {
@@ -424,6 +437,18 @@ const handleReg = (e) => {
                     }
                 }
             }
+
+            .show {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                .logo{
+                    width: 90%;
+                    border-radius: 20px;
+                    opacity: 0.9;
+                    box-shadow:1px 3px 12px #909399;
+                }
+            }
         }
 
         .right {
@@ -432,11 +457,12 @@ const handleReg = (e) => {
             flex-direction: column;
             align-items: center;
             .title {
-                .n-icon {
-                    font-size: 50px;
-                    padding-top: 3px;
-                    margin-right: 16px;
+                img {
+                    width: 45px;
+                    margin-right: 12px;
+                    padding-top: 5px;
                 }
+
                 width: 360px;
                 height: 60px;
                 display: flex;
