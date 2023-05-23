@@ -495,6 +495,7 @@ const modalState = reactive({
 
 // 添加文件夹
 const handleAddFold = () => {
+    addFoldFormValue.fold_name = ''
     modalState.foldModalMode = 'add'
     modalState.addFoldModal = true
 }

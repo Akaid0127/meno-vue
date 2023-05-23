@@ -153,7 +153,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useMessage } from 'naive-ui'
-import { Bot } from '@vicons/carbon'
+
 import { userLogin, userReg } from '@/service'
 import useUserinfo from '@/stores/userinfo'
 
