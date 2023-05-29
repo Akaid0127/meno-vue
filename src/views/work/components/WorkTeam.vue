@@ -19,7 +19,7 @@
                             <FolderDetailsReference />
                         </n-icon>
                     </template>
-                    管理团队文件夹
+                    新建团队文件夹
                 </n-button>
                 <n-button strong secondary type="primary" @click="handleFile">
                     <template #icon>
@@ -27,7 +27,7 @@
                             <VolumeFileStorage />
                         </n-icon>
                     </template>
-                    管理团队文件
+                    新建团队文件
                 </n-button>
                 <n-button strong secondary type="primary" @click="handleTask">
                     <template #icon>
@@ -241,15 +241,122 @@
                 :bordered="false"
                 style="width: 800px"
             >
-                <template #header-extra>
-                    <n-button strong secondary type="primary"> 添加 </n-button>
-                </template>
                 <n-data-table
                     :columns="memberState.tableColumns"
                     :data="memberState.tableData"
                     :pagination="false"
                     :bordered="false"
                 />
+            </n-modal>
+
+            <!-- 添加文件夹模态框 -->
+            <n-modal
+                v-model:show="modalState.addFoldModal"
+                class="custom-card"
+                preset="card"
+                :style="{ width: '400px' }"
+                :title="
+                    modalState.foldModalMode === 'add'
+                        ? '添加文件夹'
+                        : '修改文件夹'
+                "
+                size="huge"
+                :bordered="false"
+                :segmented="{ content: 'soft', footer: 'soft' }"
+            >
+                <template #header-extra></template>
+                <n-input
+                    v-model:value="addFoldFormValue.fold_name"
+                    placeholder="输入文件夹名"
+                />
+                <template #footer>
+                    <n-button
+                        strong
+                        secondary
+                        @click="cancelFoldCallback"
+                        :style="{
+                            width: '120px',
+                            marginRight: '20px',
+                            marginLeft: '30px',
+                        }"
+                        >取消</n-button
+                    >
+                    <n-button
+                        strong
+                        secondary
+                        type="primary"
+                        @click="submitFoldCallback"
+                        :style="{ width: '120px' }"
+                        >确定</n-button
+                    >
+                </template>
+            </n-modal>
+
+            <!-- 添加文件模态框 -->
+            <n-modal
+                v-model:show="modalState.addFileModal"
+                class="custom-card"
+                preset="card"
+                :style="{ width: '400px' }"
+                :title="
+                    modalState.fileModalMode === 'add' ? '添加文件' : '修改文件'
+                "
+                size="huge"
+                :bordered="false"
+                :segmented="{ content: 'soft', footer: 'soft' }"
+            >
+                <template #header-extra></template>
+
+                <n-input
+                    v-model:value="addFileFormValue.cre_name"
+                    placeholder="输入文件名"
+                    :style="{ marginBottom: '20px' }"
+                />
+
+                <n-radio-group
+                    v-model:value="addFileFormValue.isPublic"
+                    :style="{ marginBottom: '20px' }"
+                >
+                    <n-space>
+                        <n-radio :value="false">不公开</n-radio>
+                        <n-radio :value="true">对外公开</n-radio>
+                    </n-space>
+                </n-radio-group>
+
+                <n-select
+                    v-model:value="addFileFormValue.fold"
+                    :options="addFileOption.foldOption"
+                    placeholder="选择文件夹"
+                    :style="{ marginBottom: '20px' }"
+                />
+                <n-select
+                    v-model:value="addFileFormValue.category"
+                    :options="addFileOption.categoryOption"
+                    placeholder="选择分类"
+                    :style="{ marginBottom: '20px' }"
+                />
+
+                <template #footer>
+                    <n-button
+                        strong
+                        secondary
+                        @click="cancelFileCallback"
+                        :style="{
+                            width: '120px',
+                            marginRight: '20px',
+                            marginLeft: '30px',
+                        }"
+                        >取消</n-button
+                    >
+                    <n-button
+                        strong
+                        secondary
+                        type="primary"
+                        @click="submitFileCallback"
+                        :style="{ width: '120px' }"
+                        >确定</n-button
+                    >
+                </template>
             </n-modal>
         </div>
     </div>
@@ -264,6 +371,12 @@ import {
     getTeamManagerInfo,
     pullTeamMemberIdentity,
     pullTeamMemberList,
+    postFold,
+    putFoldInfo,
+    getTeamFolds,
+    getCategory,
+    postFile,
+    putFileInfo,
 } from '@/service'
 import useUserinfo from '@/stores/userinfo'
 import {
@@ -512,8 +625,8 @@ const delMember = (row) => {
             usersVisit.push(item.userId)
         }
     })
-    usersLists = [...usersOperate, ...usersVisit]
-    
+    usersLists = [userinfoStore.userInfo.userId, ...usersOperate, ...usersVisit]
+
     pullTeamMemberList({
         id: contentState.teamId,
         usersOperate,
@@ -586,11 +699,204 @@ const handleMember = () => {
     ]
 }
 
-// 管理团队文件夹
-const handleFold = () => {}
+// 模态框
+const modalState = reactive({
+    addFoldModal: false,
+    addFileModal: false,
+    foldModalMode: 'add',
+    fileModalMode: 'add',
+})
 
-// 管理团队文件
-const handleFile = () => {}
+// 添加值
+const addFoldFormValue = reactive({
+    curFoldId: 0,
+    fold_name: '',
+})
+
+// 新建团队文件夹
+const handleFold = () => {
+    addFoldFormValue.fold_name = ''
+    modalState.foldModalMode = 'add'
+    modalState.addFoldModal = true
+}
+
+const submitFoldCallback = () => {
+    if (modalState.foldModalMode === 'add') {
+        if (addFoldFormValue.fold_name !== '') {
+            const data = {
+                fold_name: addFoldFormValue.fold_name,
+                team: contentState.teamId,
+                is_team_fold: true,
+                creations: null,
+                folds: null,
+                user: null,
+            }
+            postFold(data).then(
+                (response) => {
+                    setTeamInfo()
+                    message.success('添加成功')
+                },
+                (error) => {
+                    console.log(error)
+                    message.error('添加失败')
+                }
+            )
+            modalState.addFoldModal = false
+        } else if (addFoldFormValue.fold_name === '') {
+            message.warning('输入为空')
+        } else {
+            message.error('添加失败')
+        }
+    } else if (modalState.foldModalMode === 'edit') {
+        const data = {
+            id: addFoldFormValue.curFoldId,
+            fold_name: addFoldFormValue.fold_name,
+        }
+        putFoldInfo(data).then(
+            (response) => {
+                message.success('修改成功')
+                dataInit()
+            },
+            (error) => {
+                message.error('修改失败')
+            }
+        )
+        modalState.addFoldModal = false
+    }
+}
+
+const cancelFoldCallback = () => {
+    modalState.addFoldModal = false
+    addFoldFormValue.fold_name = ''
+}
+
+// 新建团队文件
+const handleFile = () => {
+    addFileFormValue.curFileId = 0
+    addFileFormValue.cre_name = ''
+    addFileFormValue.isPublic = true
+    addFileFormValue.fold = null
+    addFileFormValue.category = null
+    modalState.fileModalMode = 'add'
+    fileOptionInit()
+    modalState.addFileModal = true
+}
+
+const addFileFormValue = reactive({
+    curFileId: 0,
+    cre_name: '',
+    isPublic: true,
+    fold: null,
+    category: null,
+})
+
+const addFileOption = reactive({
+    foldOption: [],
+    categoryOption: [],
+})
+
+const fileOptionInit = () => {
+    const teamId = contentState.teamId
+    // 获取团队文件
+    getTeamFolds({ id: teamId }).then(
+        (response) => {
+            const resFolds = response.data.data.attributes.folds.data
+            addFileOption.foldOption = resFolds.map((item) => {
+                return {
+                    label: item.attributes.fold_name,
+                    value: item.id,
+                }
+            })
+        },
+        (error) => {
+            message.error('未获取到团队文件夹')
+            console.log(error)
+        }
+    )
+
+    getCategory().then(
+        (response) => {
+            const resCategories = response.data.data
+            for (let index = 0; index < resCategories.length; index++) {
+                addFileOption.categoryOption[index] = {
+                    label: resCategories[index].attributes.cate_name,
+                    value: resCategories[index].id,
+                }
+            }
+        },
+        (error) => {
+            message.error('未获取到分类')
+            console.log(error)
+        }
+    )
+} // 添加文件表单的选择器配置初始化
+
+const submitFileCallback = () => {
+    if (modalState.fileModalMode === 'add') {
+        if (
+            addFileFormValue.cre_name !== '' &&
+            addFileFormValue.fold !== '' &&
+            addFileFormValue.category !== ''
+        ) {
+            const data = {
+                cre_name: addFileFormValue.cre_name,
+                cre_status: '刚创建',
+                isPublic: addFileFormValue.isPublic,
+                is_team_file: true,
+                json_content: null,
+                fold: Number(addFileFormValue.fold),
+                category: Number(addFileFormValue.category),
+                user: null,
+                team: contentState.teamId,
+            }
+            postFile(data).then(
+                (response) => {
+                    setTeamInfo()
+                    message.success('添加成功')
+                    // 跳转
+                    modalState.addFileModal = false
+                },
+                (error) => {
+                    message.error('添加失败')
+                }
+            )
+        } else if (
+            addFileFormValue.cre_name === '' ||
+            addFileFormValue.fold === null ||
+            addFileFormValue.category === null
+        ) {
+            message.warning('请完备信息')
+        } else {
+            message.error('添加失败')
+        }
+    } else if (modalState.fileModalMode === 'edit') {
+        const data = {
+            id: addFileFormValue.curFileId,
+            cre_name: addFileFormValue.cre_name,
+            isPublic: addFileFormValue.isPublic,
+            fold: addFileFormValue.fold,
+            category: addFileFormValue.category,
+        }
+        putFileInfo(data).then(
+            (response) => {
+                dataInit()
+                message.success('修改成功')
+            },
+            (error) => {
+                message.error('修改失败')
+            }
+        )
+        modalState.addFileModal = false
+    }
+}
+
+const cancelFileCallback = () => {
+    addFileFormValue.cre_name = ''
+    addFileFormValue.isPublic = true
+    addFileFormValue.fold = null
+    addFileFormValue.category = null
+    modalState.addFileModal = false
+}
 
 // 管理任务看板
 const handleTask = () => {}

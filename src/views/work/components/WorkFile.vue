@@ -190,7 +190,10 @@
                                 </n-icon>
                             </template>
                             创建时间：{{
-                                moment(item.publishedAt,moment.ISO_8601).format('YYYY-MM-DD')
+                                moment(
+                                    item.publishedAt,
+                                    moment.ISO_8601
+                                ).format('YYYY-MM-DD')
                             }}
                         </n-card>
                     </div>
@@ -240,15 +243,17 @@
                                     文件夹状态：{{ item.cre_status }}
                                     <br />
                                     创建时间：{{
-                                        moment(item.publishedAt,moment.ISO_8601).format(
-                                            'YYYY-MM-DD'
-                                        )
+                                        moment(
+                                            item.publishedAt,
+                                            moment.ISO_8601
+                                        ).format('YYYY-MM-DD')
                                     }}
                                     <br />
                                     更新时间：{{
-                                        moment(item.updatedAt,moment.ISO_8601).format(
-                                            'YYYY-MM-DD'
-                                        )
+                                        moment(
+                                            item.updatedAt,
+                                            moment.ISO_8601
+                                        ).format('YYYY-MM-DD')
                                     }}
                                     <n-button
                                         strong
@@ -313,15 +318,17 @@
                                     文件夹状态：{{ item.cre_status }}
                                     <br />
                                     创建时间：{{
-                                        moment(item.publishedAt,moment.ISO_8601).format(
-                                            'YYYY-MM-DD'
-                                        )
+                                        moment(
+                                            item.publishedAt,
+                                            moment.ISO_8601
+                                        ).format('YYYY-MM-DD')
                                     }}
                                     <br />
                                     更新时间：{{
-                                        moment(item.updatedAt,moment.ISO_8601).format(
-                                            'YYYY-MM-DD'
-                                        )
+                                        moment(
+                                            item.updatedAt,
+                                            moment.ISO_8601
+                                        ).format('YYYY-MM-DD')
                                     }}
                                     <n-button
                                         strong
@@ -382,13 +389,17 @@
                                 文件夹状态：{{ item.cre_status }}
                                 <br />
                                 创建时间：{{
-                                    moment(item.publishedAt,moment.ISO_8601).format(
-                                        'YYYY-MM-DD'
-                                    )
+                                    moment(
+                                        item.publishedAt,
+                                        moment.ISO_8601
+                                    ).format('YYYY-MM-DD')
                                 }}
                                 <br />
                                 更新时间：{{
-                                    moment(item.updatedAt,moment.ISO_8601).format('YYYY-MM-DD')
+                                    moment(
+                                        item.updatedAt,
+                                        moment.ISO_8601
+                                    ).format('YYYY-MM-DD')
                                 }}
                                 <n-button
                                     strong
@@ -514,6 +525,7 @@ const submitFoldCallback = () => {
                 is_team_fold: false,
                 creations: null,
                 folds: null,
+                team: null,
             }
             postFold(data).then(
                 (response) => {
@@ -604,6 +616,11 @@ const fileOptionInit = () => {
 } // 添加文件表单的选择器配置初始化
 
 const handleAddFile = () => {
+    addFileFormValue.curFileId = 0
+    addFileFormValue.cre_name = ''
+    addFileFormValue.isPublic = true
+    addFileFormValue.fold = null
+    addFileFormValue.category = null
     modalState.fileModalMode = 'add'
     fileOptionInit()
     modalState.addFileModal = true

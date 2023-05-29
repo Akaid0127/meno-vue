@@ -52,7 +52,8 @@ export const postFold = (data) => {
                 user: data.user,
                 is_team_fold: data.is_team_fold,
                 creations: data.creations,
-                folds: data.folds
+                folds: data.folds,
+                team: data.team,
             }
 
         }
@@ -246,5 +247,13 @@ export const pullTeamMemberList = (data) => {
                 users_lists: data.usersLists
             }
         }
+    })
+}
+
+// 获取团队文件夹
+export const getTeamFolds = (data) => {
+    return axios({
+        url: `api/teams/${data.id}?populate=folds`,
+        method: 'get',
     })
 }
