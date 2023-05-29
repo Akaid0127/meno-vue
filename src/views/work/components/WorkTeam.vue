@@ -1,8 +1,16 @@
 <template>
     <div class="work-team-content">
         <div class="team-file">
-            <div class="opera-group">
-                <n-button ghost color="#606266">
+            <div class="opera-group" v-show="limitState.isTeamAdmin">
+                <n-button strong secondary type="primary">
+                    <template #icon>
+                        <n-icon>
+                            <GroupSecurity />
+                        </n-icon>
+                    </template>
+                    管理团队成员
+                </n-button>
+                <n-button strong secondary type="primary">
                     <template #icon>
                         <n-icon>
                             <FolderDetailsReference />
@@ -10,7 +18,7 @@
                     </template>
                     管理团队文件夹
                 </n-button>
-                <n-button ghost color="#606266">
+                <n-button strong secondary type="primary">
                     <template #icon>
                         <n-icon>
                             <VolumeFileStorage />
@@ -18,7 +26,7 @@
                     </template>
                     管理团队文件
                 </n-button>
-                <n-button ghost color="#606266">
+                <n-button strong secondary type="primary">
                     <template #icon>
                         <n-icon>
                             <TaskAssetView />
@@ -219,11 +227,13 @@
 </template>
 
 <script setup>
-import { reactive, onMounted } from 'vue'
+import { reactive, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import moment from 'moment'
 import { getTeamManagerInfo } from '@/service'
+import useUserinfo from '@/stores/userinfo'
 import {
+    GroupSecurity,
     FolderDetailsReference,
     VolumeFileStorage,
     TaskAssetView,
@@ -235,6 +245,9 @@ import {
 // 路由
 const router = useRouter()
 const route = useRoute()
+
+// 用户
+const userinfoStore = useUserinfo()
 
 // users_lists,
 // user_manager,
@@ -252,7 +265,7 @@ const tabState = reactive({
 
 // 团队基本信息
 const contentState = reactive({
-    teamId: null,
+    teamId: route.query.teamId,
     teamName: '',
 
     usersLists: [],
@@ -332,6 +345,7 @@ const setTeamInfo = () => {
                 }
             })
             contentState.usersManager = {
+                userId: resData.user_manager.data.id,
                 userName: resData.user_manager.data.attributes.username,
                 userEmail: resData.user_manager.data.attributes.email,
             }
@@ -358,12 +372,30 @@ const setTeamInfo = () => {
             })
 
             // file todo
+
+            setTeamType()
         },
         (error) => {
             console.log(error)
         }
     )
 }
+
+// 检测当前团队管理员是不是当前用户
+const limitState = reactive({
+    isTeamAdmin: false,
+})
+const setTeamType = () => {
+    if (userinfoStore.userInfo.userId === contentState.usersManager.userId) {
+        limitState.isTeamAdmin = true
+    } else {
+        limitState.isTeamAdmin = false
+    }
+}
+
+watch(router.currentRoute, () => {
+    setTeamInfo()
+})
 
 onMounted(() => {
     setTeamInfo()
