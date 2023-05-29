@@ -48,6 +48,7 @@
                             :title="item.fold_name"
                             hoverable
                             embedded
+                            @click="checkChildFiles(item)"
                         >
                             <template #header-extra>
                                 <n-icon size="22" color="#FFD485">
@@ -198,30 +199,23 @@
             <div class="bulletin-group">
                 <div class="bulletin-content">
                     <n-scrollbar trigger="none">
-                        <div class="item">
-                            <n-card title="项目一" hoverable>
+                        <div
+                            class="item"
+                            v-for="item in contentState.teamTasks"
+                            :key="item.id"
+                        >
+                            <n-card :title="item.taskName" hoverable>
                                 <template #header-extra>
-                                    <n-tag type="success">已完成</n-tag>
+                                    <n-tag
+                                        :type="
+                                            item.taskStatus === '已完成'
+                                                ? 'success'
+                                                : 'info'
+                                        "
+                                        >{{ item.taskStatus }}</n-tag
+                                    >
                                 </template>
-                                登录页迭代
-                            </n-card>
-                        </div>
-
-                        <div class="item">
-                            <n-card title="项目二" hoverable>
-                                <template #header-extra>
-                                    <n-tag type="info">正在跟进</n-tag>
-                                </template>
-                                后台管理页完善
-                            </n-card>
-                        </div>
-
-                        <div class="item">
-                            <n-card title="项目二" hoverable>
-                                <template #header-extra>
-                                    <n-tag type="info">正在跟进</n-tag>
-                                </template>
-                                后台管理页提测
+                                {{ item.taskTitle }}
                             </n-card>
                         </div>
                     </n-scrollbar>
@@ -377,6 +371,7 @@ import {
     getCategory,
     postFile,
     putFileInfo,
+    getFoldFiles,
 } from '@/service'
 import useUserinfo from '@/stores/userinfo'
 import {
@@ -407,12 +402,6 @@ const userinfoStore = useUserinfo()
 // folds,
 // tasks,
 
-// 标签页tab信息
-const tabState = reactive({
-    tabValue: 'userFiles',
-    foldTabName: '选定文件夹',
-})
-
 // 团队基本信息
 const contentState = reactive({
     teamId: 0,
@@ -424,59 +413,10 @@ const contentState = reactive({
     userVisit: [],
 
     teamFolds: [],
-    teamFiles: [
-        {
-            id: 1,
-            cre_name: '登录页',
-            cre_status: '待审核',
-            publishedAt: '2023/5/21',
-            updatedAt: '2023/5/23',
-        },
-        {
-            id: 1,
-            cre_name: '订单管理页',
-            cre_status: '待审核',
-            publishedAt: '2023/5/11',
-            updatedAt: '2023/5/15',
-        },
-        {
-            id: 1,
-            cre_name: '运输管理页',
-            cre_status: '待审核',
-            publishedAt: '2023/5/15',
-            updatedAt: '2023/5/16',
-        },
-        {
-            id: 1,
-            cre_name: '采购管理页',
-            cre_status: '待审核',
-            publishedAt: '2023/5/18',
-            updatedAt: '2023/5/19',
-        },
-        {
-            id: 1,
-            cre_name: '交付管理页',
-            cre_status: '待审核',
-            publishedAt: '2023/5/21',
-            updatedAt: '2023/5/25',
-        },
-        {
-            id: 1,
-            cre_name: '员工管理页',
-            cre_status: '待审核',
-            publishedAt: '2023/5/01',
-            updatedAt: '2023/5/11',
-        },
-    ],
-    foldFiles: [
-        {
-            id: 1,
-            cre_name: '团队文件夹123',
-            cre_status: '待审核',
-            publishedAt: '2023/5/21',
-            updatedAt: '2023/5/21',
-        },
-    ],
+    teamFiles: [],
+    foldFiles: [],
+
+    teamTasks: [],
 })
 
 // 获取团队基本信息
@@ -526,8 +466,28 @@ const setTeamInfo = () => {
                     publishedAt: item.attributes.publishedAt,
                 }
             })
-
-            // file todo
+            contentState.teamFiles = resData.creations.data.map((item) => {
+                return {
+                    id: item.id,
+                    cre_name: item.attributes.cre_name,
+                    cre_status: item.attributes.cre_status,
+                    publishedAt: item.attributes.publishedAt,
+                    updatedAt: item.attributes.updatedAt,
+                }
+            })
+            console.log(resData.tasks.data)
+            contentState.teamTasks = resData.tasks.data.map((item) => {
+                return {
+                    id: item.id,
+                    taskName: item.attributes.task_name,
+                    taskTitle: item.attributes.task_title,
+                    taskPriority: item.attributes.task_priority,
+                    taskContent: item.attributes.task_content,
+                    taskStatus: item.attributes.task_status,
+                    deadline: item.attributes.deadline,
+                    publishedAt: item.attributes.publishedAt,
+                }
+            })
 
             setUserIdentity()
             memberState.tableData = [
@@ -566,6 +526,32 @@ const setUserIdentity = () => {
     } else if (VisitFlag === true) {
         userState.userIdentity = '游客'
     }
+}
+
+// 查看文件夹栏下文件
+const tabState = reactive({
+    tabValue: 'userFiles',
+    foldTabName: '选定文件夹',
+})
+const checkChildFiles = (foldData) => {
+    contentState.foldFiles = []
+    getFoldFiles({ id: foldData.id }).then(
+        (response) => {
+            const resFiles = response.data.data.attributes.creations.data
+            for (let index = 0; index < resFiles.length; index++) {
+                contentState.foldFiles[index] = {
+                    id: resFiles[index].id,
+                    ...resFiles[index].attributes,
+                }
+            }
+            tabState.foldTabName = foldData.fold_name
+            tabState.tabValue = 'foldFiles'
+        },
+        (error) => {
+            message.error('未获取到文件')
+            console.log(error)
+        }
+    )
 }
 
 // 管理团队成员
@@ -611,7 +597,6 @@ const editMember = (row) => {
 }
 const delMember = (row) => {
     // 删除该成员
-    console.log(row)
     let usersOperate = []
     let usersVisit = []
     let usersLists = []

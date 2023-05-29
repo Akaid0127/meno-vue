@@ -240,7 +240,7 @@
                                             确定删除该{{ item.cre_name }}吗
                                         </n-popconfirm>
                                     </template>
-                                    文件夹状态：{{ item.cre_status }}
+                                    文件状态：{{ item.cre_status }}
                                     <br />
                                     创建时间：{{
                                         moment(
