@@ -1,8 +1,11 @@
 <template>
     <div class="work-team-content">
         <div class="team-file">
-            <div class="opera-group" v-show="userState.userIdentity==='管理员'">
-                <n-button strong secondary type="primary">
+            <div
+                class="opera-group"
+                v-show="userState.userIdentity === '管理员'"
+            >
+                <n-button strong secondary type="primary" @click="handleMember">
                     <template #icon>
                         <n-icon>
                             <GroupSecurity />
@@ -10,7 +13,7 @@
                     </template>
                     管理团队成员
                 </n-button>
-                <n-button strong secondary type="primary">
+                <n-button strong secondary type="primary" @click="handleFold">
                     <template #icon>
                         <n-icon>
                             <FolderDetailsReference />
@@ -18,7 +21,7 @@
                     </template>
                     管理团队文件夹
                 </n-button>
-                <n-button strong secondary type="primary">
+                <n-button strong secondary type="primary" @click="handleFile">
                     <template #icon>
                         <n-icon>
                             <VolumeFileStorage />
@@ -26,7 +29,7 @@
                     </template>
                     管理团队文件
                 </n-button>
-                <n-button strong secondary type="primary">
+                <n-button strong secondary type="primary" @click="handleTask">
                     <template #icon>
                         <n-icon>
                             <TaskAssetView />
@@ -175,9 +178,11 @@
                     }"
                 >
                     <template #header-extra>
-                        <n-tag type="success">{{userState.userIdentity}}</n-tag>
+                        <n-tag type="success">{{
+                            userState.userIdentity
+                        }}</n-tag>
                     </template>
-                    {{contentState.teamName}}
+                    {{ contentState.teamName }}
                     <template #action>
                         <div class="operation">
                             <n-button strong secondary type="tertiary"
@@ -223,14 +228,39 @@
                 </div>
             </div>
         </div>
+
+        <!-- 模态框 -->
+        <div>
+            <!-- 管理团队成员弹框 -->
+            <n-modal
+                v-model:show="memberState.memberModal"
+                class="custom-card"
+                preset="card"
+                title="管理团队成员"
+                size="huge"
+                :bordered="false"
+                style="width: 800px"
+            >
+                <template #header-extra>
+                    <n-button strong secondary type="primary"> 添加 </n-button>
+                </template>
+                <n-data-table
+                    :columns="memberState.tableColumns"
+                    :data="memberState.tableData"
+                    :pagination="false"
+                    :bordered="false"
+                />
+            </n-modal>
+        </div>
     </div>
 </template>
 
 <script setup>
-import { reactive, onMounted, watch } from 'vue'
+import { reactive, onMounted, watch, h, defineComponent } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { NButton, useMessage } from 'naive-ui'
 import moment from 'moment'
-import { getTeamManagerInfo } from '@/service'
+import { getTeamManagerInfo, pullTeamMemberIdentity } from '@/service'
 import useUserinfo from '@/stores/userinfo'
 import {
     GroupSecurity,
@@ -241,6 +271,9 @@ import {
     Code,
     AlignBoxMiddleLeft,
 } from '@vicons/carbon'
+
+// naive message
+const message = useMessage()
 
 // 路由
 const router = useRouter()
@@ -356,6 +389,7 @@ const setTeamInfo = () => {
                         userId: item.id,
                         userName: item.attributes.username,
                         userEmail: item.attributes.email,
+                        userIdentity: '开发人员',
                     }
                 }
             )
@@ -364,6 +398,8 @@ const setTeamInfo = () => {
                     userId: item.id,
                     userName: item.attributes.username,
                     userEmail: item.attributes.email,
+                    userEmail: item.attributes.email,
+                    userIdentity: '游客',
                 }
             })
             contentState.teamFolds = resData.folds.data.map((item) => {
@@ -377,6 +413,10 @@ const setTeamInfo = () => {
             // file todo
 
             setUserIdentity()
+            memberState.tableData = [
+                ...contentState.userOperate,
+                ...contentState.userVisit,
+            ]
         },
         (error) => {
             console.log(error)
@@ -393,23 +433,134 @@ const setUserIdentity = () => {
     let OperateFlag = false
     let VisitFlag = false
     contentState.userOperate.forEach((item) => {
-        if(item.id === userId){
+        if (item.userId === userId) {
             OperateFlag = true
         }
     })
     contentState.userVisit.forEach((item) => {
-        if(item.id === userId){
+        if (item.userId === userId) {
             OperateFlag = true
         }
     })
     if (userId === contentState.usersManager.userId) {
         userState.userIdentity = '管理员'
     } else if (OperateFlag === true) {
-         userState.userIdentity = '开发者'
-    } else if (OperateFlag === false) {
-         userState.userIdentity = '游客'
+        userState.userIdentity = '开发人员'
+    } else if (VisitFlag === true) {
+        userState.userIdentity = '游客'
     }
 }
+
+// 管理团队成员
+const editMember = (row) => {
+    // 修改团队成员身份
+    let usersOperate = []
+    let usersVisit = []
+    if (row.userIdentity === '开发人员') {
+        contentState.userOperate.forEach((item) => {
+            if (item.userId !== row.userId) {
+                usersOperate.push(item.userId)
+            }
+        })
+        contentState.userVisit.forEach((item) => {
+            usersVisit.push(item.userId)
+        })
+        usersVisit.push(row.userId)
+    } else if (row.userIdentity === '游客') {
+        contentState.userOperate.forEach((item) => {
+            usersOperate.push(item.userId)
+        })
+        contentState.userVisit.forEach((item) => {
+            if (item.userId !== row.userId) {
+                usersVisit.push(item.userId)
+            }
+        })
+        usersOperate.push(row.userId)
+    }
+
+    pullTeamMemberIdentity({
+        id: contentState.teamId,
+        usersOperate,
+        usersVisit,
+    }).then(
+        (response) => {
+            message.success('切换身份成功')
+            setTeamInfo()
+         },
+        (error) => {
+            console.log(error)
+        }
+    )
+}
+const delMember = (row) => {
+    
+    console.log(row)
+}
+const memberCreateColumns = ({ editMember, delMember }) => {
+    return [
+        { title: '姓名', key: 'userName' },
+        { title: '邮箱', key: 'userEmail' },
+        { title: '身份', key: 'userIdentity' },
+        {
+            title: '修改',
+            key: 'edit',
+            render(row) {
+                return h(
+                    NButton,
+                    {
+                        strong: true,
+                        secondary: true,
+                        type: 'info',
+                        size: 'small',
+                        onClick: () => editMember(row),
+                    },
+                    { default: () => '切换身份' }
+                )
+            },
+        },
+        {
+            title: '删除',
+            key: 'del',
+            render(row) {
+                return h(
+                    NButton,
+                    {
+                        strong: true,
+                        secondary: true,
+                        type: 'error',
+                        size: 'small',
+                        onClick: () => delMember(row),
+                    },
+                    { default: () => '删除成员' }
+                )
+            },
+        },
+    ]
+}
+const memberState = reactive({
+    memberModal: false,
+    tableColumns: memberCreateColumns({
+        editMember,
+        delMember,
+    }),
+    tableData: [],
+})
+const handleMember = () => {
+    memberState.memberModal = true
+    memberState.tableData = [
+        ...contentState.userOperate,
+        ...contentState.userVisit,
+    ]
+}
+
+// 管理团队文件夹
+const handleFold = () => {}
+
+// 管理团队文件
+const handleFile = () => {}
+
+// 管理任务看板
+const handleTask = () => {}
 
 // 同页面跳转监视路由
 watch(router.currentRoute, () => {

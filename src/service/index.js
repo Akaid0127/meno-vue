@@ -220,3 +220,18 @@ export const getTeamManagerInfo = (data) => {
     })
 }
 
+// 修改团队成员身份
+export const pullTeamMemberIdentity = (data) => {
+    return axios({
+        url: `api/teams/${data.id}?populate=users_operate,users_visit`,
+        method: 'put',
+        data: {
+            data: {
+                users_operate: data.usersOperate,
+                users_visit: data.usersVisit
+            }
+        }
+    })
+}
+
+// 修改团队成员
