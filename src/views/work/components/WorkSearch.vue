@@ -150,7 +150,7 @@ const handleSelect = (key) => {
                 const { username, email, createdAt } = resUser
                 userState.userName = username
                 userState.email = email
-                userState.createDate = moment(createdAt).format('YYYY-MM-DD')
+                userState.createDate = moment(createdAt,moment.ISO_8601).format('YYYY-MM-DD')
             },
             (error) => {
                 message.error('获取失败')

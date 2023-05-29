@@ -18,6 +18,9 @@
 import { reactive, defineComponent, h, onMounted } from 'vue'
 import { RouterLink, useRouter, useRoute } from 'vue-router'
 import { NIcon, useMessage } from 'naive-ui'
+import { getUserTeamAll, getTeamManager } from '@/service'
+import useUserinfo from '@/stores/userinfo'
+
 import {
     RecentlyViewed,
     AlignBoxMiddleLeft,
@@ -28,6 +31,9 @@ import {
     LicenseThirdPartyDraft,
     Events,
 } from '@vicons/carbon'
+
+// 用户
+const userinfoStore = useUserinfo()
 
 // 路由
 const router = useRouter()
@@ -40,18 +46,61 @@ const imgState = reactive({
 
 // 团队
 const teamState = reactive({
-    creaTeamData: [
-        { key: 'workTeam1', label: '前端美工队', menuType: 'team' },
-        { key: 'workTeam2', label: '前端打工队', menuType: 'team' },
-        { key: 'workTeam3', label: '前端完工队', menuType: 'team' },
-    ],
-    partTeamData: [
-        { key: 'workTeam4', label: '前端美工队', menuType: 'team' },
-        { key: 'workTeam5', label: '前端打工队', menuType: 'team' },
-        { key: 'workTeam6', label: '前端完工队', menuType: 'team' },
-        { key: 'workTeam7', label: '后端临时工队', menuType: 'team' },
-    ],
+    creaTeamData: [],
+    partTeamData: [],
 })
+
+// 获取团队更新左侧菜单
+const setUserTeam = () => {
+    getUserTeamAll().then(
+        (response) => {
+            const resTeams = response.data.teams
+            const curUserId = userinfoStore.userInfo.userId
+            teamState.creaTeamData = []
+            teamState.partTeamData = []
+            resTeams.forEach((item) => {
+                getTeamManager({ id: item.id }).then(
+                    (response) => {
+                        const resData = response.data.data
+                        const teamData = {
+                            key: resData.id,
+                            label: resData.attributes.team_name,
+                            menuType: 'team',
+                        }
+                        const teamManagerId =
+                            resData.attributes.user_manager.data.id
+                        if (curUserId === teamManagerId) {
+                            teamState.creaTeamData.push(teamData)
+                        } else {
+                            teamState.partTeamData.push(teamData)
+                        }
+                        // 更新菜单
+                        meunState.menuOptions[2] = {
+                            menuType: 'user',
+                            label: '我创建的团队',
+                            key: 'workCreaTeam',
+                            icon: renderIcon(LicenseThirdPartyDraft),
+                            children: [...teamState.creaTeamData],
+                        }
+                        meunState.menuOptions[3] = {
+                            menuType: 'user',
+                            label: '我加入的团队',
+                            key: 'workPartTeam',
+                            icon: renderIcon(Events),
+                            children: [...teamState.partTeamData],
+                        }
+                    },
+                    (error) => {
+                        console.log(error)
+                    }
+                )
+            })
+        },
+        (error) => {
+            console.log(error)
+        }
+    )
+}
 
 // 左侧菜单
 function renderIcon(icon) {
@@ -132,6 +181,7 @@ const meunState = reactive({
 
 // mount
 onMounted(() => {
+    setUserTeam()
     meunState.menuRouteValue = route.name
 })
 </script>

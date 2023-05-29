@@ -51,7 +51,8 @@ export const postFold = (data) => {
 				fold_name: data.fold_name,
 				user: data.user,
 				is_team_fold: data.is_team_fold,
-				creations: data.creations
+				creations: data.creations,
+                folds: data.folds
 			}
 
 		}
@@ -195,3 +196,18 @@ export const getImage = (data) => {
 	})
 }
 
+// 搜索用户team
+export const getUserTeamAll = () => {
+    return axios({
+        url: `/api/users/me?populate=teams`,
+		method: 'get',
+    })
+}
+
+// 搜索单一团队管理员
+export const getTeamManager = (data) => {
+    return axios({
+        url: `/api/teams/${data.id}?populate=user_manager`,
+		method: 'get',
+    })
+}

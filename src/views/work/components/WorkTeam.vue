@@ -44,7 +44,7 @@
                                 </n-icon>
                             </template>
                             创建时间：{{
-                            moment(item.publishedAt).format('YYYY-MM-DD')
+                            moment(item.publishedAt,moment.ISO_8601).format('YYYY-MM-DD')
                             }}
                         </n-card>
                     </div>
@@ -72,13 +72,13 @@
                                         文件夹状态：{{ item.cre_status }}
                                         <br />
                                         创建时间：{{
-                                        moment(item.publishedAt).format(
+                                        moment(item.publishedAt,moment.ISO_8601).format(
                                         'YYYY-MM-DD'
                                         )
                                         }}
                                         <br />
                                         更新时间：{{
-                                        moment(item.updatedAt).format(
+                                        moment(item.updatedAt,moment.ISO_8601).format(
                                         'YYYY-MM-DD'
                                         )
                                         }}
@@ -116,13 +116,13 @@
                                         文件夹状态：{{ item.cre_status }}
                                         <br />
                                         创建时间：{{
-                                        moment(item.publishedAt).format(
+                                        moment(item.publishedAt,moment.ISO_8601).format(
                                         'YYYY-MM-DD'
                                         )
                                         }}
                                         <br />
                                         更新时间：{{
-                                        moment(item.updatedAt).format(
+                                        moment(item.updatedAt,moment.ISO_8601).format(
                                         'YYYY-MM-DD'
                                         )
                                         }}
