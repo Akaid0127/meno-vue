@@ -1,7 +1,7 @@
 <template>
     <div class="work-team-content">
         <div class="team-file">
-            <div class="opera-group" v-show="limitState.isTeamAdmin">
+            <div class="opera-group" v-show="userState.userIdentity==='管理员'">
                 <n-button strong secondary type="primary">
                     <template #icon>
                         <n-icon>
@@ -168,16 +168,16 @@
         <div class="team-bulletin">
             <div class="user-info">
                 <n-card
-                    title="叶女士"
+                    :title="userinfoStore.userInfo.userName"
                     :segmented="{
                         content: true,
                         footer: 'soft',
                     }"
                 >
                     <template #header-extra>
-                        <n-tag type="success">团队管理员</n-tag>
+                        <n-tag type="success">{{userState.userIdentity}}</n-tag>
                     </template>
-                    卡片内容
+                    {{contentState.teamName}}
                     <template #action>
                         <div class="operation">
                             <n-button strong secondary type="tertiary"
@@ -265,7 +265,7 @@ const tabState = reactive({
 
 // 团队基本信息
 const contentState = reactive({
-    teamId: route.query.teamId,
+    teamId: 0,
     teamName: '',
 
     usersLists: [],
@@ -337,9 +337,10 @@ const setTeamInfo = () => {
             const resData = response.data.data.attributes
 
             contentState.teamId = response.data.data.id
-            contentState.teamName = resData.teamName
+            contentState.teamName = resData.team_name
             contentState.usersLists = resData.users_lists.data.map((item) => {
                 return {
+                    userId: item.id,
                     userName: item.attributes.username,
                     userEmail: item.attributes.email,
                 }
@@ -352,6 +353,7 @@ const setTeamInfo = () => {
             contentState.userOperate = resData.users_operate.data.map(
                 (item) => {
                     return {
+                        userId: item.id,
                         userName: item.attributes.username,
                         userEmail: item.attributes.email,
                     }
@@ -359,6 +361,7 @@ const setTeamInfo = () => {
             )
             contentState.userVisit = resData.users_visit.data.map((item) => {
                 return {
+                    userId: item.id,
                     userName: item.attributes.username,
                     userEmail: item.attributes.email,
                 }
@@ -373,7 +376,7 @@ const setTeamInfo = () => {
 
             // file todo
 
-            setTeamType()
+            setUserIdentity()
         },
         (error) => {
             console.log(error)
@@ -381,18 +384,34 @@ const setTeamInfo = () => {
     )
 }
 
-// 检测当前团队管理员是不是当前用户
-const limitState = reactive({
-    isTeamAdmin: false,
+// 检测当前用户的团队身份
+const userState = reactive({
+    userIdentity: '',
 })
-const setTeamType = () => {
-    if (userinfoStore.userInfo.userId === contentState.usersManager.userId) {
-        limitState.isTeamAdmin = true
-    } else {
-        limitState.isTeamAdmin = false
+const setUserIdentity = () => {
+    const userId = userinfoStore.userInfo.userId
+    let OperateFlag = false
+    let VisitFlag = false
+    contentState.userOperate.forEach((item) => {
+        if(item.id === userId){
+            OperateFlag = true
+        }
+    })
+    contentState.userVisit.forEach((item) => {
+        if(item.id === userId){
+            OperateFlag = true
+        }
+    })
+    if (userId === contentState.usersManager.userId) {
+        userState.userIdentity = '管理员'
+    } else if (OperateFlag === true) {
+         userState.userIdentity = '开发者'
+    } else if (OperateFlag === false) {
+         userState.userIdentity = '游客'
     }
 }
 
+// 同页面跳转监视路由
 watch(router.currentRoute, () => {
     setTeamInfo()
 })
