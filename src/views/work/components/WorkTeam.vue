@@ -260,7 +260,11 @@ import { reactive, onMounted, watch, h, defineComponent } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { NButton, useMessage } from 'naive-ui'
 import moment from 'moment'
-import { getTeamManagerInfo, pullTeamMemberIdentity } from '@/service'
+import {
+    getTeamManagerInfo,
+    pullTeamMemberIdentity,
+    pullTeamMemberList,
+} from '@/service'
 import useUserinfo from '@/stores/userinfo'
 import {
     GroupSecurity,
@@ -486,15 +490,44 @@ const editMember = (row) => {
         (response) => {
             message.success('切换身份成功')
             setTeamInfo()
-         },
+        },
         (error) => {
             console.log(error)
         }
     )
 }
 const delMember = (row) => {
-    
+    // 删除该成员
     console.log(row)
+    let usersOperate = []
+    let usersVisit = []
+    let usersLists = []
+    contentState.userOperate.forEach((item) => {
+        if (item.userId !== row.userId) {
+            usersOperate.push(item.userId)
+        }
+    })
+    contentState.userVisit.forEach((item) => {
+        if (item.userId !== row.userId) {
+            usersVisit.push(item.userId)
+        }
+    })
+    usersLists = [...usersOperate, ...usersVisit]
+    
+    pullTeamMemberList({
+        id: contentState.teamId,
+        usersOperate,
+        usersVisit,
+        usersLists,
+    }).then(
+        (response) => {
+            message.success('删除成功')
+            setTeamInfo()
+        },
+        (error) => {
+            console.log(error)
+        }
+    )
 }
 const memberCreateColumns = ({ editMember, delMember }) => {
     return [

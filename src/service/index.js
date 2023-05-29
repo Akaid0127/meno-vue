@@ -234,4 +234,17 @@ export const pullTeamMemberIdentity = (data) => {
     })
 }
 
-// 修改团队成员
+// 修改团队成员（主要是用户是否存在于团队）
+export const pullTeamMemberList = (data) => {
+    return axios({
+        url: `api/teams/${data.id}?populate=users_operate,users_visit,users_lists`,
+        method: 'put',
+        data: {
+            data: {
+                users_operate: data.usersOperate,
+                users_visit: data.usersVisit,
+                users_lists: data.usersLists
+            }
+        }
+    })
+}
