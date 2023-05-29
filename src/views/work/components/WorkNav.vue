@@ -20,7 +20,6 @@ import { RouterLink, useRouter, useRoute } from 'vue-router'
 import { NIcon, useMessage } from 'naive-ui'
 import { getUserTeamAll, getTeamManager } from '@/service'
 import useUserinfo from '@/stores/userinfo'
-
 import {
     RecentlyViewed,
     AlignBoxMiddleLeft,

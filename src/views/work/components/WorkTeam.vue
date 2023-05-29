@@ -44,7 +44,10 @@
                                 </n-icon>
                             </template>
                             创建时间：{{
-                            moment(item.publishedAt,moment.ISO_8601).format('YYYY-MM-DD')
+                                moment(
+                                    item.publishedAt,
+                                    moment.ISO_8601
+                                ).format('YYYY-MM-DD')
                             }}
                         </n-card>
                     </div>
@@ -72,19 +75,24 @@
                                         文件夹状态：{{ item.cre_status }}
                                         <br />
                                         创建时间：{{
-                                        moment(item.publishedAt,moment.ISO_8601).format(
-                                        'YYYY-MM-DD'
-                                        )
+                                            moment(
+                                                item.publishedAt,
+                                                moment.ISO_8601
+                                            ).format('YYYY-MM-DD')
                                         }}
                                         <br />
                                         更新时间：{{
-                                        moment(item.updatedAt,moment.ISO_8601).format(
-                                        'YYYY-MM-DD'
-                                        )
+                                            moment(
+                                                item.updatedAt,
+                                                moment.ISO_8601
+                                            ).format('YYYY-MM-DD')
                                         }}
                                         <n-button strong secondary>
                                             <template #icon>
-                                                <n-icon size="18" color="#0e7a0d">
+                                                <n-icon
+                                                    size="18"
+                                                    color="#0e7a0d"
+                                                >
                                                     <Code />
                                                 </n-icon>
                                             </template>
@@ -97,7 +105,9 @@
                     </n-tab-pane>
 
                     <n-tab-pane name="foldFiles" :tab="tabState.foldTabName">
-                        <div v-if="contentState.foldFiles.length === 0">该文件夹下暂无文件</div>
+                        <div v-if="contentState.foldFiles.length === 0">
+                            该文件夹下暂无文件
+                        </div>
                         <div v-if="contentState.foldFiles !== 0">
                             <n-scrollbar trigger="none">
                                 <div class="file-item">
@@ -116,19 +126,24 @@
                                         文件夹状态：{{ item.cre_status }}
                                         <br />
                                         创建时间：{{
-                                        moment(item.publishedAt,moment.ISO_8601).format(
-                                        'YYYY-MM-DD'
-                                        )
+                                            moment(
+                                                item.publishedAt,
+                                                moment.ISO_8601
+                                            ).format('YYYY-MM-DD')
                                         }}
                                         <br />
                                         更新时间：{{
-                                        moment(item.updatedAt,moment.ISO_8601).format(
-                                        'YYYY-MM-DD'
-                                        )
+                                            moment(
+                                                item.updatedAt,
+                                                moment.ISO_8601
+                                            ).format('YYYY-MM-DD')
                                         }}
                                         <n-button strong secondary>
                                             <template #icon>
-                                                <n-icon size="18" color="#0e7a0d">
+                                                <n-icon
+                                                    size="18"
+                                                    color="#0e7a0d"
+                                                >
                                                     <Code />
                                                 </n-icon>
                                             </template>
@@ -157,8 +172,12 @@
                     卡片内容
                     <template #action>
                         <div class="operation">
-                            <n-button strong secondary type="tertiary">创建团队</n-button>
-                            <n-button strong secondary type="primary">加入团队</n-button>
+                            <n-button strong secondary type="tertiary"
+                                >创建团队</n-button
+                            >
+                            <n-button strong secondary type="primary"
+                                >加入团队</n-button
+                            >
                         </div>
                     </template>
                 </n-card>
@@ -200,8 +219,10 @@
 </template>
 
 <script setup>
-import { reactive } from "vue";
-import moment from "moment";
+import { reactive, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import moment from 'moment'
+import { getTeamManagerInfo } from '@/service'
 import {
     FolderDetailsReference,
     VolumeFileStorage,
@@ -209,74 +230,144 @@ import {
     Folder,
     Code,
     AlignBoxMiddleLeft,
-} from "@vicons/carbon";
+} from '@vicons/carbon'
 
+// 路由
+const router = useRouter()
+const route = useRoute()
+
+// users_lists,
+// user_manager,
+// users_operate,
+// users_visit,
+// creations,
+// folds,
+// tasks,
+
+// 标签页tab信息
+const tabState = reactive({
+    tabValue: 'userFiles',
+    foldTabName: '选定文件夹',
+})
+
+// 团队基本信息
 const contentState = reactive({
-    teamFolds: [
-        { id: 1, fold_name: "项目一文件夹", publishedAt: "2023/5/11" },
-        { id: 1, fold_name: "项目二文件夹", publishedAt: "2023/5/23" },
-        { id: 1, fold_name: "项目三文件夹", publishedAt: "2023/5/21" },
-        { id: 1, fold_name: "项目四文件夹", publishedAt: "2023/5/12" },
-    ],
+    teamId: null,
+    teamName: '',
+
+    usersLists: [],
+    usersManager: {},
+    userOperate: [],
+    userVisit: [],
+
+    teamFolds: [],
     teamFiles: [
         {
             id: 1,
-            cre_name: "登录页",
-            cre_status: "待审核",
-            publishedAt: "2023/5/21",
-            updatedAt: "2023/5/23",
+            cre_name: '登录页',
+            cre_status: '待审核',
+            publishedAt: '2023/5/21',
+            updatedAt: '2023/5/23',
         },
         {
             id: 1,
-            cre_name: "订单管理页",
-            cre_status: "待审核",
-            publishedAt: "2023/5/11",
-            updatedAt: "2023/5/15",
+            cre_name: '订单管理页',
+            cre_status: '待审核',
+            publishedAt: '2023/5/11',
+            updatedAt: '2023/5/15',
         },
         {
             id: 1,
-            cre_name: "运输管理页",
-            cre_status: "待审核",
-            publishedAt: "2023/5/15",
-            updatedAt: "2023/5/16",
+            cre_name: '运输管理页',
+            cre_status: '待审核',
+            publishedAt: '2023/5/15',
+            updatedAt: '2023/5/16',
         },
         {
             id: 1,
-            cre_name: "采购管理页",
-            cre_status: "待审核",
-            publishedAt: "2023/5/18",
-            updatedAt: "2023/5/19",
+            cre_name: '采购管理页',
+            cre_status: '待审核',
+            publishedAt: '2023/5/18',
+            updatedAt: '2023/5/19',
         },
         {
             id: 1,
-            cre_name: "交付管理页",
-            cre_status: "待审核",
-            publishedAt: "2023/5/21",
-            updatedAt: "2023/5/25",
+            cre_name: '交付管理页',
+            cre_status: '待审核',
+            publishedAt: '2023/5/21',
+            updatedAt: '2023/5/25',
         },
         {
             id: 1,
-            cre_name: "员工管理页",
-            cre_status: "待审核",
-            publishedAt: "2023/5/01",
-            updatedAt: "2023/5/11",
+            cre_name: '员工管理页',
+            cre_status: '待审核',
+            publishedAt: '2023/5/01',
+            updatedAt: '2023/5/11',
         },
     ],
     foldFiles: [
         {
             id: 1,
-            cre_name: "团队文件夹123",
-            cre_status: "待审核",
-            publishedAt: "2023/5/21",
-            updatedAt: "2023/5/21",
+            cre_name: '团队文件夹123',
+            cre_status: '待审核',
+            publishedAt: '2023/5/21',
+            updatedAt: '2023/5/21',
         },
     ],
-});
+})
 
-const tabState = reactive({
-    tabValue: "userFiles",
-    foldTabName: "选定文件夹",
-});
+// 获取团队基本信息
+const setTeamInfo = () => {
+    // route.query.teamId
+    getTeamManagerInfo({ id: route.query.teamId }).then(
+        (response) => {
+            const resData = response.data.data.attributes
+
+            contentState.teamId = response.data.data.id
+            contentState.teamName = resData.teamName
+            contentState.usersLists = resData.users_lists.data.map((item) => {
+                return {
+                    userName: item.attributes.username,
+                    userEmail: item.attributes.email,
+                }
+            })
+            contentState.usersManager = {
+                userName: resData.user_manager.data.attributes.username,
+                userEmail: resData.user_manager.data.attributes.email,
+            }
+            contentState.userOperate = resData.users_operate.data.map(
+                (item) => {
+                    return {
+                        userName: item.attributes.username,
+                        userEmail: item.attributes.email,
+                    }
+                }
+            )
+            contentState.userVisit = resData.users_visit.data.map((item) => {
+                return {
+                    userName: item.attributes.username,
+                    userEmail: item.attributes.email,
+                }
+            })
+            contentState.teamFolds = resData.folds.data.map((item) => {
+                return {
+                    id: item.id,
+                    fold_name: item.attributes.fold_name,
+                    publishedAt: item.attributes.publishedAt,
+                }
+            })
+
+            // file todo
+        },
+        (error) => {
+            console.log(error)
+        }
+    )
+}
+
+onMounted(() => {
+    setTeamInfo()
+})
 </script>
 
 <style lang="scss" scoped>
