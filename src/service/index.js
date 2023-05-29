@@ -257,3 +257,6 @@ export const getTeamFolds = (data) => {
         method: 'get',
     })
 }
+
+// 获取任务看板的细节
+

@@ -203,6 +203,7 @@
                             class="item"
                             v-for="item in contentState.teamTasks"
                             :key="item.id"
+                            @click="checkTeamTask(item)"
                         >
                             <n-card :title="item.taskName" hoverable>
                                 <template #header-extra>
@@ -352,6 +353,52 @@
                     >
                 </template>
             </n-modal>
+
+            <!-- 任务看板模态框 -->
+            <n-modal
+                v-model:show="taskState.taskModal"
+                class="custom-card"
+                preset="card"
+                :style="{ width: '400px' }"
+                :title="taskState.taskTitle"
+                size="huge"
+                :bordered="false"
+                :segmented="{ content: 'soft', footer: 'soft' }"
+            >
+                <template #header-extra>
+                    <n-tag style="margin-right:10px">优先级 {{ taskState.taskPriority }}</n-tag>
+                    <n-tag
+                        :type="
+                            taskState.taskStatus === '已完成'
+                                ? 'success'
+                                : 'info'
+                        "
+                        >{{ taskState.taskStatus }}</n-tag
+                    >
+                </template>
+                <p>负责人：{{}}</p>
+                <span>{{ taskState.taskName }} - </span>
+                <span>{{ taskState.taskTitle }}</span>
+                <div>
+                    {{ taskState.taskContent }}
+                </div>
+
+                <template #footer>
+                    <p>截止日期：{{ taskState.deadline }}</p>
+                    <p>发布日期：{{ taskState.publishedAt }}</p>
+                </template>
+            </n-modal>
+
+            <!-- const taskState = reactive({
+                taskModal: false,
+                taskName: '',
+                taskTitle: '',
+                taskPriority: '',
+                taskContent: '',
+                taskStatus: '',
+                deadline: '',
+                publishedAt: '',
+            }) -->
         </div>
     </div>
 </template>
@@ -475,7 +522,6 @@ const setTeamInfo = () => {
                     updatedAt: item.attributes.updatedAt,
                 }
             })
-            console.log(resData.tasks.data)
             contentState.teamTasks = resData.tasks.data.map((item) => {
                 return {
                     id: item.id,
@@ -552,6 +598,30 @@ const checkChildFiles = (foldData) => {
             console.log(error)
         }
     )
+}
+
+// 查看任务看板
+const taskState = reactive({
+    taskModal: false,
+    taskName: '',
+    taskTitle: '',
+    taskPriority: '',
+    taskContent: '',
+    taskStatus: '',
+    deadline: '',
+    publishedAt: '',
+})
+const checkTeamTask = (data) => {
+    taskState.taskModal = true
+    console.log(data)
+    taskState.taskName = data.taskName
+    taskState.taskTitle = data.taskTitle
+    taskState.taskPriority = data.taskPriority
+    taskState.taskContent = data.taskContent
+    taskState.taskContent = data.taskContent
+    taskState.taskStatus = data.taskStatus
+    taskState.deadline = data.deadline
+    taskState.publishedAt = data.publishedAt
 }
 
 // 管理团队成员
