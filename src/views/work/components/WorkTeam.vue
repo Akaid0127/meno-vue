@@ -35,7 +35,7 @@
                             <TaskAssetView />
                         </n-icon>
                     </template>
-                    管理团队任务看板
+                    新建任务看板
                 </n-button>
             </div>
 
@@ -366,7 +366,9 @@
                 :segmented="{ content: 'soft', footer: 'soft' }"
             >
                 <template #header-extra>
-                    <n-tag style="margin-right:10px">优先级 {{ taskState.taskPriority }}</n-tag>
+                    <n-tag style="margin-right: 10px"
+                        >优先级 {{ taskState.taskPriority }}</n-tag
+                    >
                     <n-tag
                         :type="
                             taskState.taskStatus === '已完成'
@@ -376,7 +378,7 @@
                         >{{ taskState.taskStatus }}</n-tag
                     >
                 </template>
-                <p>负责人：{{}}</p>
+                <p>负责人：{{ taskState.coder }}</p>
                 <span>{{ taskState.taskName }} - </span>
                 <span>{{ taskState.taskTitle }}</span>
                 <div>
@@ -389,16 +391,87 @@
                 </template>
             </n-modal>
 
-            <!-- const taskState = reactive({
-                taskModal: false,
-                taskName: '',
-                taskTitle: '',
-                taskPriority: '',
-                taskContent: '',
-                taskStatus: '',
-                deadline: '',
-                publishedAt: '',
-            }) -->
+            <!-- 新建任务看板模态框 -->
+            <n-modal
+                v-model:show="taskState.addTaskModal"
+                class="custom-card"
+                preset="card"
+                :style="{ width: '400px' }"
+                title="添加新的任务看板"
+                size="huge"
+                :bordered="false"
+                :segmented="{ content: 'soft', footer: 'soft' }"
+            >
+                <!-- const taskAddForm = reactive({
+                    taskName: '',
+                    taskTitle: '',
+                    taskContent: '',
+                    taskStatus: '',
+                    taskPriority: '',
+                    deadline: '',
+                    coder: 0,
+                }) -->
+                <n-select
+                    v-model:value="taskAddForm.coder"
+                    :options="optionState.coderOption"
+                    placeholder="选择负责人"
+                    :style="{ marginBottom: '20px' }"
+                />
+                <n-input
+                    v-model:value="taskAddForm.taskName"
+                    placeholder="输入任务迭代"
+                    :style="{ marginBottom: '20px' }"
+                />
+                <n-input
+                    v-model:value="taskAddForm.taskTitle"
+                    placeholder="输入任务标题"
+                    :style="{ marginBottom: '20px' }"
+                />
+                <n-input
+                    v-model:value="taskAddForm.taskContent"
+                    placeholder="输入任务内容"
+                    type="textarea"
+                    :style="{ marginBottom: '20px' }"
+                />
+                <n-select
+                    v-model:value="taskAddForm.taskStatus"
+                    :options="optionState.statusOption"
+                    placeholder="请选择任务状态"
+                    :style="{ marginBottom: '20px' }"
+                />
+                <n-select
+                    v-model:value="taskAddForm.taskPriority"
+                    :options="optionState.priorityOption"
+                    placeholder="请选择任务优先级"
+                    :style="{ marginBottom: '20px' }"
+                />
+                <n-date-picker
+                    v-model:value="taskAddForm.deadline"
+                    type="date"
+                />
+
+                <template #footer>
+                    <n-button
+                        strong
+                        secondary
+                        @click="cancelAddTask"
+                        :style="{
+                            width: '120px',
+                            marginRight: '20px',
+                            marginLeft: '30px',
+                        }"
+                        >取消</n-button
+                    >
+                    <n-button
+                        strong
+                        secondary
+                        type="primary"
+                        @click="submitAddTask"
+                        :style="{ width: '120px' }"
+                        >确定</n-button
+                    >
+                </template>
+            </n-modal>
         </div>
     </div>
 </template>
@@ -419,6 +492,8 @@ import {
     postFile,
     putFileInfo,
     getFoldFiles,
+    getTaskCoder,
+    postTask,
 } from '@/service'
 import useUserinfo from '@/stores/userinfo'
 import {
@@ -429,6 +504,7 @@ import {
     Folder,
     Code,
     AlignBoxMiddleLeft,
+    FlowStream,
 } from '@vicons/carbon'
 
 // naive message
@@ -440,14 +516,6 @@ const route = useRoute()
 
 // 用户
 const userinfoStore = useUserinfo()
-
-// users_lists,
-// user_manager,
-// users_operate,
-// users_visit,
-// creations,
-// folds,
-// tasks,
 
 // 团队基本信息
 const contentState = reactive({
@@ -602,6 +670,7 @@ const checkChildFiles = (foldData) => {
 
 // 查看任务看板
 const taskState = reactive({
+    addTaskModal: false,
     taskModal: false,
     taskName: '',
     taskTitle: '',
@@ -610,10 +679,10 @@ const taskState = reactive({
     taskStatus: '',
     deadline: '',
     publishedAt: '',
+    coder: '',
 })
 const checkTeamTask = (data) => {
     taskState.taskModal = true
-    console.log(data)
     taskState.taskName = data.taskName
     taskState.taskTitle = data.taskTitle
     taskState.taskPriority = data.taskPriority
@@ -622,6 +691,16 @@ const checkTeamTask = (data) => {
     taskState.taskStatus = data.taskStatus
     taskState.deadline = data.deadline
     taskState.publishedAt = data.publishedAt
+    getTaskCoder({ id: data.id }).then(
+        (response) => {
+            taskState.coder =
+                response.data.data.attributes.coder.data.attributes.username
+        },
+        (error) => {
+            console.log(error)
+        }
+    )
+    // taskState.coder =
 }
 
 // 管理团队成员
@@ -761,7 +840,6 @@ const modalState = reactive({
     foldModalMode: 'add',
     fileModalMode: 'add',
 })
-
 // 添加值
 const addFoldFormValue = reactive({
     curFoldId: 0,
@@ -774,7 +852,6 @@ const handleFold = () => {
     modalState.foldModalMode = 'add'
     modalState.addFoldModal = true
 }
-
 const submitFoldCallback = () => {
     if (modalState.foldModalMode === 'add') {
         if (addFoldFormValue.fold_name !== '') {
@@ -819,7 +896,6 @@ const submitFoldCallback = () => {
         modalState.addFoldModal = false
     }
 }
-
 const cancelFoldCallback = () => {
     modalState.addFoldModal = false
     addFoldFormValue.fold_name = ''
@@ -836,7 +912,6 @@ const handleFile = () => {
     fileOptionInit()
     modalState.addFileModal = true
 }
-
 const addFileFormValue = reactive({
     curFileId: 0,
     cre_name: '',
@@ -844,12 +919,10 @@ const addFileFormValue = reactive({
     fold: null,
     category: null,
 })
-
 const addFileOption = reactive({
     foldOption: [],
     categoryOption: [],
 })
-
 const fileOptionInit = () => {
     const teamId = contentState.teamId
     // 获取团队文件
@@ -885,7 +958,6 @@ const fileOptionInit = () => {
         }
     )
 } // 添加文件表单的选择器配置初始化
-
 const submitFileCallback = () => {
     if (modalState.fileModalMode === 'add') {
         if (
@@ -944,7 +1016,6 @@ const submitFileCallback = () => {
         modalState.addFileModal = false
     }
 }
-
 const cancelFileCallback = () => {
     addFileFormValue.cre_name = ''
     addFileFormValue.isPublic = true
@@ -953,8 +1024,83 @@ const cancelFileCallback = () => {
     modalState.addFileModal = false
 }
 
-// 管理任务看板
-const handleTask = () => {}
+// 新建任务看板
+const taskAddForm = reactive({
+    taskName: '',
+    taskTitle: '',
+    taskContent: '',
+    taskStatus: null,
+    taskPriority: null,
+    deadline: Date.parse(new Date()),
+    coder: null,
+})
+const optionState = reactive({
+    coderOption: [],
+    statusOption: [
+        { label: '未开始', value: '未开始' },
+        { label: '正在跟进', value: '正在跟进' },
+        { label: '已完成', value: '已完成' },
+    ],
+    priorityOption: [
+        { label: '优先级1', value: '1' },
+        { label: '优先级2', value: '2' },
+        { label: '优先级3', value: '3' },
+        { label: '优先级4', value: '4' },
+        { label: '优先级5', value: '5' },
+    ],
+})
+const handleTask = () => {
+    setCoderSelect()
+    taskState.addTaskModal = true
+}
+const setCoderSelect = () => {
+    optionState.coderOption = contentState.userOperate.map((item) => {
+        return {
+            label: item.userName,
+            value: item.userId,
+        }
+    })
+}
+const cancelAddTask = () => {
+    taskState.addTaskModal = false
+}
+const submitAddTask = () => {
+    const data = {
+        task_name: taskAddForm.taskName,
+        task_title: taskAddForm.taskTitle,
+        task_content: taskAddForm.taskContent,
+        task_status: taskAddForm.taskStatus,
+        task_priority: taskAddForm.taskPriority,
+        deadline: moment(taskAddForm.deadline).format('YYYY-MM-DD:HH:MM:SS'),
+        coder: taskAddForm.coder,
+        team: contentState.teamId,
+    }
+
+    let emptyFlag = false
+    for (let key in data) {
+        if (data[key] === null || data[key] === undefined || data[key] === '') {
+            emptyFlag = true
+        }
+    }
+    
+    if (!emptyFlag) {
+        postTask(data).then(
+            (response) => {
+                console.log(response.data)
+                setTeamInfo()
+                message.success('添加任务成功')
+                taskState.addTaskModal = false
+            },
+            (error) => {
+                message.error('创建失败')
+                taskState.addTaskModal = false
+                console.log(error)
+            }
+        )
+    } else {
+        message.warning('输入信息不完备')
+    }
+}
 
 // 同页面跳转监视路由
 watch(router.currentRoute, () => {

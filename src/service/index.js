@@ -1,3 +1,4 @@
+import { affixProps } from "naive-ui";
 import axios from "./axios";
 
 // 用户登录
@@ -258,5 +259,29 @@ export const getTeamFolds = (data) => {
     })
 }
 
-// 获取任务看板的细节
+// 获取任务看板(任务负责人)
+export const getTaskCoder = (data) => {
+    return axios({
+        url:`api/tasks/${data.id}?populate=coder`
+    })
+}
 
+// 添加任务看板
+export const postTask = (data) => {
+    return axios({
+        url:`api/tasks`,
+        method: 'post',
+        data: {
+            data: {
+                task_name: data.task_name,
+                task_title: data.task_title,
+                task_content: data.task_content,
+                task_status: data.task_status,
+                task_priority: data.task_priority,
+                deadline: data.deadline,
+                coder: data.coder,
+                team: data.team,
+            }
+        }
+    })
+}
