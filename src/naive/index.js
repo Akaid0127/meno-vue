@@ -33,7 +33,9 @@ import {
     NTag,
     NDivider,
     NDataTable,
-    NDatePicker
+    NDatePicker,
+    NStatistic,
+    NNumberAnimation
 } from 'naive-ui'
 
 const naive = create({
@@ -70,7 +72,9 @@ const naive = create({
         NTag,
         NDivider,
         NDataTable,
-        NDatePicker
+        NDatePicker,
+        NStatistic,
+        NNumberAnimation
     ]
 })
 

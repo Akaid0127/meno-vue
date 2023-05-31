@@ -177,7 +177,7 @@ export const getUserSelf = () => {
 // 获取所有文件
 export const getAllFiles = () => {
     return axios({
-        url: "/api/creations?populate=user",
+        url: "/api/creations?populate=user,category",
         method: 'get',
     })
 }
