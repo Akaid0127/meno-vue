@@ -1,10 +1,7 @@
 <template>
     <div class="work-team-content">
         <div class="team-file">
-            <div
-                class="opera-group"
-                v-show="userState.userIdentity === '管理员'"
-            >
+            <div class="opera-group" v-if="userState.userIdentity === '管理员'">
                 <n-button strong secondary type="primary" @click="handleMember">
                     <template #icon>
                         <n-icon>
@@ -51,9 +48,38 @@
                             @click="checkChildFiles(item)"
                         >
                             <template #header-extra>
-                                <n-icon size="22" color="#FFD485">
-                                    <Folder />
-                                </n-icon>
+                                <div v-if="userState.userIdentity === '管理员'">
+                                    <n-icon
+                                        size="16"
+                                        color="#606266"
+                                        :style="{ marginRight: '6px' }"
+                                        @click="handleEditFold(item.id)"
+                                    >
+                                        <Edit />
+                                    </n-icon>
+                                    <n-popconfirm
+                                        @positive-click="
+                                            handleDeleteFold(item.id)
+                                        "
+                                    >
+                                        <template #trigger>
+                                            <n-icon
+                                                size="16"
+                                                color="#606266"
+                                                :style="{ marginRight: '6px' }"
+                                            >
+                                                <Delete />
+                                            </n-icon>
+                                        </template>
+                                        确定删除该{{ item.fold_name }}吗
+                                    </n-popconfirm>
+                                </div>
+
+                                <div v-else>
+                                    <n-icon size="22" color="#FFD485">
+                                        <Folder />
+                                    </n-icon>
+                                </div>
                             </template>
                             创建时间：{{
                                 moment(
@@ -80,11 +106,59 @@
                                         embedded
                                     >
                                         <template #header-extra>
-                                            <n-icon size="22" color="#18A058">
-                                                <AlignBoxMiddleLeft />
-                                            </n-icon>
+                                            <div
+                                                v-if="
+                                                    userState.userIdentity ===
+                                                    '管理员'
+                                                "
+                                            >
+                                                <n-icon
+                                                    size="16"
+                                                    color="#606266"
+                                                    :style="{
+                                                        marginRight: '6px',
+                                                    }"
+                                                    @click="
+                                                        handleEditFile(item.id)
+                                                    "
+                                                >
+                                                    <Edit />
+                                                </n-icon>
+                                                <n-popconfirm
+                                                    @positive-click="
+                                                        handleDeleteFile(
+                                                            item.id
+                                                        )
+                                                    "
+                                                >
+                                                    <template #trigger>
+                                                        <n-icon
+                                                            size="16"
+                                                            color="#606266"
+                                                            :style="{
+                                                                marginRight:
+                                                                    '6px',
+                                                            }"
+                                                        >
+                                                            <Delete />
+                                                        </n-icon>
+                                                    </template>
+                                                    确定删除该{{
+                                                        item.cre_name
+                                                    }}吗
+                                                </n-popconfirm>
+                                            </div>
+
+                                            <div v-else>
+                                                <n-icon
+                                                    size="22"
+                                                    color="#18A058"
+                                                >
+                                                    <AlignBoxMiddleLeft />
+                                                </n-icon>
+                                            </div>
                                         </template>
-                                        文件夹状态：{{ item.cre_status }}
+                                        文件状态：{{ item.cre_status }}
                                         <br />
                                         创建时间：{{
                                             moment(
@@ -131,9 +205,57 @@
                                         embedded
                                     >
                                         <template #header-extra>
-                                            <n-icon size="22" color="#18A058">
-                                                <AlignBoxMiddleLeft />
-                                            </n-icon>
+                                            <div
+                                                v-if="
+                                                    userState.userIdentity ===
+                                                    '管理员'
+                                                "
+                                            >
+                                                <n-icon
+                                                    size="16"
+                                                    color="#606266"
+                                                    :style="{
+                                                        marginRight: '6px',
+                                                    }"
+                                                    @click="
+                                                        handleEditFile(item.id)
+                                                    "
+                                                >
+                                                    <Edit />
+                                                </n-icon>
+                                                <n-popconfirm
+                                                    @positive-click="
+                                                        handleDeleteFile(
+                                                            item.id
+                                                        )
+                                                    "
+                                                >
+                                                    <template #trigger>
+                                                        <n-icon
+                                                            size="16"
+                                                            color="#606266"
+                                                            :style="{
+                                                                marginRight:
+                                                                    '6px',
+                                                            }"
+                                                        >
+                                                            <Delete />
+                                                        </n-icon>
+                                                    </template>
+                                                    确定删除该{{
+                                                        item.cre_name
+                                                    }}吗
+                                                </n-popconfirm>
+                                            </div>
+
+                                            <div v-else>
+                                                <n-icon
+                                                    size="22"
+                                                    color="#18A058"
+                                                >
+                                                    <AlignBoxMiddleLeft />
+                                                </n-icon>
+                                            </div>
                                         </template>
                                         文件夹状态：{{ item.cre_status }}
                                         <br />
@@ -577,6 +699,9 @@ import {
     putNewTeam,
     getTeamAll,
     getTeamVisit,
+    deleteFold,
+    deleteFile,
+    getFile,
 } from '@/service'
 import useUserinfo from '@/stores/userinfo'
 import {
@@ -588,6 +713,8 @@ import {
     Code,
     AlignBoxMiddleLeft,
     FlowStream,
+    Edit,
+    Delete,
 } from '@vicons/carbon'
 
 // naive message
@@ -970,7 +1097,7 @@ const submitFoldCallback = () => {
         putFoldInfo(data).then(
             (response) => {
                 message.success('修改成功')
-                dataInit()
+                setTeamInfo()
             },
             (error) => {
                 message.error('修改失败')
@@ -1089,7 +1216,7 @@ const submitFileCallback = () => {
         }
         putFileInfo(data).then(
             (response) => {
-                dataInit()
+                setTeamInfo()
                 message.success('修改成功')
             },
             (error) => {
@@ -1296,6 +1423,66 @@ const submitPartTeam = () => {
             message.warning('输入为空')
         }
     }
+}
+
+// 编辑文件夹
+const handleEditFold = (foldId) => {
+    addFoldFormValue.curFoldId = foldId
+    const filterFold = contentState.teamFolds.filter((item) => {
+        return item.id === foldId
+    })
+    addFoldFormValue.fold_name = filterFold[0].fold_name
+    modalState.foldModalMode = 'edit'
+    modalState.addFoldModal = true
+}
+
+// 编辑文件
+const handleEditFile = (fileId) => {
+    addFileFormValue.curFileId = fileId
+    fileOptionInit()
+    getFile({ id: fileId }).then(
+        (response) => {
+            const resfile = response.data.data.attributes
+            addFileFormValue.cre_name = resfile.cre_name
+            addFileFormValue.isPublic = resfile.isPublic
+            addFileFormValue.fold = resfile.fold.data.id
+            addFileFormValue.category = resfile.category.data.id
+        },
+        (error) => {
+            message.error('获取文件信息失败')
+            console.log(error)
+        }
+    )
+    modalState.fileModalMode = 'edit'
+    modalState.addFileModal = true
+}
+
+// 删除文件夹
+const handleDeleteFold = (foldId) => {
+    deleteFold({ id: foldId }).then(
+        (response) => {
+            message.success('删除成功')
+            setTeamInfo()
+        },
+        (error) => {
+            message.error('删除失败')
+            console.log(error)
+        }
+    )
+}
+
+// 删除文件
+const handleDeleteFile = (fileId) => {
+    deleteFile({ id: fileId }).then(
+        (response) => {
+            message.success('删除成功')
+            setTeamInfo()
+        },
+        (error) => {
+            message.error('删除失败')
+            console.log(error)
+        }
+    )
 }
 
 // 同页面跳转监视路由
