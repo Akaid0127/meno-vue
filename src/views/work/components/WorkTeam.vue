@@ -713,7 +713,7 @@ const setUserIdentity = () => {
     })
     contentState.userVisit.forEach((item) => {
         if (item.userId === userId) {
-            OperateFlag = true
+            VisitFlag = true
         }
     })
     if (userId === contentState.usersManager.userId) {
