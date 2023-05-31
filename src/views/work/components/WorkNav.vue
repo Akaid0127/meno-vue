@@ -20,6 +20,7 @@ import { RouterLink, useRouter, useRoute } from 'vue-router'
 import { NIcon, useMessage } from 'naive-ui'
 import { getUserTeamAll, getTeamManager } from '@/service'
 import useUserinfo from '@/stores/userinfo'
+import emitter from '@/mitt/event'
 import {
     RecentlyViewed,
     AlignBoxMiddleLeft,
@@ -100,6 +101,9 @@ const setUserTeam = () => {
         }
     )
 }
+emitter.on('setRouteTeam',(data) => {
+    setUserTeam()
+})
 
 // 左侧菜单
 function renderIcon(icon) {

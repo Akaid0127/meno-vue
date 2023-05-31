@@ -186,12 +186,20 @@
                     {{ contentState.teamName }}
                     <template #action>
                         <div class="operation">
-                            <n-button strong secondary type="tertiary"
-                                >创建团队</n-button
-                            >
-                            <n-button strong secondary type="primary"
-                                >加入团队</n-button
-                            >
+                            <n-button
+                                strong
+                                secondary
+                                type="tertiary"
+                                @click="handleCreateTeam"
+                                >创建团队
+                            </n-button>
+                            <n-button
+                                strong
+                                secondary
+                                type="primary"
+                                @click="handlePartTeam"
+                                >加入团队
+                            </n-button>
                         </div>
                     </template>
                 </n-card>
@@ -402,15 +410,6 @@
                 :bordered="false"
                 :segmented="{ content: 'soft', footer: 'soft' }"
             >
-                <!-- const taskAddForm = reactive({
-                    taskName: '',
-                    taskTitle: '',
-                    taskContent: '',
-                    taskStatus: '',
-                    taskPriority: '',
-                    deadline: '',
-                    coder: 0,
-                }) -->
                 <n-select
                     v-model:value="taskAddForm.coder"
                     :options="optionState.coderOption"
@@ -472,6 +471,85 @@
                     >
                 </template>
             </n-modal>
+
+            <!-- 创建团队模态框 -->
+            <n-modal
+                v-model:show="teamOpState.createModal"
+                class="custom-card"
+                preset="card"
+                :style="{ width: '400px' }"
+                title="创建团队"
+                size="huge"
+                :bordered="false"
+                :segmented="{ content: 'soft', footer: 'soft' }"
+            >
+                <n-input
+                    v-model:value="createTeamForm.teamName"
+                    placeholder="输入团队名称"
+                    :style="{ marginBottom: '20px' }"
+                />
+
+                <template #footer>
+                    <n-button
+                        strong
+                        secondary
+                        @click="cancelCreateTeam"
+                        :style="{
+                            width: '120px',
+                            marginRight: '20px',
+                            marginLeft: '30px',
+                        }"
+                        >取消</n-button
+                    >
+                    <n-button
+                        strong
+                        secondary
+                        type="primary"
+                        @click="submitCreateTeam"
+                        :style="{ width: '120px' }"
+                        >确定</n-button
+                    >
+                </template>
+            </n-modal>
+
+            <!-- 加入团队模态框 -->
+            <n-modal
+                v-model:show="teamOpState.partModal"
+                class="custom-card"
+                preset="card"
+                :style="{ width: '400px' }"
+                title="加入团队"
+                size="huge"
+                :bordered="false"
+                :segmented="{ content: 'soft', footer: 'soft' }"
+            >
+                <n-input
+                    v-model:value="partTeamForm.teamName"
+                    placeholder="输入团队名称"
+                    :style="{ marginBottom: '20px' }"
+                />
+                <template #footer>
+                    <n-button
+                        strong
+                        secondary
+                        @click="cancelPartTeam"
+                        :style="{
+                            width: '120px',
+                            marginRight: '20px',
+                            marginLeft: '30px',
+                        }"
+                        >取消</n-button
+                    >
+                    <n-button
+                        strong
+                        secondary
+                        type="primary"
+                        @click="submitPartTeam"
+                        :style="{ width: '120px' }"
+                        >确定</n-button
+                    >
+                </template>
+            </n-modal>
         </div>
     </div>
 </template>
@@ -481,6 +559,7 @@ import { reactive, onMounted, watch, h, defineComponent } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { NButton, useMessage } from 'naive-ui'
 import moment from 'moment'
+import emitter from '@/mitt/event'
 import {
     getTeamManagerInfo,
     pullTeamMemberIdentity,
@@ -494,6 +573,10 @@ import {
     getFoldFiles,
     getTaskCoder,
     postTask,
+    postNewTeam,
+    putNewTeam,
+    getTeamAll,
+    getTeamVisit,
 } from '@/service'
 import useUserinfo from '@/stores/userinfo'
 import {
@@ -1082,7 +1165,7 @@ const submitAddTask = () => {
             emptyFlag = true
         }
     }
-    
+
     if (!emptyFlag) {
         postTask(data).then(
             (response) => {
@@ -1099,6 +1182,119 @@ const submitAddTask = () => {
         )
     } else {
         message.warning('输入信息不完备')
+    }
+}
+
+// 团队相关操作
+const teamOpState = reactive({
+    createModal: false,
+    partModal: false,
+})
+const createTeamForm = reactive({
+    teamName: '',
+})
+const partTeamForm = reactive({
+    teamName: '',
+})
+
+// 创建团队
+const handleCreateTeam = () => {
+    teamOpState.createModal = true
+}
+const cancelCreateTeam = () => {
+    teamOpState.createModal = false
+}
+const submitCreateTeam = () => {
+    const userId = userinfoStore.userInfo.userId
+
+    const data = {
+        team_name: createTeamForm.teamName,
+        user_manager: userId,
+        users_operate: null,
+        users_visit: null,
+        creations: null,
+        tasks: null,
+        folds: null,
+        users_lists: [userId],
+    }
+
+    if (data.team_name !== '') {
+        postNewTeam(data).then(
+            (response) => {
+                setTeamInfo()
+                message.success('创建团队成功')
+                // 刷新左侧组队列表全局事件总线
+                emitter.emit('setRouteTeam', '')
+                teamOpState.createModal = false
+            },
+            (error) => {
+                message.error('创建失败')
+                teamOpState.createModal = false
+                console.log(error)
+            }
+        )
+    } else {
+        message.warning('输入为空')
+    }
+}
+
+// 加入团队
+const handlePartTeam = () => {
+    teamOpState.partModal = true
+}
+const cancelPartTeam = () => {
+    teamOpState.partModal = false
+}
+const submitPartTeam = () => {
+    const userId = userinfoStore.userInfo.userId
+    const teamNameInp = partTeamForm.teamName
+    let teamIdInp = null
+    let teamListInp = []
+    let teamVisitInp = []
+
+    // 获取所有的团队
+    getTeamAll().then((response) => {
+        let existFlag = false
+        console.log(response.data.data)
+        response.data.data.forEach((item) => {
+            if (item.attributes.team_name === teamNameInp) {
+                teamIdInp = item.id
+                teamVisitInp = [...item.attributes.users_visit.data]
+                teamListInp = [...item.attributes.users_lists.data]
+                existFlag = true
+                putTeamVisit()
+            }
+        })
+        if (!existFlag) {
+            message.error('团队不存在')
+        }
+    })
+
+    const putTeamVisit = () => {
+        const data = {
+            id: teamIdInp,
+            users_visit: [...teamVisitInp, userId],
+            users_lists: [...teamListInp, userId],
+        }
+
+        if (teamNameInp !== '') {
+            putNewTeam(data).then(
+                (response) => {
+                    setTeamInfo()
+                    message.success('加入团队成功')
+                    // 刷新左侧组队列表全局事件总线
+                    emitter.emit('setRouteTeam', '')
+                    teamOpState.partModal = false
+                },
+                (error) => {
+                    message.error('加入失败')
+                    teamOpState.partModal = false
+                    console.log(error)
+                }
+            )
+        } else {
+            message.warning('输入为空')
+        }
     }
 }
 

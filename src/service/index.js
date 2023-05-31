@@ -262,14 +262,14 @@ export const getTeamFolds = (data) => {
 // 获取任务看板(任务负责人)
 export const getTaskCoder = (data) => {
     return axios({
-        url:`api/tasks/${data.id}?populate=coder`
+        url: `api/tasks/${data.id}?populate=coder`
     })
 }
 
 // 添加任务看板
 export const postTask = (data) => {
     return axios({
-        url:`api/tasks`,
+        url: `api/tasks`,
         method: 'post',
         data: {
             data: {
@@ -281,6 +281,56 @@ export const postTask = (data) => {
                 deadline: data.deadline,
                 coder: data.coder,
                 team: data.team,
+            }
+        }
+    })
+}
+
+// 创建团队
+export const postNewTeam = (data) => {
+    return axios({
+        url: `api/teams`,
+        method: 'post',
+        data: {
+            data: {
+                team_name: data.team_name,
+                user_manager: data.user_manager,
+                users_operate: data.users_operate,
+                users_visit: data.users_visit,
+                creations: data.creations,
+                tasks: data.tasks,
+                folds: data.folds,
+                users_lists: data.users_lists,
+            }
+        }
+    })
+}
+
+// 获取所有团队
+export const getTeamAll = () => {
+    return axios({
+        url: `api/teams?populate=users_visit,users_lists`,
+        method: 'get',
+    })
+}
+
+// 获取特定团队的访客列表
+export const getTeamVisit = (data) => {
+    return axios({
+        url: `api/teams/${data.id}?populate=users_visit`,
+        method: 'get',
+    })
+}
+
+// 加入团队
+export const putNewTeam = (data) => {
+    return axios({
+        url: `api/teams/${data.id}`,
+        method: 'put',
+        data: {
+            data: {
+                users_visit: data.users_visit,
+                users_lists: data.users_lists,
             }
         }
     })
