@@ -1300,7 +1300,9 @@ const submitPartTeam = () => {
 
 // 同页面跳转监视路由
 watch(router.currentRoute, () => {
-    setTeamInfo()
+    if (route.path === '/work/team') {
+        setTeamInfo()
+    }
 })
 
 onMounted(() => {
