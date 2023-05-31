@@ -133,7 +133,6 @@
                             </n-upload> -->
 
   
-                        </n-input>
                         <template #footer>
                             <n-button
                                 strong
