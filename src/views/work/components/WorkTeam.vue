@@ -1329,6 +1329,7 @@ const handleCreateTeam = () => {
     teamOpState.createModal = true
 }
 const cancelCreateTeam = () => {
+    createTeamForm.teamName = ''
     teamOpState.createModal = false
 }
 const submitCreateTeam = () => {
@@ -1370,6 +1371,7 @@ const handlePartTeam = () => {
     teamOpState.partModal = true
 }
 const cancelPartTeam = () => {
+    partTeamForm.teamName = ''
     teamOpState.partModal = false
 }
 const submitPartTeam = () => {
@@ -1488,6 +1490,9 @@ const handleDeleteFile = (fileId) => {
 // 同页面跳转监视路由
 watch(router.currentRoute, () => {
     if (route.path === '/work/team') {
+        tabState.tabValue = 'userFiles'
+        tabState.foldTabName = '选定文件夹'
+        contentState.foldFiles = []
         setTeamInfo()
     }
 })
