@@ -78,7 +78,8 @@ export const postFile = (data) => {
                 user: data.user,
                 team: data.team,
                 like_num: 0,
-                copy_num: 0
+                copy_num: 0,
+                cover: data.cover
             }
         }
     })

@@ -35,7 +35,8 @@ import {
     NDataTable,
     NDatePicker,
     NStatistic,
-    NNumberAnimation
+    NNumberAnimation,
+    NUpload
 } from 'naive-ui'
 
 const naive = create({
@@ -74,7 +75,8 @@ const naive = create({
         NDataTable,
         NDatePicker,
         NStatistic,
-        NNumberAnimation
+        NNumberAnimation,
+        NUpload
     ]
 })
 

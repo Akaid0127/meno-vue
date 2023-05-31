@@ -91,7 +91,7 @@
                         :bordered="false"
                         :segmented="{ content: 'soft', footer: 'soft' }"
                     >
-                        <template #header-extra></template>
+                        <template #header-extra> </template>
 
                         <n-input
                             v-model:value="addFileFormValue.cre_name"
@@ -122,6 +122,18 @@
                             :style="{ marginBottom: '20px' }"
                         />
 
+                        <!-- <n-upload
+                                :headers="{
+                                    'Content-Type': 'multipart/form-data',
+                                }"
+                                :data="addFileFormValue.imgData"
+                                list-type="image-card" 
+                            >
+                                <n-button>上传封面</n-button>
+                            </n-upload> -->
+
+  
+                        </n-input>
                         <template #footer>
                             <n-button
                                 strong
@@ -573,6 +585,7 @@ const addFileFormValue = reactive({
     isPublic: true,
     fold: null,
     category: null,
+    imgData: null,
 })
 
 const addFileOption = reactive({
@@ -634,6 +647,7 @@ const submitFileCallback = () => {
             addFileFormValue.fold !== '' &&
             addFileFormValue.category !== ''
         ) {
+            console.log(addFileFormValue.imgData)
             const data = {
                 cre_name: addFileFormValue.cre_name,
                 cre_status: '刚创建',
@@ -644,6 +658,7 @@ const submitFileCallback = () => {
                 category: Number(addFileFormValue.category),
                 user: userinfoStore.userInfo.userId,
                 team: null,
+                cover: addFileFormValue.imgData,
             }
             postFile(data).then(
                 (response) => {

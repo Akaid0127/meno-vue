@@ -23,22 +23,7 @@
                     <div class="describe">欢迎来到简易绘码社区</div>
                 </div>
                 <div class="search-box">
-                    <div>
-                        <n-input placeholder="搜索作品、用户" class="search-inp">
-                            <template #prefix>
-                                <n-icon color="#0e7a0d" :component="Search" />
-                            </template>
-                        </n-input>
-                    </div>
-                    <div class="btn-group">
-                        <n-button type="primary" ghost>全部</n-button>
-
-                        <n-button
-                            type="tertiary"
-                            v-for="item in cateState.cateArr"
-                            :key="item.cateId"
-                        >{{ item.cateName }}</n-button>
-                    </div>
+                    
                 </div>
             </div>
             <div class="second-row">
@@ -249,20 +234,7 @@ const setTopFile = () => {
             justify-content: center;
             align-items: center;
 
-            .search-inp {
-                width: 600px;
-                line-height: 45px;
-                margin-bottom: 12px;
-            }
 
-            .btn-group {
-                display: flex;
-                width: 600px;
-                .n-button {
-                    width: 80px;
-                    margin-right: 12px;
-                }
-            }
         }
     }
 

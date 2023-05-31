@@ -1185,6 +1185,7 @@ const submitFileCallback = () => {
                 category: Number(addFileFormValue.category),
                 user: null,
                 team: contentState.teamId,
+                cover:null,
             }
             postFile(data).then(
                 (response) => {
