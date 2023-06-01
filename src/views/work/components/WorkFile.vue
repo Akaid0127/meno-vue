@@ -98,17 +98,6 @@
                             placeholder="输入文件名"
                             :style="{ marginBottom: '20px' }"
                         />
-
-                        <n-radio-group
-                            v-model:value="addFileFormValue.isPublic"
-                            :style="{ marginBottom: '20px' }"
-                        >
-                            <n-space>
-                                <n-radio :value="false">不公开</n-radio>
-                                <n-radio :value="true">对外公开</n-radio>
-                            </n-space>
-                        </n-radio-group>
-
                         <n-select
                             v-model:value="addFileFormValue.fold"
                             :options="addFileOption.foldOption"
@@ -121,18 +110,17 @@
                             placeholder="选择分类"
                             :style="{ marginBottom: '20px' }"
                         />
-
-                        <!-- <n-upload
-                                :headers="{
-                                    'Content-Type': 'multipart/form-data',
-                                }"
-                                :data="addFileFormValue.imgData"
-                                list-type="image-card" 
-                            >
-                                <n-button>上传封面</n-button>
-                            </n-upload> -->
-
+                        <n-radio-group
+                            v-model:value="addFileFormValue.isPublic"
+                            :style="{ marginBottom: '20px' }"
+                        >
+                            <n-space>
+                                <n-radio :value="false">不公开</n-radio>
+                                <n-radio :value="true">对外公开</n-radio>
+                            </n-space>
+                        </n-radio-group>
                         <input
+                            class="inp-file"
                             type="file"
                             accept="image/*"
                             @change="getPicture($event)"
@@ -695,7 +683,6 @@ const submitFileCallback = () => {
                     }
                     postFileWithImage(data).then(
                         (response) => {
-                            console.log(response)
                             const imageUrl = response.data[0]
                             const data = {
                                 id: fileImageId,
@@ -703,7 +690,7 @@ const submitFileCallback = () => {
                             }
                             postFileWithImageNext(data).then(
                                 (respons) => {
-                                    console.log(response)
+                                    // console.log(response)
                                 },
                                 (error) => {
                                     console.log(error)
