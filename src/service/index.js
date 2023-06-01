@@ -61,6 +61,33 @@ export const postFold = (data) => {
     })
 }
 
+// 个人修改文件图片
+export const postFileWithImage = (data) => {
+    const formData = new FormData();
+
+    formData.append("files", data.cover);
+    return axios({
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+        url: `api/upload/`,
+        method: 'post',
+        data: formData
+    })
+}
+
+export const postFileWithImageNext = (data) => {
+    return axios({
+        url: `api/creations/${data.id}`,
+        method: 'put',
+        data: {
+            data: {
+                cover: data.cover,
+            }
+        }
+    })
+}
+
 // 添加文件
 export const postFile = (data) => {
     return axios({
@@ -79,7 +106,6 @@ export const postFile = (data) => {
                 team: data.team,
                 like_num: 0,
                 copy_num: 0,
-                cover: data.cover
             }
         }
     })

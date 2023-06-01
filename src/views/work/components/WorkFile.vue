@@ -132,7 +132,12 @@
                                 <n-button>上传封面</n-button>
                             </n-upload> -->
 
-  
+                        <input
+                            type="file"
+                            accept="image/*"
+                            @change="getPicture($event)"
+                        />
+
                         <template #footer>
                             <n-button
                                 strong
@@ -462,6 +467,8 @@ import {
     deleteFold,
     deleteFile,
     getFile,
+    postFileWithImage,
+    postFileWithImageNext,
 } from '@/service'
 
 // pinia
@@ -592,6 +599,10 @@ const addFileOption = reactive({
     categoryOption: [],
 })
 
+const getPicture = (e) => {
+    addFileFormValue.imgData = e.target.files[0]
+}
+
 const fileOptionInit = () => {
     const userID = userinfoStore.userInfo.userId
     getUserFold({ id: userID }).then(
@@ -639,6 +650,19 @@ const handleAddFile = () => {
     // router.push({ name: "design" });
 }
 
+// base64 转 blob
+const base64toBlob = (data) => {
+    var arr = data.split(','),
+        mime = arr[0].match(/:(.*?);/)[1],
+        bstr = atob(arr[1]),
+        n = bstr.length,
+        u8arr = new Uint8Array(n)
+    while (n--) {
+        u8arr[n] = bstr.charCodeAt(n)
+    }
+    return new Blob([u8arr], { type: mime })
+}
+
 const submitFileCallback = () => {
     if (modalState.fileModalMode === 'add') {
         if (
@@ -646,7 +670,9 @@ const submitFileCallback = () => {
             addFileFormValue.fold !== '' &&
             addFileFormValue.category !== ''
         ) {
-            console.log(addFileFormValue.imgData)
+            // const blobData = base64toBlob(addFileFormValue.imgData)
+            const blobData = addFileFormValue.imgData
+
             const data = {
                 cre_name: addFileFormValue.cre_name,
                 cre_status: '刚创建',
@@ -657,12 +683,37 @@ const submitFileCallback = () => {
                 category: Number(addFileFormValue.category),
                 user: userinfoStore.userInfo.userId,
                 team: null,
-                cover: addFileFormValue.imgData,
             }
+
             postFile(data).then(
                 (response) => {
                     dataInit()
                     message.success('添加成功')
+                    const fileImageId = response.data.data.id
+                    const data = {
+                        cover: blobData,
+                    }
+                    postFileWithImage(data).then(
+                        (response) => {
+                            console.log(response)
+                            const imageUrl = response.data[0]
+                            const data = {
+                                id: fileImageId,
+                                cover: imageUrl,
+                            }
+                            postFileWithImageNext(data).then(
+                                (respons) => {
+                                    console.log(response)
+                                },
+                                (error) => {
+                                    console.log(error)
+                                }
+                            )
+                        },
+                        (error) => {
+                            console.log(error)
+                        }
+                    )
                     // 跳转
                     modalState.addFileModal = false
                     fileToDesign(response.data.data.id)
