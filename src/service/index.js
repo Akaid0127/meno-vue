@@ -362,3 +362,61 @@ export const putNewTeam = (data) => {
         }
     })
 }
+
+// 点赞作品
+export const likeCreation = (data) => {
+	return axios({
+		url: `api/creations/${data.id}`,
+		method: 'put',
+		data: {
+			data: {
+				like_num: data.like_num,
+			}
+		}
+	})
+}
+
+// 复用作品次数增加
+export const copyCreation = (data) => {
+	return axios({
+		url: `api/creations/${data.id}`,
+		method: 'put',
+		data: {
+			data: {
+				copy_num: data.copy_num,
+			}
+		}
+	})
+}
+
+// 复用作品增加作品
+export const copyCreationPostFile = (data) => {
+	return axios({
+		url: 'api/creations',
+		method: 'post',
+		data: {
+			data: {
+				cre_name: data.cre_name,
+				cre_status: data.cre_status,
+				isPublic: data.isPublic,
+				is_team_file: data.is_team_file,
+				json_content: data.json_content,
+				fold: data.fold,
+				category: data.category,
+				user: data.user,
+				team: data.team,
+				cover: data.cover,
+				like_num: 0,
+				copy_num: 0,
+			}
+		}
+	})
+}
+
+// 复用获取文件
+export const copyGetFile = (data) => {
+	return axios({
+		url: `api/creations/${data.id}?populate=fold,user,team,category,cover`,
+		method: 'get',
+	})
+}

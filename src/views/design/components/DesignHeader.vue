@@ -9,7 +9,7 @@
                             color: '#18A058',
                             backgroundColor: '#DAF0E4',
                         }"
-                        >{{ props.fileInfo.userName }}</n-avatar
+                        >{{ props.fileInfo.userName.slice(0, 1) }}</n-avatar
                     >
                 </div>
                 <div class="split-line"></div>
@@ -221,6 +221,8 @@ const saveExit = () => {
     putFileContent(data).then(
         (response) => {
             message.success('保存成功')
+
+			
             router.push({ name: 'work' })
             const tempData = []
             editingStore.resetBlocks(tempData)

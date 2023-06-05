@@ -26,9 +26,9 @@
 
             <div class="right">
                 <div class="function-btn">
-                    <n-button>
+                    <!-- <n-button>
                         <n-icon> <CopyLink /> </n-icon>其他文件迁移
-                    </n-button>
+                    </n-button> -->
                 </div>
                 <div class="split-line"></div>
                 <div class="theme">

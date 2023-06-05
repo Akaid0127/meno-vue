@@ -36,63 +36,68 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { getFile } from '@/service'
-import useEditing from '@/stores/editing'
-import useSnapshot from '@/stores/snapshot'
-import DesignHeader from './components/DesignHeader.vue'
-import DesignSupply from './components/DesignSupply.vue'
-import DesignLevel from './components/DesignLevel.vue'
-import DesignEdit from './components/DesignEdit.vue'
-import DesignAttr from './components/DesignAttr.vue'
+import { ref, onMounted, reactive } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { getFile } from "@/service";
+import useEditing from "@/stores/editing";
+import useSnapshot from "@/stores/snapshot";
+import DesignHeader from "./components/DesignHeader.vue";
+import DesignSupply from "./components/DesignSupply.vue";
+import DesignLevel from "./components/DesignLevel.vue";
+import DesignEdit from "./components/DesignEdit.vue";
+import DesignAttr from "./components/DesignAttr.vue";
 
 // 定义路由
-const router = useRouter()
-const route = useRoute()
+const router = useRouter();
+const route = useRoute();
 
 // pinia
-const editingStore = useEditing() // 组件状态
-const snapshotStore = useSnapshot() // 快照状态
+const editingStore = useEditing(); // 组件状态
+const snapshotStore = useSnapshot(); // 快照状态
 
 const infoState = reactive({
-    userName: '',
-    foldName: '',
-    fileName: '',
-    fileContent: '',
-})
+    userName: "",
+    foldName: "",
+    fileName: "",
+    fileContent: "",
+});
 
 const initData = () => {
     getFile({ id: route.query.fileId }).then(
         (response) => {
-            const resFile = response.data.data.attributes
-            infoState.userName = resFile.user.data.attributes.username
-            infoState.foldName = resFile.fold.data.attributes.fold_name
-            infoState.fileName = resFile.cre_name
-            infoState.fileContent = resFile.json_content
-            snapshotStore.resetSnapshot(resFile.json_content)
-            if (infoState.fileContent !== null) {
-                editingStore.resetBlocks(infoState.fileContent)
+            const resFile = response.data.data.attributes;
+            if (resFile.user.data !== null) {
+                infoState.userName = resFile.user.data.attributes.username;
             } else {
-                const tempData = []
-                editingStore.resetBlocks(tempData)
+                infoState.userName = resFile.team.data.attributes.team_name;
+            }
+
+            infoState.foldName = resFile.fold.data.attributes.fold_name;
+            infoState.fileName = resFile.cre_name;
+            infoState.fileContent = resFile.json_content;
+            snapshotStore.resetSnapshot(resFile.json_content);
+            if (infoState.fileContent !== null) {
+                editingStore.resetBlocks(infoState.fileContent);
+            } else {
+                const tempData = [];
+                editingStore.resetBlocks(tempData);
             }
         },
         (error) => {
-            console.log(error)
+            console.log(error);
         }
-    )
-}
+    );
+};
 
 // 获取containerdom并传递给左侧物料区
-const supplyRef = ref()
+const supplyRef = ref();
 const handleContainerDom = (containerDom) => {
-    supplyRef.value.hasContainerDom(containerDom)
-}
+    supplyRef.value.hasContainerDom(containerDom);
+};
 
 onMounted(() => {
-    initData()
-})
+    initData();
+});
 </script>
 
 <style lang="scss" scoped>

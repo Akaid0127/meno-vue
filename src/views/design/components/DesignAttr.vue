@@ -159,7 +159,7 @@
                     </n-scrollbar>
                 </n-tab-pane>
                 <n-tab-pane tab="事件" name="attrEvent">
-                    <div class="event-list">456</div>
+                    <div class="event-list">暂未开发</div>
                 </n-tab-pane>
             </n-tabs>
         </div>

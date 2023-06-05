@@ -10,17 +10,17 @@
             </div>
 
             <div class="right">
-                <div class="opre-like">
+                <div class="opre-like" @click="likeOpre">
                     <n-icon>
-                        <Favorite />
+                        <ThumbsUp />
                     </n-icon>
-                    {{ fileInfo.likeNum }}
+                    {{ fileState.fileInfo.likeNum }}
                 </div>
-                <div class="opre-copy">
+                <div class="opre-copy" @click="copyOpre">
                     <n-icon>
                         <Copy />
                     </n-icon>
-                    {{ fileInfo.copyNum }}
+                    {{ fileState.fileInfo.copyNum }}
                 </div>
             </div>
         </div>
@@ -29,10 +29,24 @@
 
 <script setup>
 import { reactive, onMounted } from "vue";
-import { Favorite, Copy } from "@vicons/carbon";
-import { getSingleFiles, getImage } from "@/service";
+import { ThumbsUp, Copy, Cost } from "@vicons/carbon";
+import {
+    getSingleFiles,
+    getImage,
+    likeCreation,
+    copyCreation,
+    copyGetFile,
+    copyCreationPostFile,
+    getUserFold,
+} from "@/service";
+import { useMessage } from "naive-ui";
+import useUserinfo from "@/stores/userinfo";
 
 const props = defineProps(["fileInfo"]);
+
+const message = useMessage();
+
+const userinfoStore = useUserinfo(); // 用户状态
 
 onMounted(() => {
     setFileCover();
@@ -53,8 +67,87 @@ const setFileCover = () => {
             console.log(error);
         }
     );
-    // console.log(fileState.fileInfo.fileId);
-    // console.log(fileState.fileInfo.fileContent);
+};
+
+// 作品点赞成功
+const likeOpre = () => {
+    likeCreation({
+        id: fileState.fileInfo.fileId,
+        like_num: Number(fileState.fileInfo.likeNum) + 1,
+    }).then(
+        (response) => {
+            console.log(response.data.data.attributes.like_num);
+            fileState.fileInfo.likeNum = response.data.data.attributes.like_num;
+            message.success("已成功支持作品一次");
+        },
+        (error) => {
+            console.log(error);
+        }
+    );
+};
+
+// 作品复用成功
+const copyOpre = () => {
+    copyGetFile({ id: fileState.fileInfo.fileId }).then(
+        (response) => {
+            console.log(response.data.data);
+            const resData = response.data.data.attributes;
+
+            const data = {
+                cre_name: resData.cre_name,
+                cre_status: resData.cre_status,
+                isPublic: resData.isPublic,
+                is_team_file: resData.is_team_file,
+                json_content: resData.json_content,
+                team: null,
+
+                fold: resData.fold,
+                category: 1,
+                user: userinfoStore.userInfo.userId,
+                cover: resData.cover.data.id,
+            };
+
+            getUserFold({ id: userinfoStore.userInfo.userId }).then(
+                (response) => {
+                    data.fold = response.data.folds[0].id;
+
+                    copyCreationPostFile(data).then(
+                        (response) => {
+                            console.log(response);
+                        },
+                        (error) => {
+                            console.log(error);
+                        }
+                    );
+                },
+                (error) => {
+                    console.log(error);
+                }
+            );
+
+            addCopyNum();
+        },
+        (error) => {
+            console.log(error);
+        }
+    );
+
+    const addCopyNum = () => {
+        copyCreation({
+            id: fileState.fileInfo.fileId,
+            copy_num: Number(fileState.fileInfo.copyNum) + 1,
+        }).then(
+            (response) => {
+                console.log(response.data.data.attributes.copy_num);
+                fileState.fileInfo.copyNum =
+                    response.data.data.attributes.copy_num;
+                message.success("作品复用成功，请返回个人工作台查看");
+            },
+            (error) => {
+                console.log(error);
+            }
+        );
+    };
 };
 </script>
 
@@ -70,7 +163,7 @@ const setFileCover = () => {
     .file-image {
         background-color: #d4d7de;
         width: 100%;
-		height: 200px;
+        height: 200px;
         flex: 3;
         img {
             display: block;
@@ -82,7 +175,7 @@ const setFileCover = () => {
 
     .info-content {
         width: 100%;
-		height: 40px;
+        height: 40px;
         flex: 1;
         display: flex;
         justify-content: space-between;
